@@ -312,11 +312,11 @@
     const lines = [];
     lines.push('Hola! Quiero hacer el siguiente pedido:\n');
     items.forEach(item => {
-      lines.push(`☑️ ${item.qty}x ${item.name}  (${item.price})`);
+      lines.push(`✅ ${item.qty}x ${item.name}  (${item.price})`);
     });
 
     const total = items.reduce((acc, i) => {
-      const num = parseFloat(String(i.price).replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
+      const num = parseInt(String(i.price).replace(/\D/g, ''), 10) || 0;
       return acc + num * i.qty;
     }, 0);
 
@@ -404,9 +404,32 @@
     overlay.addEventListener('click', closeDrawer);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 
-    /* Parsear precio como número */
+    /* Parsear precio como número (formato AR: $3.000 = 3000) */
     function parsePrice(str) {
-      return parseFloat(String(str).replace(/[^0-9.]/g, '').replace(',','.')) || 0;
+      return parseInt(String(str).replace(/\D/g, ''), 10) || 0;
+    }
+
+    /* Lista de barrios */
+    const HOODS = ['Barrio Belgrano','Barrio Quintas Altas','Zona Centro','Barrio Obrero','Zona Industrial','Barrio Cantera','Barrio 120 Viviendas','Barrio 80 Viviendas','Barrio 26 Viviendas','Barrio La Selva 1','Barrio La Selva 2','Barrio FM','Barrio EMSA','Villa Nueva'];
+
+    /* Renderizar picker de barrio en carrito */
+    function renderHoodPicker() {
+      if (!hoodPicker) return;
+      hoodPicker.style.display = '';
+      if (_neighborhood) {
+        hoodPicker.innerHTML = `
+          <p class="cart-hood-picker__label">📍 Barrio seleccionado</p>
+          <div class="cart-hood-picker__selected">
+            <span class="cart-hood-picker__selected-name">${_neighborhood}</span>
+            <button type="button" class="cart-hood-picker__change" data-action="change-hood">Cambiar</button>
+          </div>`;
+      } else {
+        hoodPicker.innerHTML = `
+          <p class="cart-hood-picker__label">📍 ¿Desde qué barrio pedís?</p>
+          <ul class="cart-hood-picker__list">
+            ${HOODS.map(h => `<li><button type="button" data-hood="${h}">${h}</button></li>`).join('')}
+          </ul>`;
+      }
     }
 
     /* Calcular total */
@@ -429,10 +452,12 @@
       if (!cart.length) {
         emptyEl.style.display = '';
         footerEl.style.display = 'none';
+        if (hoodPicker) hoodPicker.style.display = 'none';
         return;
       }
       emptyEl.style.display = 'none';
       footerEl.style.display = 'flex';
+      renderHoodPicker();
 
       cart.forEach((item, idx) => {
         const li = document.createElement('li');
@@ -471,26 +496,33 @@
     /* Vaciar */
     if (clearBtn) clearBtn.addEventListener('click', () => { cart.length = 0; updateBadge(); renderCart(); });
 
-    /* Confirmar pedido: si no hay barrio, mostrar picker primero */
+    /* Confirmar pedido: requiere barrio seleccionado */
     if (waBtn) {
       waBtn.addEventListener('click', e => {
         if (!_neighborhood) {
           e.preventDefault();
-          if (hoodPicker) hoodPicker.style.display = '';
+          if (hoodPicker) {
+            hoodPicker.classList.add('shake');
+            setTimeout(() => hoodPicker.classList.remove('shake'), 600);
+          }
         }
       });
     }
 
-    /* Selección de barrio desde el picker del carrito */
+    /* Picker de barrio: selección y cambio */
     if (hoodPicker) {
       hoodPicker.addEventListener('click', e => {
-        const btn = e.target.closest('[data-hood]');
-        if (!btn) return;
-        _neighborhood = btn.dataset.hood;
-        hoodPicker.style.display = 'none';
-        renderCart();
-        /* Navegar a WhatsApp con el carrito completo */
-        window.open(buildCartWaUrl(cart, _neighborhood), '_blank', 'noopener,noreferrer');
+        const hoodBtn = e.target.closest('[data-hood]');
+        if (hoodBtn) {
+          _neighborhood = hoodBtn.dataset.hood;
+          renderHoodPicker();
+          if (waBtn) waBtn.href = buildCartWaUrl(cart, _neighborhood);
+          return;
+        }
+        if (e.target.closest('[data-action="change-hood"]')) {
+          _neighborhood = '';
+          renderHoodPicker();
+        }
       });
     }
 

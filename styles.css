@@ -1593,6 +1593,51 @@ button {
   border-color: #ff6b00;
 }
 
+/* Estado: barrio seleccionado */
+.cart-hood-picker__selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+}
+
+.cart-hood-picker__selected-name {
+  color: #fff;
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.cart-hood-picker__change {
+  background: transparent;
+  border: 1px solid #ff6b00;
+  color: #ff6b00;
+  border-radius: 5px;
+  padding: .25rem .6rem;
+  cursor: pointer;
+  font-size: .75rem;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+
+.cart-hood-picker__change:hover {
+  background: #ff6b00;
+  color: #fff;
+}
+
+/* Shake cuando falta elegir barrio */
+@keyframes cart-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.cart-hood-picker.shake {
+  animation: cart-shake .5s ease;
+  border-color: #ef4444;
+}
+
 
 /* ────────────────────────────────────────
    14. MENU PAGE – menu-hero
