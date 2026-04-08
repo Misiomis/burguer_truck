@@ -386,6 +386,61 @@
   /* ──────────────────────────────────────────
      INIT
   ────────────────────────────────────────── */
+
+  /* ── Dropdown personalizado de barrios ── */
+  function initNeighborhoodDropdown() {
+    const container = document.getElementById('nbhood');
+    const trigger   = document.getElementById('nbhoodTrigger');
+    const list      = document.getElementById('nbhoodList');
+    const labelEl   = document.getElementById('nbhoodLabel');
+    const select    = document.getElementById('neighborhoodSelect');
+    if (!container || !trigger || !list) return;
+
+    /* Abrir / cerrar */
+    trigger.addEventListener('click', () => {
+      const open = container.classList.toggle('nbhood--open');
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    /* Cerrar al hacer clic fuera */
+    document.addEventListener('click', e => {
+      if (!container.contains(e.target)) {
+        container.classList.remove('nbhood--open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    /* Cerrar con Escape */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        container.classList.remove('nbhood--open');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.focus();
+      }
+    });
+
+    /* Seleccionar barrio */
+    list.addEventListener('click', e => {
+      const item = e.target.closest('.nbhood__item');
+      if (!item) return;
+      const value = item.dataset.value;
+
+      labelEl.textContent = value;
+
+      list.querySelectorAll('.nbhood__item').forEach(i => i.classList.remove('nbhood__item--selected'));
+      item.classList.add('nbhood__item--selected');
+
+      /* Sincronizar select oculto para que initWhatsApp() lo detecte */
+      if (select) {
+        select.value = value;
+        select.dispatchEvent(new Event('change'));
+      }
+
+      container.classList.remove('nbhood--open');
+      trigger.setAttribute('aria-expanded', 'false');
+    });
+  }
+
   function init() {
     initLoader();
     initNavbar();
@@ -395,6 +450,7 @@
     initStickyFilter();
     initMenuFilter();
     initWhatsApp();
+    initNeighborhoodDropdown();
     initCarousels();
   }
 

@@ -250,14 +250,13 @@
         <span class="section-label">Nuestra Historia</span>
         <h2 class="section-title">Desde la calle,<br />con pasión</h2>
         <p>
-          Burguer Truck nació en 2020 con una idea simple: llevar las mejores hamburguesas
-          artesanales a cada rincón de la ciudad. Lo que empezó como un sueño en una truck
-          pequeña, se convirtió en el punto de encuentro de los amantes de la buena comida.
+          Burguer Truck nació en 2025 con un objetivo claro: hacerle la vida más fácil a la gente.
+          Podés retirar tu pedido directamente en el carrito o pedirlo con envío a tu barrio —
+          como más te quede cómodo.
         </p>
         <p>
-          Usamos solo ingredientes frescos, pan brioche horneado a diario y la técnica smash
-          para lograr esa costra perfecta que nos hace únicos. Sin congelados, sin atajos.
-          Solo sabor real.
+          Precios accesibles, ingredientes frescos y una atención de excelencia en cada pedido.
+          Porque comer rico no tiene que ser un lujo.
         </p>
 
         <!-- Dirección física del local -->
@@ -319,8 +318,8 @@
             <span class="location__icon" aria-hidden="true">🕐</span>
             <div>
               <strong>Horarios</strong>
-              <p>Lun a Vie: 19:00 – 00:00</p>
-              <p>Sáb y Dom: 12:00 – 01:00</p>
+              <p>Mar a Dom: 19:30 – 23:45</p>
+              <p>Lunes: cerrado</p>
             </div>
           </div>
           <div class="location__item">
@@ -359,96 +358,95 @@
   </section>
 
   <!-- ================================================
-       DELIVERY AREA – selector de barrios
-  ================================================ -->
-  <section class="delivery" id="delivery">
-    <div class="container">
-
-      <div class="section-header reveal">
-        <span class="section-label">Zona de Entrega</span>
-        <h2 class="section-title">Hacemos envíos</h2>
-        <p class="section-desc">Seleccioná tu barrio para calcular el envío y armar tu pedido.</p>
-      </div>
-
-      <div class="delivery__inner reveal">
-
-        <!-- Selector de barrio -->
-        <div class="delivery__selector">
-          <label for="neighborhoodSelect" class="delivery__label">
-            Seleccione su barrio para calcular el envío.
-          </label>
-          <div class="delivery__select-wrap">
-            <select id="neighborhoodSelect" name="barrio" class="delivery__select">
-              <option value="">-- Elegí tu barrio --</option>
-              <option value="Barrio Belgrano">Barrio Belgrano</option>
-              <option value="Barrio Quintas Altas">Barrio Quintas Altas</option>
-              <option value="Zona Centro">Zona Centro</option>
-              <option value="Barrio Obrero">Barrio Obrero</option>
-              <option value="Zona Industrial">Zona Industrial</option>
-              <option value="Barrio Cantera">Barrio Cantera</option>
-              <option value="Barrio 120 Viviendas">Barrio 120 Viviendas</option>
-              <option value="Barrio 80 Viviendas">Barrio 80 Viviendas</option>
-              <option value="Barrio 26 Viviendas">Barrio 26 Viviendas</option>
-              <option value="Barrio La Selva 1">Barrio La Selva 1</option>
-              <option value="Barrio La Selva 2">Barrio La Selva 2</option>
-              <option value="Barrio FM">Barrio FM</option>
-              <option value="Barrio EMSA">Barrio EMSA</option>
-              <option value="Villa Nueva">Villa Nueva</option>
-            </select>
-            <span class="delivery__arrow" aria-hidden="true">▾</span>
-          </div>
-          <!-- Mensaje de retroalimentación dinámico -->
-          <p class="delivery__feedback" id="deliveryFeedback" aria-live="polite"></p>
-        </div>
-
-        <!-- CTA WhatsApp con barrio dinámico -->
-        <div class="delivery__cta">
-          <!-- JS actualiza el href con el barrio seleccionado -->
-          <a
-            href="https://wa.me/5493757626892"
-            id="waDeliveryBtn"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn--whatsapp btn--lg"
-            aria-label="Pedir con envío a mi barrio por WhatsApp"
-          >
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            Pedir con envío a mi barrio
-          </a>
-          <p class="delivery__hint" id="deliveryHint">Elegí un barrio para continuar.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ================================================
-       ORDER – CTA WhatsApp
+       ORDER – ¿Listo para pedir? (con selector de barrio)
   ================================================ -->
   <section class="order" id="order">
     <div class="order__bg" aria-hidden="true"></div>
     <div class="container order__inner reveal">
+
+      <!-- Texto izquierdo -->
       <div class="order__text">
-        <h2 class="order__title">¿Listo para pedir?</h2>
-        <p>Hacé tu pedido directo por WhatsApp. Rápido, fácil y sin vueltas.</p>
+        <span class="order__badge">🛵 Hacemos envíos</span>
+        <h2 class="order__title">¿Listo para<br>pedir?</h2>
+        <p>Elegí tu barrio y mandanos el pedido por WhatsApp. Rápido, sin vueltas.</p>
       </div>
-      <!-- JS actualiza automáticamente el href con el barrio elegido -->
-      <a
-        href="https://wa.me/5493757626892"
-        id="waOrderBtn"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn btn--whatsapp btn--lg"
-        aria-label="Ordenar por WhatsApp"
-      >
-        <!-- Ícono WhatsApp SVG inline -->
-        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-        Ordenar por WhatsApp
-      </a>
+
+      <!-- Formulario derecho -->
+      <div class="order__form">
+        <p class="order__form-label">Seleccioná tu barrio</p>
+
+        <!-- Custom dropdown barrios -->
+        <div class="nbhood" id="nbhood">
+          <button class="nbhood__trigger" id="nbhoodTrigger" type="button"
+                  aria-haspopup="listbox" aria-expanded="false" aria-controls="nbhoodList">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="nbhood__label" id="nbhoodLabel">Elegí tu barrio...</span>
+            <svg class="nbhood__chevron" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          <ul class="nbhood__list" id="nbhoodList" role="listbox" aria-label="Barrios con envio">
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Belgrano">Barrio Belgrano</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Quintas Altas">Barrio Quintas Altas</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Zona Centro">Zona Centro</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Obrero">Barrio Obrero</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Zona Industrial">Zona Industrial</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Cantera">Barrio Cantera</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio 120 Viviendas">Barrio 120 Viviendas</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio 80 Viviendas">Barrio 80 Viviendas</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio 26 Viviendas">Barrio 26 Viviendas</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio La Selva 1">Barrio La Selva 1</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio La Selva 2">Barrio La Selva 2</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio FM">Barrio FM</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio EMSA">Barrio EMSA</li>
+            <li class="nbhood__item" role="option" tabindex="-1" data-value="Villa Nueva">Villa Nueva</li>
+          </ul>
+        </div>
+
+        <!-- Select oculto para compatibilidad con JS existente -->
+        <select id="neighborhoodSelect" aria-hidden="true" tabindex="-1" style="display:none">
+          <option value=""></option>
+          <option value="Barrio Belgrano">Barrio Belgrano</option>
+          <option value="Barrio Quintas Altas">Barrio Quintas Altas</option>
+          <option value="Zona Centro">Zona Centro</option>
+          <option value="Barrio Obrero">Barrio Obrero</option>
+          <option value="Zona Industrial">Zona Industrial</option>
+          <option value="Barrio Cantera">Barrio Cantera</option>
+          <option value="Barrio 120 Viviendas">Barrio 120 Viviendas</option>
+          <option value="Barrio 80 Viviendas">Barrio 80 Viviendas</option>
+          <option value="Barrio 26 Viviendas">Barrio 26 Viviendas</option>
+          <option value="Barrio La Selva 1">Barrio La Selva 1</option>
+          <option value="Barrio La Selva 2">Barrio La Selva 2</option>
+          <option value="Barrio FM">Barrio FM</option>
+          <option value="Barrio EMSA">Barrio EMSA</option>
+          <option value="Villa Nueva">Villa Nueva</option>
+        </select>
+
+        <p class="order__feedback" id="deliveryFeedback" aria-live="polite"></p>
+
+        <a
+          href="https://wa.me/5493757626892"
+          id="waOrderBtn"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn--whatsapp btn--lg order__wa-btn"
+          aria-label="Pedir por WhatsApp"
+        >
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Pedir por WhatsApp
+        </a>
+        <p class="order__hint" id="deliveryHint">Elegí un barrio para continuar.</p>
+      </div>
+
     </div>
   </section>
 
@@ -485,8 +483,8 @@
       <!-- Horarios -->
       <div class="footer__col">
         <h4 class="footer__heading">Horarios</h4>
-        <p>Lunes a Viernes<br /><strong>19:00 – 00:00</strong></p>
-        <p>Sábado y Domingo<br /><strong>12:00 – 01:00</strong></p>
+        <p>Martes a Domingo<br /><strong>19:30 – 23:45</strong></p>
+        <p>Lunes<br /><strong>Cerrado</strong></p>
       </div>
 
       <!-- Redes sociales -->
