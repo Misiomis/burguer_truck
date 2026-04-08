@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Menú de Burguer Truck – Hamburguesas artesanales, combos y bebidas. Pedí por WhatsApp." />
+  <title>Menú | Burguer Truck</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Swiper.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+</head>
+<body class="menu-page">
+
+  <!-- ================================================
+       LOADER
+  ================================================ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__icon">
+      <div class="loader__bun loader__bun--top"></div>
+      <div class="loader__patty"></div>
+      <div class="loader__bun loader__bun--bottom"></div>
+    </div>
+    <p class="loader__text">Burguer Truck</p>
+  </div>
+
+  <!-- ================================================
+       NAVBAR (idéntico al index)
+  ================================================ -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <img src="img/burguer_truck.jpg" alt="Burguer Truck" class="navbar__logo-img" />
+      </a>
+      <ul class="navbar__links" id="navLinks" role="list">
+        <li><a href="index.html#about"    class="nav-link">Nosotros</a></li>
+        <li><a href="index.html#location" class="nav-link">Ubicación</a></li>
+        <li><a href="menu.html" class="nav-link nav-link--highlight" aria-current="page">Menú Completo</a></li>
+      </ul>
+      <div class="navbar__actions">
+        <a href="#menu-order" class="btn btn--primary btn--sm">Ordenar</a>
+        <button class="navbar__toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================================================
+       MENU HERO – cabecera de la página
+  ================================================ -->
+  <header class="menu-hero">
+    <div class="menu-hero__overlay" aria-hidden="true"></div>
+    <div class="container menu-hero__content">
+      <span class="hero__badge reveal">Todo el sabor, en un lugar</span>
+      <h1 class="menu-hero__title reveal">Nuestro <span class="text-accent">Menú</span></h1>
+      <p class="menu-hero__desc reveal">Hamburguesas artesanales, combos irresistibles y bebidas para acompañar.</p>
+    </div>
+  </header>
+
+  <!-- ================================================
+       FILTROS DE CATEGORÍA
+  ================================================ -->
+  <div class="menu-filter sticky-filter" id="menuFilter" role="tablist" aria-label="Filtrar por categoría">
+    <div class="container menu-filter__inner">
+      <button class="filter-btn active" data-filter="all"    role="tab" aria-selected="true">  Todo       </button>
+      <button class="filter-btn"        data-filter="burger" role="tab" aria-selected="false">🍔 Hamburguesas</button>
+      <button class="filter-btn"        data-filter="combo"  role="tab" aria-selected="false">🍟 Combos      </button>
+      <button class="filter-btn"        data-filter="drink"  role="tab" aria-selected="false">🥤 Bebidas      </button>
+    </div>
+  </div>
+
+  <!-- ================================================
+       SECCIÓN PRINCIPAL DEL MENÚ
+  ================================================ -->
+  <main class="menu-main" id="menu-main">
+    <div class="container">
+
+      <!-- ── HAMBURGUESAS ── -->
+      <div class="menu-category" id="cat-burger">
+        <h2 class="menu-category__title reveal">
+          <span class="menu-category__icon" aria-hidden="true">🍔</span>
+          Hamburguesas
+        </h2>
+        <div class="swiper menu-swiper" id="grid-burger">
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <article class="menu-card" data-category="burger">
+                <div class="menu-card__media"><img src="img/simple.png" alt="Hamburguesa Simple" loading="lazy" /><span class="menu-card__tag tag--fav">⭐ Clásica</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Simple</h3>
+                  <p class="menu-card__desc">Un medallón jugoso en pan artesanal con todos los clásicos de la casa.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">$3.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card" data-category="burger">
+                <div class="menu-card__media"><img src="img/completa.png" alt="Hamburguesa Completa" loading="lazy" /><span class="menu-card__tag tag--new">🔥 Completa</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Completa</h3>
+                  <p class="menu-card__desc">Medallón, cheddar fundido, lechuga, tomate, cebolla y salsa especial de la casa.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">$5.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card" data-category="burger">
+                <div class="menu-card__media"><img src="img/doble.png" alt="Hamburguesa Doble" loading="lazy" /><span class="menu-card__tag tag--hot">👑 Doble</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Doble</h3>
+                  <p class="menu-card__desc">Dos medallones, doble cheddar, cebolla caramelizada y mayonesa ahumada. El doble del sabor.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">$8.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card" data-category="burger">
+                <div class="menu-card__media"><img src="img/lomito.png" alt="Lomito" loading="lazy" /><span class="menu-card__tag tag--hot">🥩 Lomito</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Lomito + Papas</h3>
+                  <p class="menu-card__desc">Lomo tierno en pan artesanal con lechuga, tomate, huevo y mayonesa, con papas incluidas.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">$13.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card" data-category="burger">
+                <div class="menu-card__media"><img src="img/papa.png" alt="Papas fritas" loading="lazy" /><span class="menu-card__tag tag--fav">🍟 Papas</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Papa</h3>
+                  <p class="menu-card__desc">Cono de papas fritas crocantes. El acompañamiento perfecto para tu burger.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">$2.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card" data-category="burger">
+                <div class="menu-card__media"><img src="img/kingkong.png" alt="Hamburguesa KingKong" loading="lazy" /><span class="menu-card__tag tag--hot">👑 La Grande</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">KingKong</h3>
+                  <p class="menu-card__desc">La bestia del menú. Rinde 4 porciones — equivale a 4 completas en una sola burger. Para los valientes de verdad.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">$15.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div><!-- /grid-burger -->
+      </div><!-- /cat-burger -->
+
+      <!-- ── COMBOS ── -->
+      <div class="menu-category" id="cat-combo">
+        <h2 class="menu-category__title reveal">
+          <span class="menu-category__icon" aria-hidden="true">🍟</span>
+          Combos
+        </h2>
+        <p class="menu-category__desc reveal">Burger + papas fritas + bebida. Todo junto, mejor precio.</p>
+        <div class="swiper menu-swiper" id="grid-combo">
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <article class="menu-card menu-card--combo" data-category="combo">
+                <div class="menu-card__media"><img src="img/completa.png" alt="Combo Completa" loading="lazy" /><span class="menu-card__tag tag--combo">Combo</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Combo Completa</h3>
+                  <p class="menu-card__desc">Hamburguesa Completa + papas fritas + bebida a elección.</p>
+                  <ul class="combo-includes"><li>🍔 Hamburguesa Completa</li><li>🍟 Papas fritas</li><li>🥤 Bebida a elección</li></ul>
+                  <div class="menu-card__footer"><span class="menu-card__price">$5.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card menu-card--combo" data-category="combo">
+                <div class="menu-card__media"><img src="img/doble.png" alt="Combo Doble" loading="lazy" /><span class="menu-card__tag tag--combo">Combo</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Combo Doble</h3>
+                  <p class="menu-card__desc">Hamburguesa Doble + papas fritas + bebida a elección.</p>
+                  <ul class="combo-includes"><li>🍔 Hamburguesa Doble</li><li>🍟 Papas fritas</li><li>🥤 Bebida a elección</li></ul>
+                  <div class="menu-card__footer"><span class="menu-card__price">$8.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card menu-card--combo" data-category="combo">
+                <div class="menu-card__media"><img src="img/lomito.png" alt="Combo Lomito + Papa" loading="lazy" /><span class="menu-card__tag tag--hot">🔥 Especial</span></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Lomito + Papa</h3>
+                  <p class="menu-card__desc">Lomito completo + porción de papas fritas crocantes. El combo más pedido.</p>
+                  <ul class="combo-includes"><li>🥩 Lomito completo</li><li>🍟 Papas fritas</li></ul>
+                  <div class="menu-card__footer"><span class="menu-card__price">$13.000</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div><!-- /grid-combo -->
+
+        <!-- Aviso legal: combos sin envío -->
+        <p class="note-disclaimer note-disclaimer--combo reveal">
+          ⚠️ Los combos no incluyen envío.
+        </p>
+
+      </div><!-- /cat-combo -->
+
+      <!-- ── BEBIDAS ── -->
+      <div class="menu-category" id="cat-drink">
+        <h2 class="menu-category__title reveal">
+          <span class="menu-category__icon" aria-hidden="true">🥤</span>
+          Bebidas
+        </h2>
+        <div class="swiper menu-swiper menu-swiper--drinks" id="grid-drink">
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <article class="menu-card menu-card--drink" data-category="drink">
+                <div class="menu-card__media"><img src="img/coca.png" alt="Coca-Cola" loading="lazy" /></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Coca-Cola</h3>
+                  <p class="menu-card__desc">Lata 354 ml bien fría. La compañera perfecta para tu burger.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">Consultá precio</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card menu-card--drink" data-category="drink">
+                <div class="menu-card__media"><img src="img/brahma.png" alt="Cerveza Brahma" loading="lazy" /></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Cerveza Brahma</h3>
+                  <p class="menu-card__desc">Lata 473 ml bien fría. Rubia y refrescante.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">Consultá precio</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="swiper-slide">
+              <article class="menu-card menu-card--drink" data-category="drink">
+                <div class="menu-card__media"><img src="img/quilmes.png" alt="Cerveza Quilmes" loading="lazy" /></div>
+                <div class="menu-card__body">
+                  <h3 class="menu-card__name">Cerveza Quilmes</h3>
+                  <p class="menu-card__desc">Lata 473 ml bien fría. La clásica argentina de siempre.</p>
+                  <div class="menu-card__footer"><span class="menu-card__price">Consultá precio</span><a href="#menu-order" class="btn btn--primary btn--sm">Pedir</a></div>
+                </div>
+              </article>
+            </div>
+
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div><!-- /grid-drink -->
+      </div><!-- /cat-drink -->
+
+    </div><!-- /container -->
+
+    <!-- Nota legal sobre imágenes al pie del menú -->
+    <div class="menu-disclaimer container">
+      <p class="note-disclaimer">Las imágenes publicadas son ilustrativas.</p>
+    </div>
+
+  </main>
+
+  <!-- ================================================
+       ORDER – CTA WhatsApp al pie del menú
+  ================================================ -->
+  <section class="order" id="menu-order">
+    <div class="order__bg" aria-hidden="true"></div>
+    <div class="container order__inner reveal">
+      <div class="order__text">
+        <h2 class="order__title">¿Ya elegiste?</h2>
+        <p>Hacé tu pedido por WhatsApp. Rápido, fácil y sin vueltas.</p>
+      </div>
+      <a
+        href="https://wa.me/5493757626892"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn--whatsapp btn--lg"
+        aria-label="Ordenar por WhatsApp"
+      >
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Ordenar por WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- ================================================
+       FOOTER (idéntico al index)
+  ================================================ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+
+      <div class="footer__brand">
+        <a href="index.html" class="navbar__logo footer__logo">
+          <img src="img/burguer_truck.jpg" alt="Burguer Truck" class="navbar__logo-img footer__logo-img" />
+        </a>
+        <p>Hamburguesas Smash sobre Ruedas.<br />Hechas con amor, servidas con fuego.</p>
+        <address class="footer__address">
+          Calle Costa Rica<br />
+          Comandante Andresito<br />
+          Misiones, Argentina
+        </address>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Navegación</h4>
+        <ul role="list">
+          <li><a href="index.html#featured">Menú</a></li>
+          <li><a href="index.html#about">Nosotros</a></li>
+          <li><a href="index.html#location">Ubicación</a></li>
+          <li><a href="menu.html">Menú Completo</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Horarios</h4>
+        <p>Lunes a Viernes<br /><strong>19:00 – 00:00</strong></p>
+        <p>Sábado y Domingo<br /><strong>12:00 – 01:00</strong></p>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Seguinos</h4>
+        <div class="social-links">
+          <a href="#" aria-label="Instagram" class="social-link">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="m16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook" class="social-link">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://wa.me/5493757626892" aria-label="WhatsApp" class="social-link" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+          <a href="#" aria-label="TikTok" class="social-link">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.19 8.19 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+    <div class="footer__bottom">
+      <div class="container">
+        <p>&copy; 2026 Burguer Truck. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
