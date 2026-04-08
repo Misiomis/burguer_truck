@@ -295,72 +295,215 @@
 
   /* ──────────────────────────────────────────
      8. WHATSAPP CON BARRIO DINÁMICO
-     Escucha el selector de barrio y actualiza
-     el href de todos los botones WhatsApp del
-     sitio con el mensaje correspondiente.
   ────────────────────────────────────────── */
-  function initWhatsApp() {
-    // Número en formato internacional (sin + ni espacios)
-    // Reemplazá XXXXXXXXXX por tu número real
-    const WA_NUMBER = '5493757626892';
 
-    const select       = document.getElementById('neighborhoodSelect');
-    const feedback     = document.getElementById('deliveryFeedback');
-    const hint         = document.getElementById('deliveryHint');
-    const deliveryBtn  = document.getElementById('waDeliveryBtn');
-    const orderBtn     = document.getElementById('waOrderBtn');
+  /* Estado global del carrito y barrio — compartido con initCart */
+  const WA_NUMBER  = '5493757626892';
+  let   _neighborhood = '';
 
-    /* Construye la URL de WhatsApp con el mensaje dinámico */
-    function buildWaUrl(neighborhood) {
-      if (!neighborhood) {
-        return `https://wa.me/${WA_NUMBER}`;
-      }
-      const msg = `Hola! Quiero hacer un pedido desde el ${neighborhood}.`;
+  function buildCartWaUrl(items, neighborhood) {
+    if (!items.length) {
+      const msg = neighborhood
+        ? `Hola! Quiero hacer un pedido desde *${neighborhood}*.`
+        : 'Hola! Quiero hacer un pedido.';
       return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     }
 
-    /* Actualiza todos los botones WhatsApp de la página */
-    function updateButtons(neighborhood) {
-      const url = buildWaUrl(neighborhood);
+    const lines = [];
+    lines.push('Hola! Quiero hacer el siguiente pedido:\n');
+    items.forEach(item => {
+      lines.push(`☑️ ${item.qty}x ${item.name}  (${item.price})`);
+    });
 
-      if (deliveryBtn) deliveryBtn.href = url;
-      if (orderBtn)    orderBtn.href    = url;
+    const total = items.reduce((acc, i) => {
+      const num = parseFloat(String(i.price).replace(/[^0-9.]/g, '').replace(',', '.')) || 0;
+      return acc + num * i.qty;
+    }, 0);
+
+    lines.push('');
+    lines.push(`*Total estimado: $${total.toLocaleString('es-AR')}*`);
+
+    if (neighborhood) {
+      lines.push('');
+      lines.push(`📍 *Barrio: ${neighborhood}*`);
     }
 
-    /* Actualiza el mensaje visual debajo del selector */
-    function updateFeedback(neighborhood) {
-      if (!feedback || !hint) return;
+    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join('\n'))}`;
+  }
 
-      if (neighborhood) {
-        feedback.textContent = `✅ Envío a: ${neighborhood}`;
-        if (hint) hint.textContent = 'Hacé clic en el botón para pedir.';
-      } else {
-        feedback.textContent = '';
-        if (hint) hint.textContent = 'Elegí un barrio para continuar.';
+  function initWhatsApp() {
+    const select     = document.getElementById('neighborhoodSelect');
+    const feedback   = document.getElementById('deliveryFeedback');
+    const hint       = document.getElementById('deliveryHint');
+    const hoodDisplay = document.getElementById('selectedHoodDisplay');
+    const hoodValue  = document.getElementById('selectedHoodValue');
+    const orderBtn   = document.getElementById('waOrderBtn');
+
+    function updateOrderBtn() {
+      if (!orderBtn) return;
+      orderBtn.href = buildCartWaUrl([], _neighborhood);
+    }
+
+    function updateFeedback(neighborhood) {
+      if (feedback) feedback.textContent = '';
+      if (hint) hint.textContent = neighborhood ? 'Hacé clic en el botón para pedir.' : 'Elegí un barrio para continuar.';
+
+      if (hoodDisplay && hoodValue) {
+        if (neighborhood) {
+          hoodValue.textContent  = neighborhood;
+          hoodDisplay.style.display = 'flex';
+        } else {
+          hoodDisplay.style.display = 'none';
+        }
       }
     }
 
-    /* Listener principal del selector */
     if (select) {
       select.addEventListener('change', () => {
-        const neighborhood = select.value;
-        updateButtons(neighborhood);
-        updateFeedback(neighborhood);
+        _neighborhood = select.value;
+        updateFeedback(_neighborhood);
+        updateOrderBtn();
       });
-
-      // Sincronizar estado inicial (por si el navegador recuerda el valor)
       if (select.value) {
-        updateButtons(select.value);
-        updateFeedback(select.value);
+        _neighborhood = select.value;
+        updateFeedback(_neighborhood);
+        updateOrderBtn();
       }
     }
+  }
+
+  /* ──────────────────────────────────────────
+     9. CARRITO
+  ────────────────────────────────────────── */
+  function initCart() {
+    /* Estado */
+    const cart = [];   /* [{ pid, name, price, qty }] */
+
+    /* Nodos */
+    const fab      = document.getElementById('cartFab');
+    const badge    = document.getElementById('cartBadge');
+    const drawer   = document.getElementById('cartDrawer');
+    const overlay  = document.getElementById('cartOverlay');
+    const closeBtn = document.getElementById('cartClose');
+    const listEl   = document.getElementById('cartList');
+    const emptyEl  = document.getElementById('cartEmpty');
+    const footerEl = document.getElementById('cartFooter');
+    const totalEl  = document.getElementById('cartTotal');
+    const waBtn    = document.getElementById('cartWaBtn');
+    const clearBtn = document.getElementById('cartClear');
+
+    if (!fab) return;  /* page without cart markup */
+
+    /* Abrir / cerrar */
+    function openDrawer()  { drawer.classList.add('open'); overlay.classList.add('open'); document.body.classList.add('no-scroll'); }
+    function closeDrawer() { drawer.classList.remove('open'); overlay.classList.remove('open'); document.body.classList.remove('no-scroll'); }
+
+    fab.addEventListener('click', openDrawer);
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+    /* Parsear precio como número */
+    function parsePrice(str) {
+      return parseFloat(String(str).replace(/[^0-9.]/g, '').replace(',','.')) || 0;
+    }
+
+    /* Calcular total */
+    function calcTotal() {
+      return cart.reduce((acc, i) => acc + parsePrice(i.price) * i.qty, 0);
+    }
+
+    /* Actualizar badge */
+    function updateBadge() {
+      const qty = cart.reduce((a, i) => a + i.qty, 0);
+      badge.textContent = qty;
+      badge.classList.remove('bump');
+      void badge.offsetWidth;
+      badge.classList.add('bump');
+    }
+
+    /* Renderizar lista */
+    function renderCart() {
+      listEl.innerHTML = '';
+      if (!cart.length) {
+        emptyEl.style.display = '';
+        footerEl.style.display = 'none';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      footerEl.style.display = 'flex';
+
+      cart.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'cart-item';
+        li.innerHTML = `
+          <div class="cart-item__name">${item.name}</div>
+          <div class="cart-item__qty">
+            <button aria-label="Quitar uno" data-action="dec" data-idx="${idx}">−</button>
+            <span>${item.qty}</span>
+            <button aria-label="Agregar uno" data-action="inc" data-idx="${idx}">+</button>
+          </div>
+          <div class="cart-item__price">${item.price}</div>
+        `;
+        listEl.appendChild(li);
+      });
+
+      const total = calcTotal();
+      totalEl.textContent = '$' + total.toLocaleString('es-AR');
+
+      /* URL del botón WhatsApp con detalle del carrito */
+      if (waBtn) waBtn.href = buildCartWaUrl(cart, _neighborhood);
+    }
+
+    /* Eventos sobre los botones +/− del carrito */
+    listEl.addEventListener('click', e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const idx    = parseInt(btn.dataset.idx);
+      const action = btn.dataset.action;
+      if (action === 'inc') { cart[idx].qty++; }
+      if (action === 'dec') { cart[idx].qty--; if (cart[idx].qty <= 0) cart.splice(idx, 1); }
+      updateBadge();
+      renderCart();
+    });
+
+    /* Vaciar */
+    if (clearBtn) clearBtn.addEventListener('click', () => { cart.length = 0; updateBadge(); renderCart(); });
+
+    /* Capturar clics en "＋ Agregar" de cualquier card */
+    document.addEventListener('click', e => {
+      if (!e.target.classList.contains('btn-cart-add')) return;
+      const card = e.target.closest('[data-pid]');
+      if (!card) return;
+
+      const nameEl  = card.querySelector('.burger-card__name, .menu-card__name');
+      const priceEl = card.querySelector('.burger-card__price, .menu-card__price');
+      const pid     = card.dataset.pid;
+      const name    = nameEl  ? nameEl.textContent.trim()  : pid;
+      const price   = priceEl ? priceEl.textContent.trim() : '';
+
+      const existing = cart.find(i => i.pid === pid);
+      if (existing) { existing.qty++; } else { cart.push({ pid, name, price, qty: 1 }); }
+
+      updateBadge();
+      renderCart();
+
+      /* Feedback visual rápido en el botón */
+      e.target.textContent = '✓ Agregado';
+      e.target.disabled = true;
+      setTimeout(() => { e.target.textContent = '+ Agregar'; e.target.disabled = false; }, 1200);
+    });
+
+    /* Init */
+    updateBadge();
+    renderCart();
   }
 
   /* ──────────────────────────────────────────
      INIT – arrancar todo cuando el DOM esté listo
   ────────────────────────────────────────── */
   /* ──────────────────────────────────────────
-     9. CARRUSEL 3D con perspectiva
+     CARRUSEL (Swiper)
      La card central aparece grande y al fondo.
      Las adyacentes se achican y rotan en Y.
   ────────────────────────────────────────── */
@@ -478,6 +621,7 @@
     initWhatsApp();
     initNeighborhoodDropdown();
     initCarousels();
+    initCart();
   }
 
   if (document.readyState === 'loading') {
