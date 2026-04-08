@@ -391,6 +391,7 @@
     const totalEl  = document.getElementById('cartTotal');
     const waBtn    = document.getElementById('cartWaBtn');
     const clearBtn = document.getElementById('cartClear');
+    const hoodPicker = document.getElementById('cartHoodPicker');
 
     if (!fab) return;  /* page without cart markup */
 
@@ -470,7 +471,30 @@
     /* Vaciar */
     if (clearBtn) clearBtn.addEventListener('click', () => { cart.length = 0; updateBadge(); renderCart(); });
 
-    /* Capturar clics en "＋ Agregar" de cualquier card */
+    /* Confirmar pedido: si no hay barrio, mostrar picker primero */
+    if (waBtn) {
+      waBtn.addEventListener('click', e => {
+        if (!_neighborhood) {
+          e.preventDefault();
+          if (hoodPicker) hoodPicker.style.display = '';
+        }
+      });
+    }
+
+    /* Selección de barrio desde el picker del carrito */
+    if (hoodPicker) {
+      hoodPicker.addEventListener('click', e => {
+        const btn = e.target.closest('[data-hood]');
+        if (!btn) return;
+        _neighborhood = btn.dataset.hood;
+        hoodPicker.style.display = 'none';
+        renderCart();
+        /* Navegar a WhatsApp con el carrito completo */
+        window.open(buildCartWaUrl(cart, _neighborhood), '_blank', 'noopener,noreferrer');
+      });
+    }
+
+
     document.addEventListener('click', e => {
       if (!e.target.classList.contains('btn-cart-add')) return;
       const card = e.target.closest('[data-pid]');

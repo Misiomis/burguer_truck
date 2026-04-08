@@ -1544,6 +1544,55 @@ button {
 
 .btn-clear-cart:hover { color: #ef4444; border-color: #ef4444; }
 
+/* Picker de barrio inline en el carrito */
+.cart-hood-picker {
+  background: #1a1a1a;
+  border: 1px solid #ff6b00;
+  border-radius: 10px;
+  padding: .9rem 1rem;
+}
+
+.cart-hood-picker__label {
+  font-size: .8rem;
+  color: #ff6b00;
+  font-weight: 600;
+  margin: 0 0 .6rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.cart-hood-picker__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  max-height: 210px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ff6b00 #111;
+}
+
+.cart-hood-picker__list button {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #2e2e2e;
+  color: #ccc;
+  border-radius: 6px;
+  padding: .45rem .7rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: .85rem;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.cart-hood-picker__list button:hover {
+  background: #ff6b00;
+  color: #fff;
+  border-color: #ff6b00;
+}
+
 
 /* ────────────────────────────────────────
    14. MENU PAGE – menu-hero
