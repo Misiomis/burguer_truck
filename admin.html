@@ -327,6 +327,64 @@
     }
 
     .admin-footer a { color: var(--primary); text-decoration: none; }
+
+    /* Zonas de envío */
+    .hood-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: .75rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (min-width: 500px) { .hood-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 800px) { .hood-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .hood-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      transition: border-color .2s;
+    }
+    .hood-card:hover { border-color: #444; }
+    .hood-card__name {
+      font-family: var(--ff-head);
+      font-size: .95rem;
+      color: var(--text);
+    }
+    .hood-card__row {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .hood-card__row label {
+      font-size: .75rem;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .hood-card__row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-size: .85rem;
+      padding: .35rem .6rem;
+      min-width: 0;
+    }
+    .hood-card__row input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .hood-card__actions {
+      display: flex;
+      gap: .5rem;
+    }
+    .hood-card__actions .btn-save  { flex: 1; padding: .45rem; font-size: .8rem; }
+    .hood-card__actions .btn-reset { padding: .45rem .7rem; }
   </style>
 </head>
 <body>
@@ -379,6 +437,9 @@
 
       <p class="admin-section-title">Bebidas</p>
       <div class="product-grid" id="grid-drink"></div>
+
+      <p class="admin-section-title">Zonas de Envío</p>
+      <div class="hood-grid" id="grid-hoods"></div>
 
     </main>
 
@@ -452,6 +513,7 @@
       loginScreen.style.display = 'none';
       adminPanel.style.display  = 'block';
       renderProducts();
+      renderHoods();
     }
 
     /* Verificar sesión activa */
@@ -554,6 +616,80 @@
       toast.textContent = msg;
       toast.classList.add('show');
       toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    /* ── Zonas de Envío ── */
+    const LS_HOODS_KEY  = 'bt_hoods_v1';
+    const DEFAULT_HOODS = [
+      { name: 'Zona Centro',           ship: 1000  },
+      { name: 'Barrio Belgrano',       ship: 1800  },
+      { name: 'Barrio Quintas Altas',  ship: 1500  },
+      { name: 'Barrio Cantera',        ship: 1800  },
+      { name: 'Zona Industrial',       ship: 2000  },
+      { name: 'Barrio 9 de Julio',     ship: 1500  },
+      { name: 'Villa Nueva',           ship: 2500  },
+      { name: 'Barrio Obrero',         ship: 1800  },
+      { name: 'Barrio 120 Viviendas',  ship: 1800  },
+      { name: 'Barrio 80 Viviendas',   ship: null  },
+      { name: 'Barrio 26 Viviendas',   ship: 1500  },
+      { name: 'Barrio La Selva 1',     ship: 1500  },
+      { name: 'Barrio La Selva 2',     ship: 1800  },
+      { name: 'Barrio FM',             ship: 1800  },
+      { name: 'Barrio EMSA',           ship: 1500  },
+    ];
+
+    function loadHoods() {
+      try {
+        const raw = localStorage.getItem(LS_HOODS_KEY);
+        return raw ? JSON.parse(raw) : DEFAULT_HOODS.map(h => ({ ...h }));
+      } catch { return DEFAULT_HOODS.map(h => ({ ...h })); }
+    }
+
+    function saveHoods(hoods) {
+      localStorage.setItem(LS_HOODS_KEY, JSON.stringify(hoods));
+    }
+
+    function renderHoods() {
+      const grid  = document.getElementById('grid-hoods');
+      const hoods = loadHoods();
+      grid.innerHTML = '';
+      hoods.forEach(h => {
+        const card = document.createElement('div');
+        card.className = 'hood-card';
+        const shipVal = h.ship !== null && h.ship !== undefined ? h.ship : '';
+        card.innerHTML = `
+          <div class="hood-card__name">${esc(h.name)}</div>
+          <div class="hood-card__row">
+            <label>Envío $</label>
+            <input type="number" min="0" step="100" placeholder="Consultá" value="${shipVal}" data-hoodname="${esc(h.name)}" />
+          </div>
+          <div class="hood-card__actions">
+            <button class="btn-save" data-hoodname="${esc(h.name)}">Guardar</button>
+            <button class="btn-reset" data-hoodname="${esc(h.name)}" title="Restaurar precio original">↺</button>
+          </div>`;
+
+        card.querySelector('.btn-save').addEventListener('click', () => {
+          const hoods  = loadHoods();
+          const idx    = hoods.findIndex(x => x.name === h.name);
+          if (idx === -1) return;
+          const val    = card.querySelector('input').value.trim();
+          hoods[idx].ship = val !== '' ? parseInt(val, 10) : null;
+          saveHoods(hoods);
+          showToast();
+        });
+
+        card.querySelector('.btn-reset').addEventListener('click', () => {
+          const def  = DEFAULT_HOODS.find(x => x.name === h.name);
+          if (!def) return;
+          card.querySelector('input').value = def.ship !== null ? def.ship : '';
+          const hoods = loadHoods();
+          const idx   = hoods.findIndex(x => x.name === h.name);
+          if (idx !== -1) { hoods[idx].ship = def.ship; saveHoods(hoods); }
+          showToast('↺ Restaurado');
+        });
+
+        grid.appendChild(card);
+      });
     }
 
   })();

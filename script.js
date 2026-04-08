@@ -302,8 +302,9 @@
   let   _neighborhood = '';
   let   _shipping     = 0;
 
-  /* Tabla de barrios con costo de envío (null = consultá precio) */
-  const HOODS = [
+  /* Tabla de barrios con costo de envío — los precios se pueden editar desde el panel admin */
+  const LS_HOODS_KEY = 'bt_hoods_v1';
+  const HOODS_DEFAULTS = [
     { name: 'Zona Centro',           ship: 1000  },
     { name: 'Barrio Belgrano',       ship: 1800  },
     { name: 'Barrio Quintas Altas',  ship: 1500  },
@@ -311,15 +312,23 @@
     { name: 'Zona Industrial',       ship: 2000  },
     { name: 'Barrio 9 de Julio',     ship: 1500  },
     { name: 'Villa Nueva',           ship: 2500  },
-    { name: 'Barrio Obrero',         ship: null  },
-    { name: 'Barrio 120 Viviendas',  ship: null  },
+    { name: 'Barrio Obrero',         ship: 1800  },
+    { name: 'Barrio 120 Viviendas',  ship: 1800  },
     { name: 'Barrio 80 Viviendas',   ship: null  },
-    { name: 'Barrio 26 Viviendas',   ship: null  },
-    { name: 'Barrio La Selva 1',     ship: null  },
-    { name: 'Barrio La Selva 2',     ship: null  },
-    { name: 'Barrio FM',             ship: null  },
-    { name: 'Barrio EMSA',           ship: null  },
+    { name: 'Barrio 26 Viviendas',   ship: 1500  },
+    { name: 'Barrio La Selva 1',     ship: 1500  },
+    { name: 'Barrio La Selva 2',     ship: 1800  },
+    { name: 'Barrio FM',             ship: 1800  },
+    { name: 'Barrio EMSA',           ship: 1500  },
   ];
+
+  function getHoods() {
+    try {
+      const raw = localStorage.getItem(LS_HOODS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return HOODS_DEFAULTS;
+  }
 
   function buildCartWaUrl(items, neighborhood, shipping) {
     if (!items.length) {
@@ -444,7 +453,7 @@
       if (!hoodPicker) return;
       hoodPicker.style.display = '';
       if (_neighborhood) {
-        const hoodObj = HOODS.find(h => h.name === _neighborhood);
+        const hoodObj = getHoods().find(h => h.name === _neighborhood);
         const shipTxt = hoodObj && hoodObj.ship ? `$${hoodObj.ship.toLocaleString('es-AR')}` : 'Consultá';
         hoodPicker.innerHTML = `
           <p class="cart-hood-picker__label">📍 Barrio seleccionado</p>
@@ -456,7 +465,7 @@
         hoodPicker.innerHTML = `
           <p class="cart-hood-picker__label">📍 ¿Desde qué barrio pedís?</p>
           <ul class="cart-hood-picker__list">
-            ${HOODS.map(h => `<li><button type="button" data-hood="${h.name}">${h.name}<span class="cart-hood-ship-tag">${h.ship ? '$'+h.ship.toLocaleString('es-AR') : 'Consultá'}</span></button></li>`).join('')}
+            ${getHoods().map(h => `<li><button type="button" data-hood="${h.name}">${h.name}<span class="cart-hood-ship-tag">${h.ship ? '$'+h.ship.toLocaleString('es-AR') : 'Consultá'}</span></button></li>`).join('')}
           </ul>`;
       }
     }
@@ -547,7 +556,7 @@
         const hoodBtn = e.target.closest('[data-hood]');
         if (hoodBtn) {
           _neighborhood = hoodBtn.dataset.hood;
-          const hoodObj = HOODS.find(h => h.name === _neighborhood);
+          const hoodObj = getHoods().find(h => h.name === _neighborhood);
           _shipping = (hoodObj && hoodObj.ship) ? hoodObj.ship : 0;
           renderHoodPicker();
           if (waBtn) waBtn.href = buildCartWaUrl(cart, _neighborhood, _shipping);
