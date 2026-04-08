@@ -300,8 +300,28 @@
   /* Estado global del carrito y barrio — compartido con initCart */
   const WA_NUMBER  = '5493757626892';
   let   _neighborhood = '';
+  let   _shipping     = 0;
 
-  function buildCartWaUrl(items, neighborhood) {
+  /* Tabla de barrios con costo de envío (null = consultá precio) */
+  const HOODS = [
+    { name: 'Zona Centro',           ship: 1000  },
+    { name: 'Barrio Belgrano',       ship: 1800  },
+    { name: 'Barrio Quintas Altas',  ship: 1500  },
+    { name: 'Barrio Cantera',        ship: 1800  },
+    { name: 'Zona Industrial',       ship: 2000  },
+    { name: 'Barrio 9 de Julio',     ship: 1500  },
+    { name: 'Villa Nueva',           ship: 2500  },
+    { name: 'Barrio Obrero',         ship: null  },
+    { name: 'Barrio 120 Viviendas',  ship: null  },
+    { name: 'Barrio 80 Viviendas',   ship: null  },
+    { name: 'Barrio 26 Viviendas',   ship: null  },
+    { name: 'Barrio La Selva 1',     ship: null  },
+    { name: 'Barrio La Selva 2',     ship: null  },
+    { name: 'Barrio FM',             ship: null  },
+    { name: 'Barrio EMSA',           ship: null  },
+  ];
+
+  function buildCartWaUrl(items, neighborhood, shipping) {
     if (!items.length) {
       const msg = neighborhood
         ? `Hola! Quiero hacer un pedido desde *${neighborhood}*.`
@@ -321,7 +341,14 @@
     }, 0);
 
     lines.push('');
-    lines.push(`*Total estimado: $${total.toLocaleString('es-AR')}*`);
+    lines.push(`*Subtotal: $${total.toLocaleString('es-AR')}*`);
+
+    if (shipping) {
+      lines.push(`🚚 *Envío: $${shipping.toLocaleString('es-AR')}*`);
+      lines.push(`💰 *Total con envío: $${(total + shipping).toLocaleString('es-AR')}*`);
+    } else {
+      lines.push(`*Total: $${total.toLocaleString('es-AR')}*`);
+    }
 
     if (neighborhood) {
       lines.push('');
@@ -410,24 +437,26 @@
     }
 
     /* Lista de barrios */
-    const HOODS = ['Barrio Belgrano','Barrio Quintas Altas','Zona Centro','Barrio Obrero','Zona Industrial','Barrio Cantera','Barrio 120 Viviendas','Barrio 80 Viviendas','Barrio 26 Viviendas','Barrio La Selva 1','Barrio La Selva 2','Barrio FM','Barrio EMSA','Villa Nueva'];
+    // HOODS definido en el scope exterior (con precios de envío)
 
     /* Renderizar picker de barrio en carrito */
     function renderHoodPicker() {
       if (!hoodPicker) return;
       hoodPicker.style.display = '';
       if (_neighborhood) {
+        const hoodObj = HOODS.find(h => h.name === _neighborhood);
+        const shipTxt = hoodObj && hoodObj.ship ? `$${hoodObj.ship.toLocaleString('es-AR')}` : 'Consultá';
         hoodPicker.innerHTML = `
           <p class="cart-hood-picker__label">📍 Barrio seleccionado</p>
           <div class="cart-hood-picker__selected">
-            <span class="cart-hood-picker__selected-name">${_neighborhood}</span>
+            <span class="cart-hood-picker__selected-name">${_neighborhood} <small class="cart-hood-ship">Envío: ${shipTxt}</small></span>
             <button type="button" class="cart-hood-picker__change" data-action="change-hood">Cambiar</button>
           </div>`;
       } else {
         hoodPicker.innerHTML = `
           <p class="cart-hood-picker__label">📍 ¿Desde qué barrio pedís?</p>
           <ul class="cart-hood-picker__list">
-            ${HOODS.map(h => `<li><button type="button" data-hood="${h}">${h}</button></li>`).join('')}
+            ${HOODS.map(h => `<li><button type="button" data-hood="${h.name}">${h.name}<span class="cart-hood-ship-tag">${h.ship ? '$'+h.ship.toLocaleString('es-AR') : 'Consultá'}</span></button></li>`).join('')}
           </ul>`;
       }
     }
@@ -475,10 +504,13 @@
       });
 
       const total = calcTotal();
-      totalEl.textContent = '$' + total.toLocaleString('es-AR');
+      const shipLine = _shipping
+        ? `<span class="cart-total__ship">+ Envío $${_shipping.toLocaleString('es-AR')}</span>`
+        : '';
+      totalEl.innerHTML = `$${total.toLocaleString('es-AR')}${shipLine}`;
 
       /* URL del botón WhatsApp con detalle del carrito */
-      if (waBtn) waBtn.href = buildCartWaUrl(cart, _neighborhood);
+      if (waBtn) waBtn.href = buildCartWaUrl(cart, _neighborhood, _shipping);
     }
 
     /* Eventos sobre los botones +/− del carrito */
@@ -515,13 +547,18 @@
         const hoodBtn = e.target.closest('[data-hood]');
         if (hoodBtn) {
           _neighborhood = hoodBtn.dataset.hood;
+          const hoodObj = HOODS.find(h => h.name === _neighborhood);
+          _shipping = (hoodObj && hoodObj.ship) ? hoodObj.ship : 0;
           renderHoodPicker();
-          if (waBtn) waBtn.href = buildCartWaUrl(cart, _neighborhood);
+          if (waBtn) waBtn.href = buildCartWaUrl(cart, _neighborhood, _shipping);
+          renderCart();
           return;
         }
         if (e.target.closest('[data-action="change-hood"]')) {
           _neighborhood = '';
+          _shipping = 0;
           renderHoodPicker();
+          renderCart();
         }
       });
     }
