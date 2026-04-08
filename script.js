@@ -10,11 +10,37 @@
  *   6. Sticky filter bar en menu.html
  *   7. Filtrado de menú por categoría
  *   8. WhatsApp con barrio dinámico (selector de envio)
+ *   9. Carrusel Swiper
+ *  10. Aplicar overrides del admin (localStorage)
  * ============================================================
  */
 
 (function () {
   'use strict';
+
+  /* ──────────────────────────────────────────
+     0. APLICAR CAMBIOS DEL ADMIN
+     Lee bt_products_v1 del localStorage y
+     actualiza nombre, precio y descripción
+     en todos los artículos con data-pid.
+  ────────────────────────────────────────── */
+  (function applyProductOverrides() {
+    try {
+      const raw = localStorage.getItem('bt_products_v1');
+      if (!raw) return;
+      const products = JSON.parse(raw);
+      products.forEach(function(p) {
+        document.querySelectorAll('[data-pid="' + p.pid + '"]').forEach(function(el) {
+          var nameEl  = el.querySelector('.burger-card__name, .menu-card__name');
+          var descEl  = el.querySelector('.burger-card__desc, .menu-card__desc');
+          var priceEl = el.querySelector('.burger-card__price, .menu-card__price');
+          if (nameEl  && p.name)  nameEl.textContent  = p.name;
+          if (descEl  && p.desc)  descEl.textContent  = p.desc;
+          if (priceEl && p.price) priceEl.textContent = p.price;
+        });
+      });
+    } catch (e) { /* silenciar errores de parsing */ }
+  })();
 
   /* ──────────────────────────────────────────
      1. LOADER

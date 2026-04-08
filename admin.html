@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – Burguer Truck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f0f0f;
+      --surface:  #1a1a1a;
+      --border:   #2e2e2e;
+      --primary:  #ff6b00;
+      --primary-dk: #c95500;
+      --text:     #e8e8e8;
+      --muted:    #888;
+      --green:    #22c55e;
+      --red:      #ef4444;
+      --radius:   10px;
+      --ff-head:  'Oswald', sans-serif;
+      --ff-body:  'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .login-card__logo {
+      font-family: var(--ff-head);
+      font-size: 1.4rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .login-card h1 {
+      font-family: var(--ff-head);
+      font-size: 1.6rem;
+      margin-bottom: .4rem;
+      text-transform: uppercase;
+    }
+
+    .login-card p {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-bottom: 2rem;
+    }
+
+    .login-field {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .login-field input {
+      width: 100%;
+      padding: .85rem 1rem .85rem 2.8rem;
+      background: #252525;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .login-field input:focus { border-color: var(--primary); }
+
+    .login-field svg {
+      position: absolute;
+      left: .85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .login-error {
+      color: var(--red);
+      font-size: .82rem;
+      min-height: 1.2rem;
+      margin-bottom: .75rem;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: .85rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--ff-head);
+      font-size: 1rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .btn-login:hover { background: var(--primary-dk); }
+
+    /* ── PANEL ADMIN ── */
+    #adminPanel { display: none; }
+
+    .admin-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-header__brand {
+      font-family: var(--ff-head);
+      font-size: 1.1rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .admin-header__brand span { color: var(--text); }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: .4rem .9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--ff-body);
+      font-size: .8rem;
+      transition: border-color .2s, color .2s;
+    }
+
+    .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+    .admin-main { padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto; }
+
+    .admin-section-title {
+      font-family: var(--ff-head);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 600px) {
+      .product-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: border-color .2s;
+    }
+
+    .product-card:hover { border-color: #444; }
+
+    .product-card__header {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1rem;
+    }
+
+    .product-card__thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      object-fit: contain;
+      background: #0d0d0d;
+      flex-shrink: 0;
+    }
+
+    .product-card__name {
+      font-family: var(--ff-head);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .product-card__pid {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .1rem;
+    }
+
+    .form-group { margin-bottom: .75rem; }
+
+    .form-group label {
+      display: block;
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: .35rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: .65rem .85rem;
+      background: #252525;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-size: .88rem;
+      outline: none;
+      transition: border-color .2s;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--primary); }
+
+    .product-card__actions {
+      display: flex;
+      gap: .5rem;
+      margin-top: .5rem;
+    }
+
+    .btn-save {
+      flex: 1;
+      padding: .55rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-family: var(--ff-head);
+      font-size: .85rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .btn-save:hover { background: var(--primary-dk); }
+
+    .btn-reset {
+      padding: .55rem .8rem;
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: .8rem;
+      transition: color .2s, border-color .2s;
+    }
+
+    .btn-reset:hover { color: var(--red); border-color: var(--red); }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #1e1e1e;
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: .75rem 1.25rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .3s, transform .3s;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .admin-footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-size: .78rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .admin-footer a { color: var(--primary); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════
+       PANTALLA DE LOGIN
+  ══════════════════════════ -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <div class="login-card__logo">🍔 Burguer Truck</div>
+      <h1>Panel Admin</h1>
+      <p>Ingresá tu contraseña para continuar</p>
+
+      <div class="login-field">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <input type="password" id="passwordInput" placeholder="Contraseña"
+               autocomplete="current-password" />
+      </div>
+
+      <p class="login-error" id="loginError" aria-live="polite"></p>
+
+      <button class="btn-login" id="loginBtn">Ingresar</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       PANEL ADMIN
+  ══════════════════════════ -->
+  <div id="adminPanel">
+
+    <header class="admin-header">
+      <div class="admin-header__brand">
+        🍔 Burguer Truck <span>/ Admin</span>
+      </div>
+      <button class="btn-logout" id="logoutBtn">Cerrar sesión</button>
+    </header>
+
+    <main class="admin-main">
+
+      <p class="admin-section-title">Hamburguesas</p>
+      <div class="product-grid" id="grid-burger"></div>
+
+      <p class="admin-section-title">Combos</p>
+      <div class="product-grid" id="grid-combo"></div>
+
+      <p class="admin-section-title">Bebidas</p>
+      <div class="product-grid" id="grid-drink"></div>
+
+    </main>
+
+    <footer class="admin-footer">
+      Los cambios se guardan en este navegador. <a href="index.html" target="_blank">Ver sitio →</a>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">✓ Guardado</div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── Contraseña (hash SHA-256 en hex) ──────────────────────────
+       Hash de "guti2026"
+    ─────────────────────────────────────────────────────────────── */
+    const PASS_HASH = '9151e20a6da23269469f3a6c8b965552f806d5fdaac681b44b1c8c33c0b85180';
+
+    /* Productos por defecto */
+    const DEFAULTS = [
+      { pid: 'simple',       name: 'Simple',         price: '$3.000', desc: 'Un medallón jugoso en pan artesanal con todos los clásicos de la casa.',                                        img: 'img/simple.png',    group: 'burger' },
+      { pid: 'completa',     name: 'Completa',        price: '$5.000', desc: 'Medallón, cheddar fundido, lechuga, tomate, cebolla y salsa especial de la casa.',                               img: 'img/completa.png',  group: 'burger' },
+      { pid: 'doble',        name: 'Doble',           price: '$8.000', desc: 'Dos medallones, doble cheddar, cebolla caramelizada y mayonesa ahumada. El doble del sabor.',                    img: 'img/doble.png',     group: 'burger' },
+      { pid: 'lomito-papas', name: 'Lomito + Papas',  price: '$13.000',desc: 'Lomo tierno en pan artesanal con lechuga, tomate, huevo y mayonesa, con papas incluidas.',                      img: 'img/lomito.png',    group: 'burger' },
+      { pid: 'papa',         name: 'Papa',            price: '$2.000', desc: 'Cono de papas fritas crocantes. El acompañamiento perfecto para tu burger.',                                    img: 'img/papa.png',      group: 'burger' },
+      { pid: 'kingkong',     name: 'KingKong',        price: '$15.000',desc: 'La bestia del menú. Rinde 4 porciones — equivale a 4 completas en una sola burger.',                            img: 'img/kingkong.png',  group: 'burger' },
+      { pid: 'combo-completa',name:'Combo Completa',  price: '$5.000', desc: 'Hamburguesa Completa + papas fritas + bebida a elección.',                                                      img: 'img/completa.png',  group: 'combo'  },
+      { pid: 'combo-doble',  name: 'Combo Doble',     price: '$8.000', desc: 'Hamburguesa Doble + papas fritas + bebida a elección.',                                                         img: 'img/doble.png',     group: 'combo'  },
+      { pid: 'combo-lomito', name: 'Lomito + Papa',   price: '$13.000',desc: 'Lomito completo + porción de papas fritas crocantes. El combo más pedido.',                                     img: 'img/lomito.png',    group: 'combo'  },
+      { pid: 'coca',         name: 'Coca-Cola',       price: 'Consultá precio', desc: 'Lata 354 ml bien fría. La compañera perfecta para tu burger.',                                        img: 'img/coca.png',      group: 'drink'  },
+      { pid: 'brahma',       name: 'Cerveza Brahma',  price: 'Consultá precio', desc: 'Lata 473 ml bien fría. Rubia y refrescante.',                                                         img: 'img/brahma.png',    group: 'drink'  },
+      { pid: 'quilmes',      name: 'Cerveza Quilmes', price: 'Consultá precio', desc: 'Lata 473 ml bien fría. La clásica argentina de siempre.',                                             img: 'img/quilmes.png',   group: 'drink'  },
+    ];
+
+    const LS_KEY      = 'bt_products_v1';
+    const SESSION_KEY = 'bt_admin_auth';
+
+    /* ── SHA-256 simplificado (Web Crypto API) ── */
+    async function sha256hex(str) {
+      const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    /* ── LocalStorage helpers ── */
+    function loadProducts() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        return raw ? JSON.parse(raw) : structuredClone(DEFAULTS);
+      } catch { return structuredClone(DEFAULTS); }
+    }
+
+    function saveProducts(products) {
+      localStorage.setItem(LS_KEY, JSON.stringify(products));
+    }
+
+    /* ── Escape para inserción segura ── */
+    function esc(str) {
+      return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ── Login ── */
+    const loginScreen = document.getElementById('loginScreen');
+    const adminPanel  = document.getElementById('adminPanel');
+    const passInput   = document.getElementById('passwordInput');
+    const loginError  = document.getElementById('loginError');
+
+    function showPanel() {
+      loginScreen.style.display = 'none';
+      adminPanel.style.display  = 'block';
+      renderProducts();
+    }
+
+    /* Verificar sesión activa */
+    if (sessionStorage.getItem(SESSION_KEY) === '1') { showPanel(); }
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const val  = passInput.value.trim();
+      if (!val) { loginError.textContent = 'Ingresá la contraseña.'; return; }
+      const hash = await sha256hex(val);
+      if (hash === PASS_HASH) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        loginError.textContent = '';
+        showPanel();
+      } else {
+        loginError.textContent = 'Contraseña incorrecta.';
+        passInput.value = '';
+        passInput.focus();
+      }
+    });
+
+    passInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem(SESSION_KEY);
+      location.reload();
+    });
+
+    /* ── Render productos ── */
+    function renderProducts() {
+      const products = loadProducts();
+      ['burger','combo','drink'].forEach(group => {
+        const grid = document.getElementById('grid-' + group);
+        grid.innerHTML = '';
+        products.filter(p => p.group === group).forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.innerHTML = `
+            <div class="product-card__header">
+              <img class="product-card__thumb" src="${esc(p.img)}" alt="${esc(p.name)}" />
+              <div>
+                <div class="product-card__name">${esc(p.name)}</div>
+                <div class="product-card__pid">id: ${esc(p.pid)}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Nombre</label>
+              <input type="text" data-field="name" value="${esc(p.name)}" />
+            </div>
+            <div class="form-group">
+              <label>Precio</label>
+              <input type="text" data-field="price" value="${esc(p.price)}" />
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea rows="3" data-field="desc">${esc(p.desc)}</textarea>
+            </div>
+            <div class="product-card__actions">
+              <button class="btn-save" data-pid="${esc(p.pid)}">Guardar</button>
+              <button class="btn-reset" data-pid="${esc(p.pid)}" title="Restaurar valores originales">↺</button>
+            </div>
+          `;
+
+          /* Guardar */
+          card.querySelector('.btn-save').addEventListener('click', () => {
+            const products = loadProducts();
+            const idx = products.findIndex(x => x.pid === p.pid);
+            if (idx === -1) return;
+            products[idx].name  = card.querySelector('[data-field="name"]').value.trim();
+            products[idx].price = card.querySelector('[data-field="price"]').value.trim();
+            products[idx].desc  = card.querySelector('[data-field="desc"]').value.trim();
+            saveProducts(products);
+            showToast();
+          });
+
+          /* Resetear */
+          card.querySelector('.btn-reset').addEventListener('click', () => {
+            const def = DEFAULTS.find(x => x.pid === p.pid);
+            if (!def) return;
+            card.querySelector('[data-field="name"]').value  = def.name;
+            card.querySelector('[data-field="price"]').value = def.price;
+            card.querySelector('[data-field="desc"]').value  = def.desc;
+            const products = loadProducts();
+            const idx = products.findIndex(x => x.pid === p.pid);
+            if (idx !== -1) { products[idx] = structuredClone(def); saveProducts(products); }
+            showToast('↺ Restaurado');
+          });
+
+          grid.appendChild(card);
+        });
+      });
+    }
+
+    /* ── Toast ── */
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    function showToast(msg = '✓ Guardado') {
+      clearTimeout(toastTimer);
+      toast.textContent = msg;
+      toast.classList.add('show');
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+  })();
+  </script>
+</body>
+</html>
