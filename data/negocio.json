@@ -1,0 +1,140 @@
+{
+  "schema": "ebs.negocio",
+  "version": 1,
+  "actualizado": "2026-11-17",
+  "nombre": "El Buen Sabor",
+  "nombreHistorico": "Burguer Truck",
+  "lema": "Siempre hay algo rico.",
+  "mensajeTransicion": "Crecimos. Y el sabor sigue.",
+  "sitio": {
+    "url": "https://misiomis.github.io/burguer_truck/"
+  },
+  "whatsapp": {
+    "estado": "confirmado",
+    "numero": "5493757626892"
+  },
+  "direccion": {
+    "estado": "confirmado",
+    "texto": "Calle Costa Rica",
+    "localidad": "Comandante Andresito, Misiones",
+    "mapaUrl": "https://maps.app.goo.gl/rrjarzStdaCkGc1o9"
+  },
+  "horarios": {
+    "estado": "confirmado",
+    "lista": [
+      {
+        "dias": "Martes a domingo",
+        "horario": "19:30 a 23:45"
+      },
+      {
+        "dias": "Lunes",
+        "horario": "Cerrado"
+      }
+    ]
+  },
+  "modalidades": {
+    "retiro": {
+      "estado": "confirmado"
+    },
+    "envio": {
+      "estado": "confirmado",
+      "zonas": [
+        {
+          "id": "zona-centro",
+          "nombre": "Zona Centro",
+          "tarifa": 1000,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-belgrano",
+          "nombre": "Barrio Belgrano",
+          "tarifa": 1800,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-quintas-altas",
+          "nombre": "Barrio Quintas Altas",
+          "tarifa": 1500,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-cantera",
+          "nombre": "Barrio Cantera",
+          "tarifa": 1800,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "zona-industrial",
+          "nombre": "Zona Industrial",
+          "tarifa": 2000,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-9-de-julio",
+          "nombre": "Barrio 9 de Julio",
+          "tarifa": 1500,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "villa-nueva",
+          "nombre": "Villa Nueva",
+          "tarifa": 2500,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-obrero",
+          "nombre": "Barrio Obrero",
+          "tarifa": 1800,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-120-viviendas",
+          "nombre": "Barrio 120 Viviendas",
+          "tarifa": 1800,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-80-viviendas",
+          "nombre": "Barrio 80 Viviendas",
+          "tarifa": null,
+          "tarifaEstado": "pendiente"
+        },
+        {
+          "id": "barrio-26-viviendas",
+          "nombre": "Barrio 26 Viviendas",
+          "tarifa": 1500,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-la-selva-1",
+          "nombre": "Barrio La Selva 1",
+          "tarifa": 1500,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-la-selva-2",
+          "nombre": "Barrio La Selva 2",
+          "tarifa": 1800,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-fm",
+          "nombre": "Barrio FM",
+          "tarifa": 1800,
+          "tarifaEstado": "confirmada"
+        },
+        {
+          "id": "barrio-emsa",
+          "nombre": "Barrio EMSA",
+          "tarifa": 1500,
+          "tarifaEstado": "confirmada"
+        }
+      ]
+    }
+  },
+  "mediosDePago": {
+    "estado": "pendiente",
+    "lista": []
+  },
+  "redes": []
+}

@@ -1,0 +1,237 @@
+{
+  "schema": "ebs.catalogo",
+  "version": 1,
+  "actualizado": "2026-11-17",
+  "fuente": "Carta informada por el propietario el 17/11/2026 (reemplaza los importes del manual de marca, edición 01).",
+  "moneda": "ARS",
+  "categorias": [
+    {
+      "id": "hamburguesas",
+      "nombre": "Hamburguesas",
+      "descripcion": "Las de siempre, desde el carrito.",
+      "estado": "activa"
+    },
+    {
+      "id": "sandwiches",
+      "nombre": "Sándwiches",
+      "descripcion": "Lomito y milanesa de carne o de pollo.",
+      "estado": "activa"
+    },
+    {
+      "id": "papas",
+      "nombre": "Papas fritas",
+      "descripcion": "Porción individual o en caja.",
+      "estado": "activa"
+    },
+    {
+      "id": "empanadas",
+      "nombre": "Empanadas",
+      "descripcion": "De carne o de pollo, por media docena o por docena.",
+      "estado": "activa"
+    }
+  ],
+  "productos": [
+    {
+      "id": "hamburguesa-simple",
+      "categoria": "hamburguesas",
+      "nombre": "Hamburguesa simple",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "hamburguesa-simple",
+          "presentacion": "Unidad",
+          "unidades": 1,
+          "precio": 4500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "hamburguesa-completa",
+      "categoria": "hamburguesas",
+      "nombre": "Hamburguesa completa",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "hamburguesa-completa",
+          "presentacion": "Unidad",
+          "unidades": 1,
+          "precio": 6500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "hamburguesa-doble",
+      "categoria": "hamburguesas",
+      "nombre": "Doble paty o KingKong",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "hamburguesa-doble",
+          "presentacion": "Unidad",
+          "unidades": 1,
+          "precio": 8500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "lomito",
+      "categoria": "sandwiches",
+      "nombre": "Lomito",
+      "descripcion": "Elegí con papas o sin papas.",
+      "imagen": "lomito",
+      "alt": "Sándwich de lomito cortado en dos sobre papel. Imagen ilustrativa.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "lomito-con-papas",
+          "presentacion": "Con papas",
+          "unidades": 1,
+          "precio": 15500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        },
+        {
+          "id": "lomito-sin-papas",
+          "presentacion": "Sin papas",
+          "unidades": 1,
+          "precio": 12500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "milanesa-carne",
+      "categoria": "sandwiches",
+      "nombre": "Sándwich de milanesa de carne",
+      "imagen": "sandwich_milanesa_carne",
+      "alt": "Sándwich de milanesa de carne cortado en dos. Imagen ilustrativa.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "milanesa-carne",
+          "presentacion": "Unidad",
+          "unidades": 1,
+          "precio": 10000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "milanesa-pollo",
+      "categoria": "sandwiches",
+      "nombre": "Sándwich de milanesa de pollo",
+      "imagen": "sandwich_milanesa_pollo",
+      "alt": "Sándwich de milanesa de pollo cortado en dos. Imagen ilustrativa.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "milanesa-pollo",
+          "presentacion": "Unidad",
+          "unidades": 1,
+          "precio": 10000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "papas-fritas",
+      "categoria": "papas",
+      "nombre": "Papas fritas",
+      "descripcion": "Elegí porción individual o en caja.",
+      "imagen": "papas_mediana_caja",
+      "alt": "Papas fritas en una caja de cartón abierta. Imagen ilustrativa.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "papas-individual",
+          "presentacion": "Porción individual",
+          "unidades": 1,
+          "precio": 3500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        },
+        {
+          "id": "papas-mediana-caja",
+          "presentacion": "En caja",
+          "unidades": 1,
+          "precio": 6000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "empanadas-carne",
+      "categoria": "empanadas",
+      "nombre": "Empanadas de carne",
+      "descripcion": "Elegí media docena o docena.",
+      "imagen": "empanadas",
+      "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "empanadas-carne-6",
+          "presentacion": "Media docena",
+          "unidades": 6,
+          "precio": 6500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        },
+        {
+          "id": "empanadas-carne-12",
+          "presentacion": "Docena",
+          "unidades": 12,
+          "precio": 12000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "empanadas-pollo",
+      "categoria": "empanadas",
+      "nombre": "Empanadas de pollo",
+      "descripcion": "Elegí media docena o docena.",
+      "imagen": "empanadas",
+      "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "empanadas-pollo-6",
+          "presentacion": "Media docena",
+          "unidades": 6,
+          "precio": 6500,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        },
+        {
+          "id": "empanadas-pollo-12",
+          "presentacion": "Docena",
+          "unidades": 12,
+          "precio": 12000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    }
+  ],
+  "proximas": [
+    {
+      "id": "pizzas",
+      "nombre": "Pizzas",
+      "estado": "futuro",
+      "comunicar": false,
+      "nota": "Planificado. Sin receta, precio ni fecha. No comprable."
+    }
+  ],
+  "historicos": []
+}

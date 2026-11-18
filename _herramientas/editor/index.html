@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editor local | El Buen Sabor</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/img/icono-192.png">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="editor.css">
+  <script type="module" src="editor.js"></script>
+</head>
+<body class="editor">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <p class="brand"><span class="brand__name">El Buen Sabor</span><span class="brand__before">Editor local de la carta</span></p>
+      <span class="ed-badge" data-dirty-badge>Sin cambios</span>
+    </div>
+  </header>
+
+  <main id="contenido" class="container ed-main" tabindex="-1">
+    <section class="ed-panel ed-panel--warn" aria-labelledby="ed-what">
+      <h1 class="ed-title" id="ed-what">Borrador local</h1>
+      <p><strong>Lo que hagas acá no cambia la web publicada.</strong> El borrador queda solo en este navegador. Para publicar: exportá los dos archivos, reemplazá <code>data/catalogo.json</code> y <code>data/negocio.json</code>, ejecutá <code>npm run build</code> y subí los cambios con Git (ver README).</p>
+      <div class="ed-actions">
+        <button type="button" class="btn btn--ghost" data-act="load-published">Cargar datos del proyecto</button>
+        <button type="button" class="btn btn--ghost" data-act="save">Guardar borrador en este navegador</button>
+        <button type="button" class="btn btn--ghost" data-act="discard">Descartar borrador</button>
+      </div>
+      <div class="ed-actions">
+        <label class="btn btn--ghost ed-file">Importar JSON…<input type="file" accept="application/json,.json" data-import class="visually-hidden"></label>
+        <button type="button" class="btn btn--primary" data-act="export-catalogo">Exportar catalogo.json</button>
+        <button type="button" class="btn btn--primary" data-act="export-negocio">Exportar negocio.json</button>
+      </div>
+      <p class="ed-status" role="status" aria-live="polite" data-status></p>
+    </section>
+
+    <section class="ed-panel" data-import-review hidden aria-labelledby="ed-import-title">
+      <h2 class="ed-h2" id="ed-import-title">Revisar importación</h2>
+      <div data-import-summary></div>
+      <div class="ed-actions">
+        <button type="button" class="btn btn--primary" data-act="import-apply">Aplicar al borrador</button>
+        <button type="button" class="btn btn--ghost" data-act="import-cancel">Cancelar</button>
+      </div>
+    </section>
+
+    <section class="ed-panel" aria-labelledby="ed-errors-title">
+      <h2 class="ed-h2" id="ed-errors-title">Validación</h2>
+      <div data-errors></div>
+    </section>
+
+    <section class="ed-panel" aria-labelledby="ed-cat-title">
+      <h2 class="ed-h2" id="ed-cat-title">Carta</h2>
+      <p class="muted">Precios en pesos, enteros, sin puntos ni signo. Un precio “pendiente” queda vacío: nunca uses 0 para “no sé”.</p>
+      <div data-catalog-form></div>
+    </section>
+
+    <section class="ed-panel" aria-labelledby="ed-biz-title">
+      <h2 class="ed-h2" id="ed-biz-title">Local, contacto y entrega</h2>
+      <p class="muted">Marcá “confirmado” solo con datos verificados. Lo pendiente no se publica y desactiva lo que dependa de eso (por ejemplo, el botón de WhatsApp).</p>
+      <div data-business-form></div>
+    </section>
+
+    <section class="ed-panel" aria-labelledby="ed-prev-title">
+      <h2 class="ed-h2" id="ed-prev-title">Vista previa del borrador</h2>
+      <p class="muted">Se arma con las mismas funciones que el build. No afecta a la web pública.</p>
+      <div class="ed-preview" data-preview></div>
+    </section>
+
+    <section class="ed-panel" aria-labelledby="ed-legacy-title">
+      <h2 class="ed-h2" id="ed-legacy-title">Datos de la web anterior en este navegador</h2>
+      <div data-legacy></div>
+    </section>
+  </main>
+</body>
+</html>

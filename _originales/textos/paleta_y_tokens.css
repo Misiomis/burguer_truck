@@ -1,0 +1,24 @@
+/* El Buen Sabor · base visual propuesta, edición 01.
+   Integrar en el CSS del proyecto después de revisar sus estilos existentes.
+   Fuentes: Google Fonts, Oswald y Poppins. No se incluyen archivos de fuentes. */
+:root {
+  --ebs-red: #E60012;
+  --ebs-black: #141414;
+  --ebs-white: #FFFFFF;
+  --ebs-cream: #F4EEE6;
+  --ebs-honey: #E2A646;
+  --ebs-text: var(--ebs-black);
+  --ebs-background: var(--ebs-cream);
+  --ebs-surface: var(--ebs-white);
+  --ebs-font-display: "Oswald", "Arial Narrow", sans-serif;
+  --ebs-font-body: "Poppins", Arial, sans-serif;
+  --ebs-space-1: 0.25rem;
+  --ebs-space-2: 0.5rem;
+  --ebs-space-3: 0.75rem;
+  --ebs-space-4: 1rem;
+  --ebs-space-6: 1.5rem;
+  --ebs-space-8: 2rem;
+  --ebs-radius-card: 0.75rem;
+  --ebs-radius-button: 0.5rem;
+  --ebs-content-width: 72rem;
+}

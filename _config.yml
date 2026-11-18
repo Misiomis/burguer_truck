@@ -1,0 +1,17 @@
+# Configuración mínima para GitHub Pages (Jekyll).
+# El sitio es estático: Jekyll solo copia archivos. Esto evita publicar herramientas internas.
+# Las carpetas que empiezan con "_" (_herramientas, _originales) Jekyll ya las excluye.
+# En Jekyll 3 (GitHub Pages) esta lista reemplaza a la predeterminada: por eso se repiten node_modules, etc.
+exclude:
+  - README.md
+  - docs
+  - tests
+  - scripts
+  - data
+  - package.json
+  - package-lock.json
+  - node_modules
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .lighthouse

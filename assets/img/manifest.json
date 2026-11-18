@@ -1,0 +1,207 @@
+{
+  "generado": "2026-11-18",
+  "imagenes": {
+    "portada": {
+      "original": "_originales/menu_inicial/portada_menu_inicial.png",
+      "originalBytes": 2275124,
+      "ancho": 1672,
+      "alto": 941,
+      "salidas": [
+        {
+          "ancho": 640,
+          "alto": 360,
+          "avif": 13736,
+          "webp": 18440
+        },
+        {
+          "ancho": 1024,
+          "alto": 576,
+          "avif": 27755,
+          "webp": 39258
+        },
+        {
+          "ancho": 1440,
+          "alto": 810,
+          "avif": 45120,
+          "webp": 67910
+        },
+        {
+          "ancho": 1672,
+          "alto": 941,
+          "avif": 54142,
+          "webp": 84376
+        }
+      ]
+    },
+    "empanadas": {
+      "original": "_originales/menu_inicial/empanadas.png",
+      "originalBytes": 2404605,
+      "ancho": 1536,
+      "alto": 1024,
+      "salidas": [
+        {
+          "ancho": 480,
+          "alto": 320,
+          "avif": 11430,
+          "webp": 15346
+        },
+        {
+          "ancho": 768,
+          "alto": 512,
+          "avif": 23429,
+          "webp": 32862
+        },
+        {
+          "ancho": 1024,
+          "alto": 683,
+          "avif": 36815,
+          "webp": 52600
+        }
+      ]
+    },
+    "sandwich_milanesa_carne": {
+      "original": "_originales/menu_inicial/sandwich_milanesa_carne.png",
+      "originalBytes": 2370331,
+      "ancho": 1536,
+      "alto": 1024,
+      "salidas": [
+        {
+          "ancho": 480,
+          "alto": 320,
+          "avif": 9429,
+          "webp": 12516
+        },
+        {
+          "ancho": 768,
+          "alto": 512,
+          "avif": 20551,
+          "webp": 28754
+        },
+        {
+          "ancho": 1024,
+          "alto": 683,
+          "avif": 32891,
+          "webp": 46208
+        }
+      ]
+    },
+    "sandwich_milanesa_pollo": {
+      "original": "_originales/menu_inicial/sandwich_milanesa_pollo.png",
+      "originalBytes": 2404230,
+      "ancho": 1536,
+      "alto": 1024,
+      "salidas": [
+        {
+          "ancho": 480,
+          "alto": 320,
+          "avif": 11884,
+          "webp": 14664
+        },
+        {
+          "ancho": 768,
+          "alto": 512,
+          "avif": 24698,
+          "webp": 31624
+        },
+        {
+          "ancho": 1024,
+          "alto": 683,
+          "avif": 38970,
+          "webp": 51598
+        }
+      ]
+    },
+    "papas_mediana_caja": {
+      "original": "_originales/menu_inicial/papas_mediana_caja.png",
+      "originalBytes": 2382010,
+      "ancho": 1536,
+      "alto": 1024,
+      "salidas": [
+        {
+          "ancho": 480,
+          "alto": 320,
+          "avif": 5999,
+          "webp": 8698
+        },
+        {
+          "ancho": 768,
+          "alto": 512,
+          "avif": 13821,
+          "webp": 22096
+        },
+        {
+          "ancho": 1024,
+          "alto": 683,
+          "avif": 22965,
+          "webp": 38496
+        }
+      ]
+    },
+    "lomito": {
+      "original": "_originales/proxima_etapa/lomito_concepto_futuro.png",
+      "originalBytes": 2727310,
+      "ancho": 1536,
+      "alto": 1024,
+      "salidas": [
+        {
+          "ancho": 480,
+          "alto": 320,
+          "avif": 16834,
+          "webp": 20412
+        },
+        {
+          "ancho": 768,
+          "alto": 512,
+          "avif": 36752,
+          "webp": 45526
+        },
+        {
+          "ancho": 1024,
+          "alto": 683,
+          "avif": 58325,
+          "webp": 74418
+        }
+      ]
+    },
+    "logo-principal": {
+      "original": "_originales/marca/el_buen_sabor_logo_principal.png",
+      "originalBytes": 1861007,
+      "ancho": 1254,
+      "alto": 1254,
+      "salidas": [
+        {
+          "ancho": 320,
+          "alto": 320,
+          "avif": 31764,
+          "webp": 33064
+        },
+        {
+          "ancho": 560,
+          "alto": 560,
+          "avif": 68000,
+          "webp": 76752
+        }
+      ]
+    },
+    "logo-simplificado": {
+      "original": "_originales/marca/el_buen_sabor_perfil_simplificado.png",
+      "originalBytes": 1785754,
+      "ancho": 1254,
+      "alto": 1254,
+      "salidas": [
+        {
+          "ancho": 192,
+          "alto": 192,
+          "avif": 14440,
+          "webp": 13318
+        }
+      ]
+    }
+  },
+  "extras": {
+    "apple-touch-icon.png": 49713,
+    "compartir-1200x630.jpg": 78140,
+    "icono-192.png": 55641,
+    "logo-principal-560.png": 425887
+  }
+}

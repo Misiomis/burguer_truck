@@ -1,566 +1,228 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es-AR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Burguer Truck – Hamburguesas Smash sobre Ruedas. Las mejores hamburguesas artesanales sobre ruedas. Ingredientes frescos, sabor que no para." />
-  <meta property="og:title" content="Burguer Truck | Hamburguesas Smash sobre Ruedas" />
-  <meta property="og:description" content="Hamburguesas artesanales hechas con amor, en la calle, para vos." />
-  <meta property="og:type" content="website" />
-  <title>Burguer Truck | Hamburguesas Smash sobre Ruedas</title>
-
-  <!-- Google Fonts: Oswald (headings bold) + Poppins (body) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Swiper.js -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>El Buen Sabor | Menú y pedidos</title>
+  <meta name="description" content="El Buen Sabor, antes Burguer Truck. Hamburguesas, lomitos, sándwiches de milanesa, papas fritas y empanadas en Comandante Andresito, Misiones. Conocé el menú y pedí por WhatsApp.">
+  <link rel="canonical" href="https://misiomis.github.io/burguer_truck/">
+  <meta name="theme-color" content="#141414">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:site_name" content="El Buen Sabor">
+  <meta property="og:title" content="El Buen Sabor · Antes Burguer Truck">
+  <meta property="og:description" content="Crecimos. Y el sabor sigue. Hamburguesas, lomitos, milanesas, papas y empanadas.">
+  <meta property="og:url" content="https://misiomis.github.io/burguer_truck/">
+  <meta property="og:image" content="https://misiomis.github.io/burguer_truck/assets/img/compartir-1200x630.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Empanadas, sándwich de milanesa y papas en caja sobre una mesa oscura. Imagen ilustrativa.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/img/icono-192.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preload" href="assets/fonts/oswald-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/poppins-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+  <script type="module" src="js/app.js"></script>
+  <link rel="modulepreload" href="js/data/datos.js">
+  <link rel="modulepreload" href="js/core/cart.js">
+  <link rel="modulepreload" href="js/core/money.js">
+  <link rel="modulepreload" href="js/core/whatsapp.js">
+  <link rel="modulepreload" href="js/core/schema.js">
+  <link rel="modulepreload" href="js/core/storage.js">
+  <!-- build:jsonld --><script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"El Buen Sabor","alternateName":"Burguer Truck","url":"https://misiomis.github.io/burguer_truck/","slogan":"Siempre hay algo rico.","currenciesAccepted":"ARS","hasMenu":{"@type":"Menu","name":"Menú inicial","url":"https://misiomis.github.io/burguer_truck/menu.html","inLanguage":"es-AR","hasMenuSection":[{"@type":"MenuSection","name":"Hamburguesas","hasMenuItem":[{"@type":"MenuItem","name":"Hamburguesa simple","offers":[{"@type":"Offer","name":"Unidad","price":"4500","priceCurrency":"ARS"}]},{"@type":"MenuItem","name":"Hamburguesa completa","offers":[{"@type":"Offer","name":"Unidad","price":"6500","priceCurrency":"ARS"}]},{"@type":"MenuItem","name":"Doble paty o KingKong","offers":[{"@type":"Offer","name":"Unidad","price":"8500","priceCurrency":"ARS"}]}]},{"@type":"MenuSection","name":"Sándwiches","hasMenuItem":[{"@type":"MenuItem","name":"Lomito","offers":[{"@type":"Offer","name":"Con papas","price":"15500","priceCurrency":"ARS"},{"@type":"Offer","name":"Sin papas","price":"12500","priceCurrency":"ARS"}]},{"@type":"MenuItem","name":"Sándwich de milanesa de carne","offers":[{"@type":"Offer","name":"Unidad","price":"10000","priceCurrency":"ARS"}]},{"@type":"MenuItem","name":"Sándwich de milanesa de pollo","offers":[{"@type":"Offer","name":"Unidad","price":"10000","priceCurrency":"ARS"}]}]},{"@type":"MenuSection","name":"Papas fritas","hasMenuItem":[{"@type":"MenuItem","name":"Papas fritas","offers":[{"@type":"Offer","name":"Porción individual","price":"3500","priceCurrency":"ARS"},{"@type":"Offer","name":"En caja","price":"6000","priceCurrency":"ARS"}]}]},{"@type":"MenuSection","name":"Empanadas","hasMenuItem":[{"@type":"MenuItem","name":"Empanadas de carne","offers":[{"@type":"Offer","name":"Media docena","price":"6500","priceCurrency":"ARS"},{"@type":"Offer","name":"Docena","price":"12000","priceCurrency":"ARS"}]},{"@type":"MenuItem","name":"Empanadas de pollo","offers":[{"@type":"Offer","name":"Media docena","price":"6500","priceCurrency":"ARS"},{"@type":"Offer","name":"Docena","price":"12000","priceCurrency":"ARS"}]}]}]},"image":"https://misiomis.github.io/burguer_truck/assets/img/compartir-1200x630.jpg","telephone":"+5493757626892","address":{"@type":"PostalAddress","streetAddress":"Calle Costa Rica","addressLocality":"Comandante Andresito, Misiones","addressCountry":"AR"}}</script><!-- /build:jsonld -->
 </head>
-<body>
-
-  <!-- ================================================
-       LOADER – animación de entrada
-  ================================================ -->
-  <div class="loader" id="loader" aria-hidden="true">
-    <div class="loader__icon">
-      <div class="loader__bun loader__bun--top"></div>
-      <div class="loader__patty"></div>
-      <div class="loader__bun loader__bun--bottom"></div>
-    </div>
-    <p class="loader__text">Burguer Truck</p>
+<body class="page-home">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <!-- build:sprite --><svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false"><symbol id="i-bag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 8h14l-1 12H6L5 8z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></symbol><symbol id="i-minus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol><symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x="9" y="9" width="11" height="11" rx="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 15V5a1 1 0 0 1 1-1h10"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12l5 5L20 7"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cx="12" cy="12" r="9"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 11v5M12 8h.01"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cx="12" cy="9" r="2.5"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cx="12" cy="12" r="9"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2"/></symbol><symbol id="i-card" viewBox="0 0 24 24"><rect fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x="3" y="6" width="18" height="13" rx="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h3"/></symbol><symbol id="i-whatsapp" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1a4 4 0 0 1-2-2l1-1-1-2L9 9.5z"/></symbol></svg><!-- /build:sprite -->
+  <!-- build:cabecera --><header class="site-header" id="navbar">
+  <div class="container site-header__inner">
+    <a class="brand" href="./" aria-current="page"><span class="brand__name">El Buen Sabor</span><span class="brand__before">Antes Burguer Truck</span></a>
+    <nav class="site-nav" aria-label="Principal">
+      <button type="button" class="site-nav__toggle js-only" aria-expanded="false" aria-controls="nav-list"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-menu"></use></svg><span class="visually-hidden">Abrir navegación</span></button>
+      <ul class="site-nav__list" id="nav-list" role="list"><li><a class="site-nav__link" href="menu.html">Menú</a></li><li><a class="site-nav__link" href="#about">Nuestra historia</a></li><li><a class="site-nav__link" href="#location">Contacto</a></li></ul>
+    </nav>
+    <button type="button" class="order-btn js-only" data-open-cart aria-haspopup="dialog"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bag"></use></svg><span class="order-btn__label">Ver pedido</span><span class="order-btn__count" data-cart-count aria-hidden="true">0</span><span class="visually-hidden" data-cart-count-label>, vacío</span></button>
   </div>
+</header><!-- /build:cabecera -->
 
-  <!-- ================================================
-       NAVBAR – sticky con menú mobile
-  ================================================ -->
-  <nav class="navbar" id="navbar">
-    <div class="container navbar__inner">
-
-      <!-- Logo -->
-      <a href="index.html" class="navbar__logo">
-        <img src="img/burguer_truck.jpg" alt="Burguer Truck" class="navbar__logo-img" />
-      </a>
-
-      <!-- Links desktop -->
-      <ul class="navbar__links" id="navLinks" role="list">
-        <li><a href="#about"     class="nav-link">Nosotros</a></li>
-        <li><a href="#location"  class="nav-link">Ubicación</a></li>
-        <li><a href="menu.html"  class="nav-link nav-link--highlight">Menú Completo</a></li>
-      </ul>
-
-      <!-- Acciones -->
-      <div class="navbar__actions">
-        <a href="#order" class="btn btn--primary btn--sm">Ordenar</a>
-        <button class="navbar__toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-
-    </div>
-  </nav>
-
-  <!-- ================================================
-       HERO – parallax + CTA principal
-  ================================================ -->
-  <section class="hero" id="hero">
-    <!-- Capa de imagen con parallax vía JS -->
-    <div class="hero__bg" id="heroBg" aria-hidden="true"></div>
-    <!-- Overlay oscuro para contraste -->
-    <div class="hero__overlay" aria-hidden="true"></div>
-
-    <div class="container hero__content">
-      <span class="hero__badge reveal">🔥 Comida Artesanal</span>
-      <h1 class="hero__title reveal">
-        Burguer<br />
-        <span class="text-accent">Truck</span>
-      </h1>
-      <p class="hero__tagline reveal">Hamburguesas Smash sobre Ruedas</p>
-      <p class="hero__desc reveal">
-        Hamburguesas artesanales hechas con amor,<br class="hide-mobile" />
-        en la calle, para vos.
-      </p>
-      <div class="hero__cta reveal">
-        <a href="menu.html" class="btn btn--primary btn--lg">
-          Ver menú
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-        <a href="#about" class="btn btn--outline btn--lg">Conocenos</a>
-      </div>
-    </div>
-
-    <!-- Indicador de scroll -->
-    <div class="scroll-hint" aria-hidden="true">
-      <div class="scroll-hint__dot"></div>
-    </div>
-  </section>
-
-  <!-- ================================================
-       FEATURED – las 3 burgers más pedidas
-  ================================================ -->
-  <section class="featured" id="featured">
-    <div class="container">
-
-      <div class="section-header reveal">
-        <span class="section-label">Nuestras Estrellas</span>
-        <h2 class="section-title">Las Más Pedidas</h2>
-        <p class="section-desc">
-          Cada mordida es una experiencia. Ingredientes frescos, técnica smash, sabor que no para.
-        </p>
-      </div>
-
-      <div class="swiper burger-swiper">
-        <div class="swiper-wrapper">
-
-          <!-- Simple -->
-          <div class="swiper-slide">
-            <article class="burger-card" data-pid="simple">
-              <div class="burger-card__media">
-                <img src="img/simple.png" alt="Hamburguesa Simple" class="burger-card__img" loading="lazy" />
-                <span class="burger-card__tag tag--fav">⭐ Clásica</span>
-              </div>
-              <div class="burger-card__body">
-                <h3 class="burger-card__name">Simple</h3>
-                <p class="burger-card__desc">Pan artesanal, medallón de carne jugoso, lechuga fresca, tomate y mayonesa de la casa. La base perfecta, sin complicaciones.</p>
-                <div class="burger-card__footer">
-                  <span class="burger-card__price">$3.000</span>
-                  <button class="btn btn--primary btn--sm btn-cart-add" type="button">+ Agregar</button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- Completa -->
-          <div class="swiper-slide">
-            <article class="burger-card" data-pid="completa">
-              <div class="burger-card__media">
-                <img src="img/completa.png" alt="Hamburguesa Completa" class="burger-card__img" loading="lazy" />
-                <span class="burger-card__tag tag--new">🔥 Completa</span>
-              </div>
-              <div class="burger-card__body">
-                <h3 class="burger-card__name">Completa</h3>
-                <p class="burger-card__desc">Medallón con cheddar fundido, lechuga, tomate, cebolla morada, huevo frito y salsa especial de la casa. El clásico que siempre vuelve.</p>
-                <div class="burger-card__footer">
-                  <span class="burger-card__price">$5.000</span>
-                  <button class="btn btn--primary btn--sm btn-cart-add" type="button">+ Agregar</button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- Doble -->
-          <div class="swiper-slide">
-            <article class="burger-card" data-pid="doble">
-              <div class="burger-card__media">
-                <img src="img/doble.png" alt="Hamburguesa Doble" class="burger-card__img" loading="lazy" />
-                <span class="burger-card__tag tag--hot">👑 Doble</span>
-              </div>
-              <div class="burger-card__body">
-                <h3 class="burger-card__name">Doble</h3>
-                <p class="burger-card__desc">Dos medallones de carne, doble cheddar derretido, cebolla caramelizada y mayonesa ahumada. Para los que saben lo que quieren.</p>
-                <div class="burger-card__footer">
-                  <span class="burger-card__price">$8.000</span>
-                  <button class="btn btn--primary btn--sm btn-cart-add" type="button">+ Agregar</button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- Lomito + Papas -->
-          <div class="swiper-slide">
-            <article class="burger-card" data-pid="lomito-papas">
-              <div class="burger-card__media">
-                <img src="img/lomito.png" alt="Lomito + Papas" class="burger-card__img" loading="lazy" />
-                <span class="burger-card__tag tag--combo">🥩 Lomito</span>
-              </div>
-              <div class="burger-card__body">
-                <h3 class="burger-card__name">Lomito + Papas</h3>
-                <p class="burger-card__desc">Lomo tierno en pan artesanal con lechuga, tomate, huevo y mayonesa, acompañado de papas fritas crocantes. El combo más pedido del local.</p>
-                <div class="burger-card__footer">
-                  <span class="burger-card__price">$13.000</span>
-                  <button class="btn btn--primary btn--sm btn-cart-add" type="button">+ Agregar</button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- KingKong -->
-          <div class="swiper-slide">
-            <article class="burger-card" data-pid="kingkong">
-              <div class="burger-card__media">
-                <img src="img/kingkong.png" alt="Hamburguesa KingKong" class="burger-card__img" loading="lazy" />
-                <span class="burger-card__tag tag--hot">👑 La Grande</span>
-              </div>
-              <div class="burger-card__body">
-                <h3 class="burger-card__name">KingKong</h3>
-                <p class="burger-card__desc">La bestia del menú. Rinde 4 porciones — equivale a 4 completas en una sola burger. Para los valientes de verdad.</p>
-                <div class="burger-card__footer">
-                  <span class="burger-card__price">$15.000</span>
-                  <button class="btn btn--primary btn--sm btn-cart-add" type="button">+ Agregar</button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-        </div><!-- /swiper-wrapper -->
-        <div class="swiper-pagination"></div>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-      </div><!-- /burger-swiper -->
-
-      <div class="featured__more reveal">
-        <a href="menu.html" class="btn btn--outline btn--lg">
-          Ver menú completo
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-      </div>
-
-      <!-- Nota legal sobre imágenes -->
-      <p class="note-disclaimer reveal">Las imágenes de los productos son meramente ilustrativas.</p>
-
-    </div>
-  </section>
-
-  <!-- ================================================
-       ABOUT – historia y valores
-  ================================================ -->
-  <section class="about" id="about">
-    <div class="container about__inner">
-
-      <!-- Imagen + stat flotante -->
-      <div class="about__visual reveal">
-        <div class="about__img-wrap">
-          <img
-            src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=800&q=80"
-            alt="Chef preparando hamburguesas artesanales en Burguer Truck"
-            loading="lazy"
-          />
-        </div>
-        <div class="about__stat">
-          <span class="about__stat-num">+5.000</span>
-          <span class="about__stat-lbl">hamburguesas vendidas</span>
+  <main id="contenido" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-title">
+      <picture class="hero__media">
+        <source type="image/avif" srcset="assets/img/portada-640.avif 640w, assets/img/portada-1024.avif 1024w, assets/img/portada-1440.avif 1440w, assets/img/portada-1672.avif 1672w" sizes="100vw">
+        <source type="image/webp" srcset="assets/img/portada-640.webp 640w, assets/img/portada-1024.webp 1024w, assets/img/portada-1440.webp 1440w, assets/img/portada-1672.webp 1672w" sizes="100vw">
+        <img src="assets/img/portada-1024.webp" width="1672" height="941" fetchpriority="high" decoding="async" alt="Empanadas, sándwich de milanesa y papas fritas en caja sobre una mesa oscura. Imagen ilustrativa.">
+      </picture>
+      <div class="container hero__content">
+        <p class="hero__before">Antes Burguer Truck</p>
+        <h1 class="hero__title" id="hero-title">El Buen Sabor</h1>
+        <p class="hero__claim">Crecimos. Y el sabor sigue.</p>
+        <p class="hero__text">Hamburguesas, lomitos, sándwiches de milanesa, papas fritas y, ahora también, empanadas de carne y de pollo.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary btn--lg" href="menu.html">Ver menú</a>
+          <a class="btn btn--on-dark btn--lg" href="#about">Nuestra historia</a>
         </div>
       </div>
+    </section>
 
-      <!-- Texto -->
-      <div class="about__text reveal">
-        <span class="section-label">Nuestra Historia</span>
-        <h2 class="section-title">Desde la calle,<br />con pasión</h2>
-        <p>
-          Burguer Truck nació en 2025 con un objetivo claro: hacerle la vida más fácil a la gente.
-          Podés retirar tu pedido directamente en el carrito o pedirlo con envío a tu barrio —
-          como más te quede cómodo.
-        </p>
-        <p>
-          Precios accesibles, ingredientes frescos y una atención de excelencia en cada pedido.
-          Porque comer rico no tiene que ser un lujo.
-        </p>
-
-        <!-- Dirección física del local -->
-        <p class="about__address">
-          <span aria-hidden="true">📍</span>
-          Ubicados en <strong>Calle Costa Rica</strong>,<br />
-          Comandante Andresito,<br />
-          Provincia de Misiones, Argentina.
-        </p>
-
-        <ul class="about__features" role="list">
-          <li class="about__feature">
-            <span class="about__feature-icon" aria-hidden="true">🥩</span>
-            <span>Carne fresca diaria</span>
-          </li>
-          <li class="about__feature">
-            <span class="about__feature-icon" aria-hidden="true">🍞</span>
-            <span>Pan brioche artesanal</span>
-          </li>
-          <li class="about__feature">
-            <span class="about__feature-icon" aria-hidden="true">🌿</span>
-            <span>Sin conservantes</span>
-          </li>
-          <li class="about__feature">
-            <span class="about__feature-icon" aria-hidden="true">🔥</span>
-            <span>Técnica Smash auténtica</span>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================================================
-       LOCATION – mapa + info de contacto
-  ================================================ -->
-  <section class="location" id="location">
-    <div class="container">
-
-      <div class="section-header reveal">
-        <span class="section-label">Dónde estamos</span>
-        <h2 class="section-title">Encontranos</h2>
-        <p class="section-desc">Pasá a visitarnos. Siempre hay una burger esperándote.</p>
-      </div>
-
-      <div class="location__inner">
-
-        <!-- Info de contacto -->
-        <div class="location__info reveal">
-          <div class="location__item">
-            <span class="location__icon" aria-hidden="true">📍</span>
-            <div>
-              <strong>Dirección</strong>
-              <p>Calle Costa Rica</p>
-              <p>Comandante Andresito, Misiones</p>
-            </div>
-          </div>
-          <div class="location__item">
-            <span class="location__icon" aria-hidden="true">🕐</span>
-            <div>
-              <strong>Horarios</strong>
-              <p>Mar a Dom: 19:30 – 23:45</p>
-              <p>Lunes: cerrado</p>
-            </div>
-          </div>
-          <div class="location__item">
-            <span class="location__icon" aria-hidden="true">📞</span>
-            <div>
-              <strong>Contacto</strong>
-              <p>WhatsApp: +54 9 3757 626892</p>
-            </div>
-          </div>
-          <a
-            href="https://maps.app.goo.gl/rrjarzStdaCkGc1o9"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn--primary btn--md"
-          >
-            Cómo llegar
-          </a>
-        </div>
-
-        <!-- Mapa embed – Burguer Truck, Comandante Andresito, Misiones -->
-        <div class="location__map reveal">
-          <iframe
-            src="https://www.google.com/maps?q=-25.673507,-54.045918&z=17&output=embed"
-            width="100%"
-            height="420"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Burguer Truck – Comandante Andresito, Misiones"
-          ></iframe>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ================================================
-       ORDER – ¿Listo para pedir? (con selector de barrio)
-  ================================================ -->
-  <section class="order" id="order">
-    <div class="order__bg" aria-hidden="true"></div>
-    <div class="container order__inner reveal">
-
-      <!-- Texto izquierdo -->
-      <div class="order__text">
-        <span class="order__badge">🛵 Hacemos envíos</span>
-        <h2 class="order__title">¿Listo para<br>pedir?</h2>
-        <p>Elegí tu barrio y mandanos el pedido por WhatsApp. Rápido, sin vueltas.</p>
-      </div>
-
-      <!-- Formulario derecho -->
-      <div class="order__form">
-        <p class="order__form-label">Seleccioná tu barrio</p>
-
-        <!-- Custom dropdown barrios -->
-        <div class="nbhood" id="nbhood">
-          <button class="nbhood__trigger" id="nbhoodTrigger" type="button"
-                  aria-haspopup="listbox" aria-expanded="false" aria-controls="nbhoodList">
-            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                 stroke-linejoin="round" aria-hidden="true">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <span class="nbhood__label" id="nbhoodLabel">Elegí tu barrio...</span>
-            <svg class="nbhood__chevron" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </button>
-          <ul class="nbhood__list" id="nbhoodList" role="listbox" aria-label="Barrios con envio">
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Belgrano">Barrio Belgrano</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Quintas Altas">Barrio Quintas Altas</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Zona Centro">Zona Centro</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Obrero">Barrio Obrero</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Zona Industrial">Zona Industrial</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio Cantera">Barrio Cantera</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio 120 Viviendas">Barrio 120 Viviendas</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio 80 Viviendas">Barrio 80 Viviendas</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio 26 Viviendas">Barrio 26 Viviendas</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio La Selva 1">Barrio La Selva 1</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio La Selva 2">Barrio La Selva 2</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio FM">Barrio FM</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Barrio EMSA">Barrio EMSA</li>
-            <li class="nbhood__item" role="option" tabindex="-1" data-value="Villa Nueva">Villa Nueva</li>
-          </ul>
-        </div>
-
-        <!-- Select oculto para compatibilidad con JS existente -->
-        <select id="neighborhoodSelect" aria-hidden="true" tabindex="-1" style="display:none">
-          <option value=""></option>
-          <option value="Barrio Belgrano">Barrio Belgrano</option>
-          <option value="Barrio Quintas Altas">Barrio Quintas Altas</option>
-          <option value="Zona Centro">Zona Centro</option>
-          <option value="Barrio Obrero">Barrio Obrero</option>
-          <option value="Zona Industrial">Zona Industrial</option>
-          <option value="Barrio Cantera">Barrio Cantera</option>
-          <option value="Barrio 120 Viviendas">Barrio 120 Viviendas</option>
-          <option value="Barrio 80 Viviendas">Barrio 80 Viviendas</option>
-          <option value="Barrio 26 Viviendas">Barrio 26 Viviendas</option>
-          <option value="Barrio La Selva 1">Barrio La Selva 1</option>
-          <option value="Barrio La Selva 2">Barrio La Selva 2</option>
-          <option value="Barrio FM">Barrio FM</option>
-          <option value="Barrio EMSA">Barrio EMSA</option>
-          <option value="Villa Nueva">Villa Nueva</option>
-        </select>
-
-        <p class="order__feedback" id="deliveryFeedback" aria-live="polite"></p>
-        <div class="order__selected-hood" id="selectedHoodDisplay" style="display:none">
-          <span class="order__selected-hood__label">Envío a:</span>
-          <strong class="order__selected-hood__value" id="selectedHoodValue"></strong>
-        </div>
-
-        <a
-          href="https://wa.me/5493757626892"
-          id="waOrderBtn"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn--whatsapp btn--lg order__wa-btn"
-          aria-label="Pedir por WhatsApp"
-        >
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-          Pedir por WhatsApp
-        </a>
-        <p class="order__hint" id="deliveryHint">Elegí un barrio para continuar.</p>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================================================
-       FOOTER
-  ================================================ -->
-  <footer class="footer">
-    <div class="container footer__inner">
-
-      <!-- Brand -->
-      <div class="footer__brand">
-        <a href="index.html" class="navbar__logo footer__logo">
-          <img src="img/burguer_truck.jpg" alt="Burguer Truck" class="navbar__logo-img footer__logo-img" />
-        </a>
-        <p>Hamburguesas Smash sobre Ruedas.<br />Hechas con amor, servidas con fuego.</p>
-        <address class="footer__address">
-          Calle Costa Rica<br />
-          Comandante Andresito<br />
-          Misiones, Argentina
-        </address>
-      </div>
-
-      <!-- Navegación -->
-      <div class="footer__col">
-        <h4 class="footer__heading">Navegación</h4>
-        <ul role="list">
-          <li><a href="#featured">Menú</a></li>
-          <li><a href="#about">Nosotros</a></li>
-          <li><a href="#location">Ubicación</a></li>
-          <li><a href="menu.html">Menú Completo</a></li>
-        </ul>
-      </div>
-
-      <!-- Horarios -->
-      <div class="footer__col">
-        <h4 class="footer__heading">Horarios</h4>
-        <p>Martes a Domingo<br /><strong>19:30 – 23:45</strong></p>
-        <p>Lunes<br /><strong>Cerrado</strong></p>
-      </div>
-
-      <!-- Redes sociales -->
-      <div class="footer__col">
-        <h4 class="footer__heading">Seguinos</h4>
-        <div class="social-links">
-
-          <a href="#" aria-label="Instagram" class="social-link">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="m16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-            </svg>
-          </a>
-
-          <a href="#" aria-label="Facebook" class="social-link">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-            </svg>
-          </a>
-
-          <a href="https://wa.me/5493757626892" aria-label="WhatsApp" class="social-link" target="_blank" rel="noopener noreferrer">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-          </a>
-
-          <a href="#" aria-label="TikTok" class="social-link">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.19 8.19 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z"/>
-            </svg>
-          </a>
-
-        </div>
-      </div>
-
-    </div>
-
-    <div class="footer__bottom">
+    <section class="section section--cream" id="featured" aria-labelledby="featured-title">
       <div class="container">
-        <p>&copy; 2026 Burguer Truck. Todos los derechos reservados.</p>
+        <header class="section-head">
+          <p class="eyebrow">Nuestro menú</p>
+          <h2 class="section-title" id="featured-title">¿Qué vas a pedir?</h2>
+          <p class="section-lead">Hamburguesas, sándwiches, papas y empanadas. Siempre hay algo rico.</p>
+        </header>
+        <div class="cat-grid"><!-- build:home-categorias --><article class="cat-card cat-card--sin-foto"><div class="cat-card__body"><h3 class="cat-card__title">Hamburguesas</h3><p class="cat-card__desc">Las de siempre, desde el carrito.</p><dl class="cat-card__prices"><div><dt>Hamburguesa simple</dt><dd>$4.500</dd></div><div><dt>Hamburguesa completa</dt><dd>$6.500</dd></div><div><dt>Doble paty o KingKong</dt><dd>$8.500</dd></div></dl><a class="btn btn--ghost cat-card__cta" href="menu.html#hamburguesas">Elegir opciones<span class="visually-hidden"> de hamburguesas</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg></a></div></article>
+<article class="cat-card"><picture class="cat-card__media"><source type="image/avif" srcset="assets/img/lomito-480.avif 480w, assets/img/lomito-768.avif 768w, assets/img/lomito-1024.avif 1024w" sizes="(min-width: 1100px) 360px, (min-width: 700px) 30vw, 100vw"><source type="image/webp" srcset="assets/img/lomito-480.webp 480w, assets/img/lomito-768.webp 768w, assets/img/lomito-1024.webp 1024w" sizes="(min-width: 1100px) 360px, (min-width: 700px) 30vw, 100vw"><img src="assets/img/lomito-768.webp" alt="Sándwich de lomito cortado en dos sobre papel. Imagen ilustrativa." width="1536" height="1024" decoding="async" loading="lazy"></picture><div class="cat-card__body"><h3 class="cat-card__title">Sándwiches</h3><p class="cat-card__desc">Lomito y milanesa de carne o de pollo.</p><dl class="cat-card__prices"><div><dt>Lomito</dt><dd>desde $12.500</dd></div><div><dt>Sándwich de milanesa de carne</dt><dd>$10.000</dd></div><div><dt>Sándwich de milanesa de pollo</dt><dd>$10.000</dd></div></dl><a class="btn btn--ghost cat-card__cta" href="menu.html#sandwiches">Elegir opciones<span class="visually-hidden"> de sándwiches</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg></a></div></article>
+<article class="cat-card"><picture class="cat-card__media"><source type="image/avif" srcset="assets/img/papas_mediana_caja-480.avif 480w, assets/img/papas_mediana_caja-768.avif 768w, assets/img/papas_mediana_caja-1024.avif 1024w" sizes="(min-width: 1100px) 360px, (min-width: 700px) 30vw, 100vw"><source type="image/webp" srcset="assets/img/papas_mediana_caja-480.webp 480w, assets/img/papas_mediana_caja-768.webp 768w, assets/img/papas_mediana_caja-1024.webp 1024w" sizes="(min-width: 1100px) 360px, (min-width: 700px) 30vw, 100vw"><img src="assets/img/papas_mediana_caja-768.webp" alt="Papas fritas en una caja de cartón abierta. Imagen ilustrativa." width="1536" height="1024" decoding="async" loading="lazy"></picture><div class="cat-card__body"><h3 class="cat-card__title">Papas fritas</h3><p class="cat-card__desc">Porción individual o en caja.</p><dl class="cat-card__prices"><div><dt>Porción individual</dt><dd>$3.500</dd></div><div><dt>En caja</dt><dd>$6.000</dd></div></dl><a class="btn btn--ghost cat-card__cta" href="menu.html#papas">Elegir opciones<span class="visually-hidden"> de papas fritas</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg></a></div></article>
+<article class="cat-card"><picture class="cat-card__media"><source type="image/avif" srcset="assets/img/empanadas-480.avif 480w, assets/img/empanadas-768.avif 768w, assets/img/empanadas-1024.avif 1024w" sizes="(min-width: 1100px) 360px, (min-width: 700px) 30vw, 100vw"><source type="image/webp" srcset="assets/img/empanadas-480.webp 480w, assets/img/empanadas-768.webp 768w, assets/img/empanadas-1024.webp 1024w" sizes="(min-width: 1100px) 360px, (min-width: 700px) 30vw, 100vw"><img src="assets/img/empanadas-768.webp" alt="Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno." width="1536" height="1024" decoding="async" loading="lazy"></picture><div class="cat-card__body"><h3 class="cat-card__title">Empanadas</h3><p class="cat-card__desc">De carne o de pollo, por media docena o por docena.</p><dl class="cat-card__prices"><div><dt>Media docena <span class="muted">(6 u.)</span></dt><dd>$6.500</dd></div><div><dt>Docena <span class="muted">(12 u.)</span></dt><dd>$12.000</dd></div></dl><a class="btn btn--ghost cat-card__cta" href="menu.html#empanadas">Elegir opciones<span class="visually-hidden"> de empanadas</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg></a></div></article><!-- /build:home-categorias --></div>
+        <p class="disclaimer">Imágenes ilustrativas generadas con IA: no son fotos de nuestros productos ni muestran el relleno o el tamaño exacto de cada porción.</p>
+      </div>
+    </section>
+
+    <section class="section section--white story" id="about" aria-labelledby="story-title">
+      <div class="container story__grid">
+        <figure class="story__seal">
+          <picture>
+            <source type="image/avif" srcset="assets/img/logo-principal-320.avif 320w, assets/img/logo-principal-560.avif 560w" sizes="(min-width: 900px) 282px, 240px">
+            <source type="image/webp" srcset="assets/img/logo-principal-320.webp 320w, assets/img/logo-principal-560.webp 560w" sizes="(min-width: 900px) 282px, 240px">
+            <img src="assets/img/logo-principal-560.png" width="1254" height="1254" loading="lazy" decoding="async" alt="Sello de El Buen Sabor: una hamburguesa dentro de un círculo con el nombre en letras de pincel y la leyenda Hamburguesas, lomitos, pizzas, empanadas.">
+          </picture>
+          <figcaption>El sello conserva la hamburguesa de nuestro origen. Su leyenda muestra hacia dónde queremos crecer; la carta vigente es la del menú.</figcaption>
+        </figure>
+        <div class="story__text">
+          <p class="eyebrow">Nuestra historia</p>
+          <h2 class="section-title" id="story-title">Empezamos en un carrito. Hoy damos un nuevo paso.</h2>
+          <p>Burguer Truck nació con una propuesta simple: hamburguesas, sándwiches y papas fritas. El carrito fue el punto de partida para empezar a trabajar y hacernos conocer.</p>
+          <p>Hoy crecemos con un nuevo nombre, El Buen Sabor, y una carta más amplia. Seguimos en el mismo lugar, construyendo esta historia con ganas de cocinar y de compartir algo rico con vos.</p>
+          <blockquote class="story__quote"><p>Gracias por acompañarnos desde el carrito.</p></blockquote>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--cream" id="location" aria-labelledby="location-title">
+      <div class="container local">
+        <header class="section-head">
+          <p class="eyebrow">Dónde estamos</p>
+          <h2 class="section-title" id="location-title">Dónde y cuándo</h2>
+        </header>
+        <!-- build:local-info --><dl class="info-list"><div class="info-list__row"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-pin"></use></svg><dt>Dirección</dt><dd>Calle Costa Rica<br>Comandante Andresito, Misiones<br><a href="https://maps.app.goo.gl/rrjarzStdaCkGc1o9" target="_blank" rel="noopener noreferrer">Abrir en el mapa<span class="visually-hidden"> (se abre en otra pestaña)</span></a></dd></div><div class="info-list__row"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-clock"></use></svg><dt>Horarios</dt><dd><ul class="plain" role="list"><li>Martes a domingo: <strong>19:30 a 23:45</strong></li><li>Lunes: <strong>Cerrado</strong></li></ul></dd></div><div class="info-list__row"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp"></use></svg><dt>WhatsApp</dt><dd><a href="https://wa.me/5493757626892" target="_blank" rel="noopener noreferrer">+54 9 3757 626892<span class="visually-hidden"> (se abre WhatsApp)</span></a></dd></div><div class="info-list__row"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bag"></use></svg><dt>Retiro y envío</dt><dd>Retiro en el local · Envío a zonas habilitadas</dd></div><div class="info-list__row"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-card"></use></svg><dt>Medios de pago</dt><dd>Consultalos por WhatsApp</dd></div></dl><!-- /build:local-info -->
+      </div>
+    </section>
+
+    <section class="section section--dark" id="order" aria-labelledby="order-title">
+      <div class="container order">
+        <header class="section-head">
+          <p class="eyebrow eyebrow--honey">Cómo pedir</p>
+          <h2 class="section-title" id="order-title">Del menú al pedido, sin vueltas.</h2>
+        </header>
+        <ol class="steps" role="list">
+          <li class="steps__item"><span class="steps__num" aria-hidden="true">1</span><div><h3 class="steps__title">Elegí</h3><p>Sabor, presentación y cantidad en el menú.</p></div></li>
+          <li class="steps__item"><span class="steps__num" aria-hidden="true">2</span><div><h3 class="steps__title">Revisá</h3><p>Productos, unidades, subtotal y entrega antes de enviar.</p></div></li>
+          <li class="steps__item"><span class="steps__num" aria-hidden="true">3</span><div><h3 class="steps__title">Continuá por WhatsApp</h3><p>El Buen Sabor te confirma disponibilidad, entrega y total.</p></div></li>
+        </ol>
+        <!-- build:pedido-nota --><!-- /build:pedido-nota -->
+        <div class="order__actions">
+          <a class="btn btn--primary btn--lg" href="menu.html">Ver menú</a>
+          <button type="button" class="btn btn--on-dark btn--lg js-only" data-open-cart aria-haspopup="dialog">Ver pedido</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- build:pie --><footer class="site-footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <picture><source type="image/avif" srcset="assets/img/logo-simplificado-192.avif"><img class="footer__logo" src="assets/img/logo-simplificado-192.webp" width="96" height="96" alt="" loading="lazy" decoding="async"></picture>
+      <div>
+        <p class="footer__name">El Buen Sabor</p>
+        <p class="footer__before">Antes Burguer Truck</p>
+        <p class="footer__lema">Siempre hay algo rico.</p>
       </div>
     </div>
-  </footer>
-
-  <!-- ── CARRITO FLOTANTE ── -->
-  <button class="cart-fab" id="cartFab" aria-label="Ver carrito" title="Ver carrito">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-    <span class="cart-fab__badge" id="cartBadge">0</span>
-  </button>
-
-  <div class="cart-drawer" id="cartDrawer" aria-label="Carrito de pedido" role="dialog" aria-modal="true">
-    <div class="cart-drawer__header">
-      <h2 class="cart-drawer__title">🛒 Tu pedido</h2>
-      <button class="cart-drawer__close" id="cartClose" aria-label="Cerrar carrito">&times;</button>
-    </div>
-    <div class="cart-drawer__body" id="cartBody">
-      <p class="cart-empty" id="cartEmpty">Tu carrito está vacío.</p>
-      <ul class="cart-list" id="cartList"></ul>
-    </div>
-    <div class="cart-drawer__footer" id="cartFooter" style="display:none">
-      <div class="cart-total">Total: <strong id="cartTotal">$0</strong></div>
-      <a href="#" class="btn btn--whatsapp btn--lg cart-wa-btn" id="cartWaBtn" target="_blank" rel="noopener noreferrer">
-        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Enviar pedido por WhatsApp
-      </a>
-      <!-- Picker de barrio: generado por JS -->
-      <div class="cart-hood-picker" id="cartHoodPicker" style="display:none"></div>
-      <button class="btn-clear-cart" id="cartClear">Vaciar carrito</button>
-    </div>
+    <nav aria-labelledby="f-nav"><h2 class="footer__title" id="f-nav">Secciones</h2>
+      <ul class="plain footer__list" role="list">
+        <li><a href="menu.html">Menú</a></li>
+        <li><a href="#about">Nuestra historia</a></li>
+        <li><a href="#location">Contacto</a></li>
+        <li><a href="#order">Cómo pedir</a></li>
+      </ul>
+    </nav>
+    <div><h2 class="footer__title">Contacto</h2><ul class="plain footer__list" role="list"><li>Calle Costa Rica</li><li>Martes a domingo: 19:30 a 23:45</li><li>Lunes: Cerrado</li><li><a href="https://wa.me/5493757626892" target="_blank" rel="noopener noreferrer">WhatsApp +54 9 3757 626892</a></li></ul></div>
   </div>
-  <div class="cart-overlay" id="cartOverlay"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script src="script.js"></script>
+  <div class="container footer__bottom"><p>© 2026 El Buen Sabor. Imágenes de comida ilustrativas.</p></div>
+</footer><!-- /build:pie -->
+  <!-- build:barra-pedido --><div class="order-bar js-only" data-order-bar hidden>
+  <button type="button" class="order-bar__btn" data-open-cart aria-haspopup="dialog"><span>Ver pedido</span><span class="order-bar__sum" data-cart-bar-summary></span></button>
+</div><!-- /build:barra-pedido -->
+  <!-- build:dialogo-pedido --><dialog class="cart" id="pedido" aria-labelledby="cart-title" data-cart>
+  <div class="cart__panel">
+    <header class="cart__head">
+      <h2 class="cart__title" id="cart-title" tabindex="-1">Tu pedido</h2>
+      <button type="button" class="icon-btn" data-close-cart aria-label="Cerrar pedido"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="cart__body">
+      <div class="cart__notices" data-cart-notices></div>
+      <div class="cart__empty" data-cart-empty>
+        <p class="cart__empty-title">Tu pedido está vacío.</p>
+        <p>Elegí algo del menú para empezar.</p>
+        <a class="btn btn--primary" href="menu.html" data-go-menu>Ver menú</a>
+      </div>
+      <div data-cart-filled hidden>
+        <ul class="cart__lines plain" role="list" data-cart-lines></ul>
+        <button type="button" class="link-btn" data-clear-cart><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-trash"></use></svg>Vaciar pedido</button>
+        <form class="checkout" data-checkout novalidate>
+          <fieldset class="checkout__group">
+            <legend class="checkout__legend">Entrega</legend>
+            <div data-mode-options></div>
+            <p class="field__error" id="err-mode" data-error="mode" hidden></p>
+          </fieldset>
+          <div class="checkout__delivery" data-delivery-fields hidden>
+            <div class="field">
+              <label class="field__label" for="c-zone">Zona de envío</label>
+              <select class="field__input" id="c-zone" name="zone" aria-describedby="err-zone"></select>
+              <p class="field__error" id="err-zone" data-error="zone" hidden></p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="c-address">Dirección de entrega</label>
+              <input class="field__input" id="c-address" name="address" autocomplete="street-address" maxlength="140" aria-describedby="err-address">
+              <p class="field__error" id="err-address" data-error="address" hidden></p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="c-reference">Referencia <span class="field__opt">(opcional)</span></label>
+              <input class="field__input" id="c-reference" name="reference" maxlength="140">
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="c-name">Nombre <span class="field__opt">(opcional)</span></label>
+            <input class="field__input" id="c-name" name="name" autocomplete="given-name" maxlength="60">
+          </div>
+          <div class="field">
+            <label class="field__label" for="c-notes">Observaciones <span class="field__opt">(opcional)</span></label>
+            <textarea class="field__input" id="c-notes" name="notes" rows="2" maxlength="300"></textarea>
+          </div>
+          <p class="checkout__privacy">Tu nombre, dirección y observaciones no se guardan en esta web: solo van en el mensaje.</p>
+          <details class="preview">
+            <summary>Ver el mensaje que vas a enviar</summary>
+            <pre class="preview__text" data-message-preview></pre>
+          </details>
+        </form>
+      </div>
+    </div>
+    <footer class="cart__foot" data-cart-foot hidden>
+      <dl class="totals">
+        <div class="totals__row"><dt>Subtotal</dt><dd data-subtotal></dd></div>
+        <div class="totals__row"><dt>Envío</dt><dd data-shipping></dd></div>
+        <div class="totals__row totals__row--total"><dt>Total</dt><dd data-total></dd></div>
+      </dl>
+      <p class="cart__hint" data-cart-hint></p>
+      <a class="btn btn--primary btn--block" data-whatsapp href="#" target="_blank" rel="noopener noreferrer" hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp"></use></svg>Continuar por WhatsApp</a>
+      <button type="button" class="btn btn--primary btn--block" data-whatsapp-pending disabled hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp"></use></svg>WhatsApp a confirmar</button>
+      <button type="button" class="btn btn--ghost btn--block" data-copy><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-copy"></use></svg>Copiar resumen</button>
+    </footer>
+  </div>
+</dialog><!-- /build:dialogo-pedido -->
+  <!-- build:live-region --><div class="visually-hidden" role="status" aria-live="polite" aria-atomic="true" data-announcer></div><!-- /build:live-region -->
 </body>
 </html>

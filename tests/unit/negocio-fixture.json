@@ -1,0 +1,40 @@
+{
+  "schema": "ebs.negocio",
+  "version": 1,
+  "actualizado": "2026-11-17",
+  "nombre": "El Buen Sabor",
+  "nombreHistorico": "Burguer Truck",
+  "lema": "Siempre hay algo rico.",
+  "mensajeTransicion": "Crecimos. Y el sabor sigue.",
+  "sitio": {
+    "url": "https://misiomis.github.io/burguer_truck/"
+  },
+  "whatsapp": {
+    "estado": "pendiente",
+    "numero": null
+  },
+  "direccion": {
+    "estado": "pendiente",
+    "texto": null,
+    "localidad": null,
+    "mapaUrl": null
+  },
+  "horarios": {
+    "estado": "pendiente",
+    "lista": []
+  },
+  "modalidades": {
+    "retiro": {
+      "estado": "pendiente"
+    },
+    "envio": {
+      "estado": "pendiente",
+      "zonas": []
+    }
+  },
+  "mediosDePago": {
+    "estado": "pendiente",
+    "lista": []
+  },
+  "redes": []
+}

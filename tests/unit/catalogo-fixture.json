@@ -1,0 +1,161 @@
+{
+  "schema": "ebs.catalogo",
+  "version": 1,
+  "actualizado": "2026-11-17",
+  "fuente": "Manual de marca El Buen Sabor, edición 01, páginas 15-16. Importes informados por el negocio el 17/11/2026.",
+  "moneda": "ARS",
+  "categorias": [
+    {
+      "id": "empanadas",
+      "nombre": "Empanadas",
+      "descripcion": "De carne o de pollo, por media docena o por docena.",
+      "estado": "activa"
+    },
+    {
+      "id": "milanesas",
+      "nombre": "Sándwiches de milanesa",
+      "descripcion": "De carne o de pollo.",
+      "estado": "activa"
+    },
+    {
+      "id": "papas",
+      "nombre": "Papas fritas",
+      "descripcion": "Para acompañar.",
+      "estado": "activa"
+    }
+  ],
+  "productos": [
+    {
+      "id": "empanadas-carne",
+      "categoria": "empanadas",
+      "nombre": "Empanadas de carne",
+      "descripcion": "Elegí media docena o docena.",
+      "imagen": "empanadas",
+      "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "empanadas-carne-6",
+          "presentacion": "Media docena",
+          "unidades": 6,
+          "precio": 7000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        },
+        {
+          "id": "empanadas-carne-12",
+          "presentacion": "Docena",
+          "unidades": 12,
+          "precio": 14000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "empanadas-pollo",
+      "categoria": "empanadas",
+      "nombre": "Empanadas de pollo",
+      "descripcion": "Elegí media docena o docena.",
+      "imagen": "empanadas",
+      "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "empanadas-pollo-6",
+          "presentacion": "Media docena",
+          "unidades": 6,
+          "precio": 7000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        },
+        {
+          "id": "empanadas-pollo-12",
+          "presentacion": "Docena",
+          "unidades": 12,
+          "precio": 14000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "milanesa-carne",
+      "categoria": "milanesas",
+      "nombre": "Sándwich de milanesa de carne",
+      "imagen": "sandwich_milanesa_carne",
+      "alt": "Sándwich de milanesa de carne cortado en dos. Imagen ilustrativa.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "milanesa-carne",
+          "presentacion": "Unidad",
+          "unidades": 1,
+          "precio": 10000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "milanesa-pollo",
+      "categoria": "milanesas",
+      "nombre": "Sándwich de milanesa de pollo",
+      "imagen": "sandwich_milanesa_pollo",
+      "alt": "Sándwich de milanesa de pollo cortado en dos. Imagen ilustrativa.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "milanesa-pollo",
+          "presentacion": "Unidad",
+          "unidades": 1,
+          "precio": 10000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    },
+    {
+      "id": "papas-fritas",
+      "categoria": "papas",
+      "nombre": "Papas fritas",
+      "imagen": "papas_mediana_caja",
+      "alt": "Papas fritas en una caja de cartón abierta. Imagen ilustrativa.",
+      "estado": "disponible",
+      "variantes": [
+        {
+          "id": "papas-mediana-caja",
+          "presentacion": "Porción mediana, en caja",
+          "unidades": 1,
+          "precio": 6000,
+          "precioEstado": "confirmado",
+          "estado": "disponible"
+        }
+      ]
+    }
+  ],
+  "proximas": [
+    {
+      "id": "lomitos",
+      "nombre": "Lomitos",
+      "estado": "futuro",
+      "comunicar": false,
+      "nota": "Planificado. Sin receta, precio ni fecha. No comprable."
+    },
+    {
+      "id": "pizzas",
+      "nombre": "Pizzas",
+      "estado": "futuro",
+      "comunicar": false,
+      "nota": "Planificado. Sin receta, precio ni fecha. No comprable."
+    }
+  ],
+  "historicos": [
+    {
+      "id": "hamburguesas",
+      "nombre": "Hamburguesas",
+      "estado": "historico",
+      "nota": "Presentes en el logo y en la historia. Oferta y precios actuales no confirmados. No comprable."
+    }
+  ]
+}

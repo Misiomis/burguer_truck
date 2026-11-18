@@ -1,0 +1,33 @@
+EL BUEN SABOR · KIT DE MARCA Y WEB
+Edición 01 · 17 de noviembre de 2026
+
+EMPEZÁ POR ACÁ
+01_manual: manual de 24 páginas y menú inicial independiente, ambos en PDF.
+02_marca: perfil corregido fiel al sello original (PNG con transparencia exterior) y una alternativa simplificada para lectura en tamaños pequeños.
+03_web_menu_inicial: cinco imágenes de las categorías iniciales, en PNG y WebP.
+04_web_proxima_etapa: pizza y lomito como conceptos futuros, en PNG y WebP.
+05_textos_y_guia: mensajes para copiar, guía para la web, menú en CSV, inventario de imágenes y colores en CSS.
+
+DOS VERSIONES DEL LOGO
+El_Buen_Sabor_Perfil_Corregido.png: conserva el nombre, hamburguesa y categorías de la referencia; se corrigió encuadre, limpieza y transparencia exterior. El interior sigue siendo blanco. Es PNG raster, no vector.
+El_Buen_Sabor_Perfil_Simplificado.png: alternativa de nombre más grande y sin categorías pequeñas. Recomendada para avatar de redes y WhatsApp. Mantiene fondo claro.
+Ambos: 1254 × 1254 px. Revisar siempre la vista previa del recorte circular.
+
+IMÁGENES DE COMIDA
+Son siete imágenes originales generadas con IA, no fotos del negocio. Se entregan como propuestas visuales. Antes de usarlas en la web, comparar con el producto real y confirmar ingredientes, tamaño, cocción y presentación. Las milanesas incluyen lechuga y tomate en la propuesta; no es una receta confirmada.
+Las imágenes de pizza y lomito no significan que esos productos ya estén disponibles.
+Los PNG conservan calidad original; los WebP son copias para la web. Las fotos no tienen textos ni precios incrustados.
+
+MENÚ Y DATOS
+Los precios son los aportados por el negocio, en pesos argentinos. No se trasladaron los importes de la web vieja. Dirección, horarios, contacto, apertura y condiciones de entrega requieren confirmación.
+No se modificó ni se publicó la web anterior.
+
+TIPOGRAFÍAS
+Oswald y Poppins, desde sus páginas oficiales:
+https://fonts.google.com/specimen/Oswald
+https://fonts.google.com/specimen/Poppins
+Las letras del logo pertenecen a la imagen de marca y no son un texto compuesto con estas fuentes.
+
+USO DEL MANUAL
+Es una propuesta completa de identidad y comunicación basada en el logo, historia y carta recibidos. El calendario, el lema y las aplicaciones son propuestas; adaptar a la operación real.
+Para cartelería de gran formato, bordado o tamaños pequeños, preparar una adaptación vectorial específica y prueba de lectura antes de producir.

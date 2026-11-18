@@ -1,0 +1,8 @@
+﻿id;producto;presentacion;unidades_o_porciones;precio_ars;fecha_base
+empanadas-carne-12;Empanadas de carne;Docena;12;14000;2026-11-17
+empanadas-carne-6;Empanadas de carne;Media docena;6;7000;2026-11-17
+empanadas-pollo-12;Empanadas de pollo;Docena;12;14000;2026-11-17
+empanadas-pollo-6;Empanadas de pollo;Media docena;6;7000;2026-11-17
+milanesa-carne;Sándwich de milanesa de carne;Unidad;1;10000;2026-11-17
+milanesa-pollo;Sándwich de milanesa de pollo;Unidad;1;10000;2026-11-17
+papas-mediana-caja;Papas fritas;Porción mediana en caja;1;6000;2026-11-17

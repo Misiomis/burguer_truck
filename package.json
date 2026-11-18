@@ -1,0 +1,23 @@
+{
+  "name": "el-buen-sabor-web",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Sitio estático de El Buen Sabor (antes Burguer Truck). Las dependencias son solo herramientas de desarrollo.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check",
+    "images": "node scripts/images.mjs",
+    "test": "node --test tests/unit/",
+    "test:ui": "node --test --test-concurrency=1 tests/ui/",
+    "capturas": "node scripts/capturas.mjs"
+  },
+  "devDependencies": {
+    "@fontsource-variable/oswald": "^5.3.0",
+    "@fontsource/poppins": "^5.3.0",
+    "axe-core": "4.10",
+    "playwright-core": "1.56",
+    "sharp": "^0.34.5"
+  }
+}
