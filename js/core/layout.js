@@ -1,6 +1,6 @@
 // Piezas compartidas de layout (cabecera, pie, diálogo del pedido, barra inferior).
 // Se insertan por build en cada página para no duplicar marcado a mano.
-import { icon, esc } from '../js/core/render.js';
+import { icon, esc } from './render.js';
 
 const NAV = [
   { href: 'menu.html', label: 'Menú', page: 'menu' },

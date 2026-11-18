@@ -2,26 +2,91 @@
 <html lang="es-AR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <title>Administración | El Buen Sabor</title>
   <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="La carta de El Buen Sabor se edita desde el proyecto, no desde la web pública.">
+  <meta name="description" content="Panel para actualizar precios de El Buen Sabor.">
+  <meta name="referrer" content="no-referrer">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/img/icono-192.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <script type="module" src="js/admin/admin.js"></script>
 </head>
-<body>
+<body class="admin">
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <header class="site-header">
     <div class="container site-header__inner">
-      <a class="brand" href="./"><span class="brand__name">El Buen Sabor</span><span class="brand__before">Antes Burguer Truck</span></a>
+      <a class="brand" href="./"><span class="brand__name">El Buen Sabor</span><span class="brand__before">Panel de precios</span></a>
+      <div class="ad-user" data-user hidden>
+        <span class="ad-user__name" data-user-name></span>
+        <button type="button" class="btn btn--ghost ad-btn-sm" data-logout>Salir</button>
+      </div>
     </div>
   </header>
-  <main id="contenido" class="container simple-page" tabindex="-1">
-    <p class="eyebrow">Administración</p>
-    <h1>El editor ya no está en la web pública</h1>
-    <p>La carta, los precios, los horarios y el contacto ahora se mantienen en los archivos del proyecto. Así, lo que se publica es lo mismo para todas las personas que visitan la web.</p>
-    <p>Para preparar cambios, quien mantiene el sitio abre el editor local desde una copia del proyecto (<code>npm run dev</code>) y sigue los pasos del archivo README.</p>
-    <p><a class="btn btn--primary" href="./">Ir al inicio</a> <a class="btn btn--ghost" href="menu.html">Ver menú</a></p>
+
+  <main id="contenido" class="container ad-main" tabindex="-1">
+    <h1 class="ad-title">Precios y disponibilidad</h1>
+    <p class="ad-status" role="status" aria-live="polite" data-status></p>
+    <noscript><p class="note">El panel necesita JavaScript activado.</p></noscript>
+
+    <!-- Ingreso -->
+    <section class="ad-panel" data-login-view aria-labelledby="login-title" hidden>
+      <h2 class="ad-h2" id="login-title">Ingresar</h2>
+      <p>Para publicar cambios, el panel usa un <strong>token de GitHub</strong> con permiso sobre el repositorio de la web. GitHub verifica el acceso: sin un token válido no se puede modificar nada.</p>
+      <form class="ad-login" data-login-form novalidate>
+        <div class="field">
+          <label class="field__label" for="token">Token de GitHub</label>
+          <input class="field__input" id="token" name="token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required aria-describedby="token-help token-error">
+          <p class="field__help" id="token-help">Empieza con <code>github_pat_</code>. Se guarda solo en este navegador.</p>
+          <p class="field__error" id="token-error" data-token-error hidden></p>
+        </div>
+        <label class="ad-check"><input type="checkbox" name="remember"> Recordar en este dispositivo</label>
+        <button type="submit" class="btn btn--primary">Ingresar</button>
+      </form>
+      <details class="ad-help">
+        <summary>¿Cómo consigo el token?</summary>
+        <ol>
+          <li>Con la cuenta dueña del repositorio <strong>Misiomis/burguer_truck</strong>, abrí <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">GitHub › Fine-grained tokens › Generate new token</a>.</li>
+          <li>Nombre: “Panel El Buen Sabor”. Vencimiento: el que prefieras (por ejemplo, 1 año).</li>
+          <li>Repository access: <strong>Only select repositories</strong> › <strong>burguer_truck</strong>.</li>
+          <li>Permissions › Repository permissions › <strong>Contents: Read and write</strong>. Nada más.</li>
+          <li>Generá el token, copialo y pegalo acá. Si lo perdés o alguien lo ve, borralo en GitHub y creá otro.</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- Edición -->
+    <div data-edit-view hidden>
+      <section class="ad-panel ad-panel--info" aria-label="Cómo funciona">
+        <p><strong>Los cambios se publican para todos</strong> recién cuando tocás “Revisar y publicar” y confirmás. La web se actualiza en 1 o 2 minutos.</p>
+        <p class="muted">Precio vacío = “a confirmar” (no se puede pedir). Para que un producto no se pueda pedir por hoy, marcalo “Agotado”.</p>
+      </section>
+      <form data-edit-form novalidate>
+        <div data-products></div>
+        <section class="ad-panel" aria-labelledby="ship-title">
+          <h2 class="ad-h2" id="ship-title">Envío por zona</h2>
+          <p class="muted">Vacío = “a confirmar”. 0 = sin cargo.</p>
+          <div data-zones></div>
+        </section>
+      </form>
+      <div class="ad-bar">
+        <p class="ad-bar__count" data-change-count>Sin cambios</p>
+        <button type="button" class="link-btn" data-discard disabled>Deshacer</button>
+        <button type="button" class="btn btn--primary" data-review disabled>Revisar y publicar</button>
+      </div>
+    </div>
   </main>
+
+  <dialog class="ad-dialog" aria-labelledby="review-title" data-review-dialog>
+    <div class="ad-dialog__inner">
+      <h2 class="ad-h2" id="review-title" tabindex="-1">Revisá antes de publicar</h2>
+      <ul class="ad-changes" data-change-list></ul>
+      <p class="muted">Se publican para todas las personas que visitan la web.</p>
+      <div class="ad-dialog__actions">
+        <button type="button" class="btn btn--ghost" data-review-cancel>Volver</button>
+        <button type="button" class="btn btn--primary" data-publish>Publicar cambios</button>
+      </div>
+    </div>
+  </dialog>
 </body>
 </html>

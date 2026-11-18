@@ -30,11 +30,12 @@ El servidor local reproduce la subruta de GitHub Pages y comprime con gzip como 
 
 ```
 index.html, menu.html     Páginas públicas (con bloques <!-- build:... --> generados)
-admin.html                Aviso público: el editor ya no vive en la web
+admin.html                Panel de precios: edita y publica en GitHub (requiere token)
 404.html                  Página de error de GitHub Pages
 css/styles.css            Tokens de marca y estilos de todo el sitio
 js/app.js                 Interacción: fichas, pedido, diálogo, navegación
-js/core/*.js              Lógica pura compartida (carrito, dinero, WhatsApp, almacenamiento, esquema, render)
+js/core/*.js              Lógica pura compartida (carrito, dinero, WhatsApp, almacenamiento, esquema, render, build-core)
+js/admin/*.js             Panel de precios (cliente de la API de GitHub, cambios, interfaz)
 js/data/datos.js          GENERADO desde data/*.json (no editar a mano)
 data/catalogo.json        FUENTE ÚNICA de la carta (productos, variantes, precios, estados)
 data/negocio.json         FUENTE ÚNICA de operación (WhatsApp, dirección, horarios, retiro/envío, zonas, pagos)
@@ -51,7 +52,19 @@ docs/                     Auditoría, capturas antes/después
 
 Todo lo comercial sale de **dos archivos**: `data/catalogo.json` y `data/negocio.json`. Inicio, menú, carrito, mensaje de WhatsApp, datos estructurados y metadatos se generan desde ahí.
 
-### Opción A: editor local (recomendado)
+### Cambiar precios desde el panel (celular o computadora)
+
+1. Abrí <https://misiomis.github.io/burguer_truck/admin.html>.
+2. Pegá el **token de GitHub** (ver abajo). Marcá “Recordar en este dispositivo” solo en un equipo propio.
+3. Cambiá precios (`7000` o `7.000`; vacío = “a confirmar”), marcá productos como **Agotado** u **Oculto** y ajustá las tarifas de envío por zona.
+4. **Revisar y publicar** muestra la lista de cambios. Al confirmar, el panel hace un commit en `main` con los mismos archivos que generaría `npm run build`. GitHub Pages actualiza la web para todos en 1 o 2 minutos y el panel avisa cuando ya se ve.
+5. Si otra persona publicó cambios mientras editabas, el panel no pisa nada: recargá y volvé a aplicar.
+
+**Token (una sola vez):** con la cuenta dueña de `Misiomis/burguer_truck`, entrá a GitHub › Settings › Developer settings › *Fine-grained tokens* › **Generate new token**. Repository access: *Only select repositories* › `burguer_truck`. Permissions: **Contents: Read and write** (nada más). Elegí un vencimiento. El token no se guarda en el código: queda solo en el navegador donde lo pegás. Si se pierde o alguien lo ve, borralo en GitHub y creá otro.
+
+Después de publicar desde el panel, quien trabaje con una copia local tiene que hacer `git pull` antes de seguir.
+
+### Editor local (horarios, contacto, zonas y todo lo demás)
 
 1. `npm run dev` y abrir <http://localhost:4173/burguer_truck/_herramientas/editor/>.
 2. Editar precios, estados, contacto, horarios, modalidades y zonas. La validación avisa errores al instante.
@@ -130,8 +143,8 @@ Notas de GitHub Pages:
 - Un `robots.txt` dentro de `/burguer_truck/` **no** controla el sitio: los robots solo leen el de la raíz del dominio. Por eso `admin.html` y `404.html` usan `<meta name="robots" content="noindex">`. `noindex` no protege información: no publiques nada privado.
 - `sitemap.xml` lista solo las rutas públicas (inicio y menú).
 
-## Administración remota (no incluida)
+## Seguridad del panel
 
-El editor anterior guardaba en `localStorage` (cambios visibles solo para quien los hacía) y validaba la contraseña en el navegador: eso no es autenticación. Se retiró. Si en el futuro se quiere editar desde el celular y publicar para todos, hace falta un backend real (por ejemplo, un CMS con autenticación de servidor que haga commits al repositorio o una base de datos con API). No se agregó ninguno en esta etapa. Nunca pongas tokens de GitHub ni contraseñas en archivos JavaScript del sitio.
+El panel anterior guardaba en `localStorage` (los cambios solo se veían en el navegador de quien editaba) y validaba una contraseña en el propio navegador: eso no protegía nada. El panel actual no tiene contraseñas en el código: **GitHub** verifica el token en cada operación y solo publica si tiene permiso de escritura sobre el repositorio. El token viaja únicamente en la cabecera `Authorization` hacia `api.github.com`. Nunca pongas tokens en archivos del sitio ni los compartas por chat.
 
 > La contraseña del panel anterior quedó referenciada en el historial público de Git. Si se reutiliza en otro servicio, conviene cambiarla.

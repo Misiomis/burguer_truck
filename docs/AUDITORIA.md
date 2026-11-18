@@ -103,7 +103,7 @@ Detalle completo en `assets/img/manifest.json`. Originales en `_originales/` (no
 - **Fichas por sabor** (carne / pollo) con selector de presentación solo cuando hay variantes; precio visible sin abrir nada.
 - **Pedido** en `<dialog>` modal: panel lateral en escritorio, pantalla completa en móvil, con cabecera y totales fijos.
 - **Editor** local, fuera del sitio público, con borrador, validación, importación con diferencias y exportación de los JSON canónicos. Sin “publicar”: publicar es commit + push.
-- `admin.html` se mantiene como ruta (aviso sin credenciales, `noindex`).
+- **Panel de precios** en `admin.html` (`noindex`): edita precios, disponibilidad y tarifas de envío y publica con un commit vía API de GitHub, usando el mismo `js/core/build-core.js` que `npm run build`. Acceso con token fine-grained de GitHub (solo `Contents: Read and write` sobre este repo), verificado por GitHub; sin credenciales en el código. Los datos se cargan con versión (`datos.js?v=HASH`) para que nadie mezcle precios viejos con HTML nuevo.
 
 ## 8. Comparación con el manual
 

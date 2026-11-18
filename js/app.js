@@ -1,7 +1,6 @@
 // El Buen Sabor · interacción del sitio.
 // La carta y los precios ya están en el HTML (prerender). Este módulo agrega el pedido.
 // Los datos salen de js/data/datos.js (generado desde data/*.json), nunca del texto de la página.
-import { CATALOGO, NEGOCIO } from './data/datos.js';
 import {
   emptyCart, addItem, setQty, removeItem, computeTotals, availableModes,
   findVariant, normalizeQty, countPacks, reconcile, MAX_QTY,
@@ -9,6 +8,10 @@ import {
 import { formatARS } from './core/money.js';
 import { buildOrderMessage, buildWhatsAppUrl, validateCheckout } from './core/whatsapp.js';
 import { getStorage, loadCart, saveCart, clearSavedCart, CART_KEY } from './core/storage.js';
+
+// Datos versionados: la página indica qué versión de js/data/datos.js le corresponde (la escribe el build).
+const DATA_VERSION = document.querySelector('meta[name="ebs-datos"]')?.content || '';
+const { CATALOGO, NEGOCIO } = await import(`./data/datos.js${DATA_VERSION ? `?v=${encodeURIComponent(DATA_VERSION)}` : ''}`);
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];

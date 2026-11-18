@@ -35,7 +35,8 @@ async function open(path = '', { width = 1440, height = 900, js = true, init, fi
     // fixture: true -> negocio confirmado ficticio; 'pendiente' -> todo pendiente. Carta: la de data/ (la misma del HTML).
     const biz = fixture === 'pendiente' ? business() : businessConfirmedFixture();
     const mod = `export const CATALOGO = ${JSON.stringify(liveCatalog())};\nexport const NEGOCIO = ${JSON.stringify(biz)};\n`;
-    await context.route('**/js/data/datos.js', (route) => route.fulfill({ status: 200, contentType: 'text/javascript', body: mod }));
+    // Coincide con js/data/datos.js con o sin ?v=versión.
+    await context.route((url) => url.pathname.endsWith('/js/data/datos.js'), (route) => route.fulfill({ status: 200, contentType: 'text/javascript', body: mod }));
   }
   if (blockImages) await context.route(/\.(avif|webp|png|jpg)$/, (route) => route.abort());
   if (init) await context.addInitScript(init);

@@ -1,5 +1,5 @@
-// Generado por scripts/build.mjs desde data/catalogo.json y data/negocio.json.
-// No editar a mano: cambiá los JSON y ejecutá `npm run build`.
+// Generado por el build (scripts/build.mjs o el panel admin.html) desde data/catalogo.json y data/negocio.json.
+// No editar a mano.
 export const CATALOGO = {
   "schema": "ebs.catalogo",
   "version": 1,
