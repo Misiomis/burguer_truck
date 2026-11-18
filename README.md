@@ -1,7 +1,7 @@
 # El Buen Sabor · sitio web (antes Burguer Truck)
 
 Sitio estático publicado en GitHub Pages: <https://misiomis.github.io/burguer_truck/>.
-La ruta y los enlaces conocidos se mantienen (`/burguer_truck/`, `menu.html`, `#about`, `#location`, `#order`, `#featured`).
+La carta completa está en el inicio (`/burguer_truck/#carta`). Los enlaces conocidos siguen funcionando: `menu.html` (y `menu.html#papas`, `#menu-main`, `#menu-order`) lleva a la sección equivalente del inicio; `#about`, `#location`, `#order` y `#featured` siguen existiendo.
 
 Base visual y de contenido: **Manual de marca El Buen Sabor, edición 01 (17/11/2026)** y su kit de recursos.
 
@@ -19,7 +19,7 @@ El servidor local reproduce la subruta de GitHub Pages y comprime con gzip como 
 | Comando | Qué hace |
 | --- | --- |
 | `npm run dev` | Sirve el sitio en `http://localhost:4173/burguer_truck/`. |
-| `npm run build` | Valida `data/*.json`, regenera `js/data/datos.js`, los bloques prerenderizados de `index.html` y `menu.html`, y `sitemap.xml`. |
+| `npm run build` | Valida `data/*.json`, regenera `js/data/datos.js`, los bloques prerenderizados de `index.html` y `sitemap.xml`. |
 | `npm run check` | Falla si algo generado quedó desactualizado respecto de `data/*.json` (no escribe). |
 | `npm test` | Pruebas unitarias (cálculo, variantes, reconciliación, mensaje, persistencia, esquema, build). |
 | `npm run test:ui` | Pruebas de interfaz con Chrome instalado + axe-core. No envía mensajes: bloquea WhatsApp. |
@@ -29,7 +29,9 @@ El servidor local reproduce la subruta de GitHub Pages y comprime con gzip como 
 ## Estructura
 
 ```
-index.html, menu.html     Páginas públicas (con bloques <!-- build:... --> generados)
+index.html                Inicio con la carta completa (bloques <!-- build:... --> generados)
+menu.html                 Compatibilidad: redirige a index.html#carta (o a la categoría del enlace)
+assets/ilustraciones/     Ilustraciones SVG propias de cada familia de productos
 admin.html                Panel de precios: edita y publica en GitHub (requiere token)
 404.html                  Página de error de GitHub Pages
 css/styles.css            Tokens de marca y estilos de todo el sitio
@@ -109,6 +111,15 @@ Horarios (una sola fuente para toda la web):
 ```json
 "horarios": { "estado": "confirmado", "lista": [ { "dias": "Martes a domingo", "horario": "19:30 a 23:45" } ] }
 ```
+
+## Categorías, precios e ilustraciones
+
+- **Precios, disponibilidad y tarifas de envío:** desde el panel `admin.html` (ver arriba) o en `data/catalogo.json` / `data/negocio.json`.
+- **Categorías:** `categorias` en `data/catalogo.json` (orden = orden de la barra y de la carta; `estado: "oculta"` la saca). Los enlaces de la barra se generan solos.
+- **Ilustración de un producto:** campo `ilustracion` del producto = nombre del archivo en `assets/ilustraciones/` sin `.svg` (hoy: `hamburguesa`, `hamburguesa-doble`, `lomito`, `milanesa`, `papas`, `empanadas`). Para una nueva, agregá un SVG de 160 × 128 con el mismo estilo (luz arriba a la izquierda, sombra elíptica abajo) y referenciála. Son ilustraciones de referencia: no prometen ingredientes ni tamaños.
+- **Foto de portada:** `_originales/menu_inicial/portada_menu_inicial.png` → `npm run images`. Es ilustrativa y está rotulada así.
+
+Después de editar a mano: `npm run build`, revisar con `npm run dev`, `npm test && npm run test:ui`, y commit + push.
 
 ## Esquema de datos
 

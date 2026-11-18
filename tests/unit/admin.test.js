@@ -63,7 +63,7 @@ describe('build compartido (CLI y panel)', () => {
     const a = buildSiteFiles({ catalog: liveCatalog(), business: liveBusiness(), pages });
     const b = buildSiteFiles({ catalog: cat, business: liveBusiness(), pages });
     assert.notEqual(a.version, b.version);
-    assert.ok(b.files['menu.html'].includes('$4.900'));
+    assert.ok(b.files['index.html'].includes('$4.900'));
     assert.ok(b.files['index.html'].includes(`content="${b.version}"`));
     assert.ok(b.files['js/data/datos.js'].includes('"precio": 4900'));
   });

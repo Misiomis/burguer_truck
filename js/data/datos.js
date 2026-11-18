@@ -37,6 +37,7 @@ export const CATALOGO = {
       "id": "hamburguesa-simple",
       "categoria": "hamburguesas",
       "nombre": "Hamburguesa simple",
+      "ilustracion": "hamburguesa",
       "estado": "disponible",
       "variantes": [
         {
@@ -53,6 +54,7 @@ export const CATALOGO = {
       "id": "hamburguesa-completa",
       "categoria": "hamburguesas",
       "nombre": "Hamburguesa completa",
+      "ilustracion": "hamburguesa",
       "estado": "disponible",
       "variantes": [
         {
@@ -69,6 +71,7 @@ export const CATALOGO = {
       "id": "hamburguesa-doble",
       "categoria": "hamburguesas",
       "nombre": "Doble paty o KingKong",
+      "ilustracion": "hamburguesa-doble",
       "estado": "disponible",
       "variantes": [
         {
@@ -85,6 +88,7 @@ export const CATALOGO = {
       "id": "lomito",
       "categoria": "sandwiches",
       "nombre": "Lomito",
+      "ilustracion": "lomito",
       "descripcion": "Elegí con papas o sin papas.",
       "imagen": "lomito",
       "alt": "Sándwich de lomito cortado en dos sobre papel. Imagen ilustrativa.",
@@ -112,6 +116,7 @@ export const CATALOGO = {
       "id": "milanesa-carne",
       "categoria": "sandwiches",
       "nombre": "Sándwich de milanesa de carne",
+      "ilustracion": "milanesa",
       "imagen": "sandwich_milanesa_carne",
       "alt": "Sándwich de milanesa de carne cortado en dos. Imagen ilustrativa.",
       "estado": "disponible",
@@ -130,6 +135,7 @@ export const CATALOGO = {
       "id": "milanesa-pollo",
       "categoria": "sandwiches",
       "nombre": "Sándwich de milanesa de pollo",
+      "ilustracion": "milanesa",
       "imagen": "sandwich_milanesa_pollo",
       "alt": "Sándwich de milanesa de pollo cortado en dos. Imagen ilustrativa.",
       "estado": "disponible",
@@ -148,6 +154,7 @@ export const CATALOGO = {
       "id": "papas-fritas",
       "categoria": "papas",
       "nombre": "Papas fritas",
+      "ilustracion": "papas",
       "descripcion": "Elegí porción individual o en caja.",
       "imagen": "papas_mediana_caja",
       "alt": "Papas fritas en una caja de cartón abierta. Imagen ilustrativa.",
@@ -175,6 +182,7 @@ export const CATALOGO = {
       "id": "empanadas-carne",
       "categoria": "empanadas",
       "nombre": "Empanadas de carne",
+      "ilustracion": "empanadas",
       "descripcion": "Elegí media docena o docena.",
       "imagen": "empanadas",
       "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",
@@ -202,6 +210,7 @@ export const CATALOGO = {
       "id": "empanadas-pollo",
       "categoria": "empanadas",
       "nombre": "Empanadas de pollo",
+      "ilustracion": "empanadas",
       "descripcion": "Elegí media docena o docena.",
       "imagen": "empanadas",
       "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",

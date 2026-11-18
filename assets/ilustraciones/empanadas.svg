@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128" role="img" aria-label="Ilustración de empanadas">
+  <defs>
+    <radialGradient id="sombra" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#141414" stop-opacity=".35"/><stop offset="1" stop-color="#141414" stop-opacity="0"/></radialGradient>
+    <radialGradient id="masa" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#F8D58F"/><stop offset=".55" stop-color="#E3A452"/><stop offset="1" stop-color="#B9732B"/></radialGradient>
+    <radialGradient id="masa2" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#EFC57C"/><stop offset=".55" stop-color="#D4924A"/><stop offset="1" stop-color="#A66426"/></radialGradient>
+  </defs>
+  <ellipse cx="80" cy="114" rx="64" ry="8" fill="url(#sombra)"/>
+  <path d="M70 84C70 56 92 38 116 38s36 18 36 46z" fill="url(#masa2)"/>
+  <path d="M73 82C74 58 94 42 116 42s34 16 34 40" fill="none" stroke="#B87430" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 7"/>
+  <path d="M10 104C10 66 40 44 74 44s64 22 64 60z" fill="url(#masa)"/>
+  <path d="M14 101C16 70 42 50 74 50s58 20 60 51" fill="none" stroke="#C47F35" stroke-width="9" stroke-linecap="round" stroke-dasharray="1 9"/>
+  <path d="M14 101C16 70 42 50 74 50s58 20 60 51" fill="none" stroke="#F6D18C" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 9" stroke-dashoffset="-2" opacity=".8"/>
+  <ellipse cx="56" cy="74" rx="18" ry="7" fill="#FFF6E2" opacity=".35" transform="rotate(-14 56 74)"/>
+  <g fill="#A55F22" opacity=".35"><ellipse cx="86" cy="86" rx="6" ry="3"/><ellipse cx="44" cy="92" rx="5" ry="2.5"/><ellipse cx="104" cy="94" rx="4" ry="2"/></g>
+  <path d="M10 104h128" stroke="#9A5A20" stroke-width="2" opacity=".5"/>
+</svg>

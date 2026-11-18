@@ -1,5 +1,5 @@
 // Build de El Buen Sabor (línea de comandos).
-// Valida data/*.json, regenera js/data/datos.js, los bloques <!-- build:NOMBRE --> de index.html y menu.html y sitemap.xml.
+// Valida data/*.json, regenera js/data/datos.js, los bloques <!-- build:NOMBRE --> de index.html y sitemap.xml.
 // La lógica vive en js/core/build-core.js y es la misma que usa el panel admin.html al publicar.
 // Uso: npm run build   |   npm run check (falla si algo generado quedó desactualizado; no escribe).
 import { readFile, writeFile, mkdir } from 'node:fs/promises';

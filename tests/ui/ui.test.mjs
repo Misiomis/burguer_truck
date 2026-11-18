@@ -53,8 +53,7 @@ const count = (page) => page.locator('.order-btn [data-cart-count]').textContent
 async function addFromMenu(page, productId, { variant, qty = 1 } = {}) {
   const card = page.locator(`[data-product="${productId}"]`);
   if (variant) await card.locator(`input[value="${variant}"]`).check();
-  for (let i = 1; i < qty; i++) await card.locator('[data-qty="1"]').click();
-  await card.locator('.product__add').click();
+  for (let i = 0; i < qty; i++) await card.locator('.product__add').click();
 }
 
 async function openCart(page) {
@@ -78,7 +77,7 @@ async function noHorizontalScroll(page, label) {
 
 describe('carga, enlaces y recursos', () => {
   test('inicio y menú cargan sin errores de consola ni 404 propios, con un h1', async () => {
-    for (const p of ['', 'menu.html', 'admin.html', 'no-existe.html']) {
+    for (const p of ['', 'admin.html', 'no-existe.html']) {
       const { page, context, problems } = await open(p);
       const filtered = problems.filter((x) => !(p === 'no-existe.html' && x.includes('404') && x.includes('no-existe')));
       // El 404 propio es esperado solo para la página inexistente.
@@ -91,7 +90,7 @@ describe('carga, enlaces y recursos', () => {
   test('todos los enlaces y recursos locales responden 200 bajo /burguer_truck/', async () => {
     const { page, context } = await open('');
     const urls = new Set();
-    for (const p of ['', 'menu.html', 'admin.html']) {
+    for (const p of ['', 'admin.html']) {
       await page.goto(BASE + p, { waitUntil: 'networkidle' });
       const found = await page.evaluate(() => [
         ...[...document.querySelectorAll('a[href]')].map((a) => a.href),
@@ -102,7 +101,7 @@ describe('carga, enlaces y recursos', () => {
       ]);
       found.filter((u) => u.startsWith(BASE)).forEach((u) => urls.add(u.split('#')[0]));
     }
-    for (const u of ['sitemap.xml', 'assets/img/compartir-1200x630.jpg']) urls.add(BASE + u);
+    for (const u of ['sitemap.xml', 'menu.html', 'assets/img/compartir-1200x630.jpg']) urls.add(BASE + u);
     for (const u of urls) {
       const r = await page.request.get(u);
       assert.equal(r.status(), 200, u);
@@ -119,34 +118,32 @@ describe('carga, enlaces y recursos', () => {
     const ld = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
     assert.equal(ld.name, 'El Buen Sabor');
     assert.equal(ld.address.streetAddress, 'Calle Costa Rica');
-    await page.goto(BASE + 'menu.html');
-    assert.equal(await page.title(), 'Menú | El Buen Sabor');
-    assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'), 'https://misiomis.github.io/burguer_truck/menu.html');
+    // menu.html es la página de compatibilidad: su canónica es el inicio.
+    const raw = await (await page.request.get(BASE + 'menu.html')).text();
+    assert.ok(raw.includes('rel="canonical" href="https://misiomis.github.io/burguer_truck/"'), 'canónica de menu.html');
     await context.close();
   });
 
   test('anclas conocidas existen y no quedan tapadas por la cabecera', async () => {
-    for (const id of ['featured', 'about', 'location', 'order']) {
+    for (const id of ['featured', 'carta', 'about', 'location', 'order', 'hamburguesas', 'sandwiches', 'papas', 'empanadas']) {
       const { page, context } = await open(`index.html#${id}`, { width: 390, height: 844 });
-      await page.waitForTimeout(400);
-      const { top, header } = await page.evaluate((i) => ({
-        top: document.getElementById(i).getBoundingClientRect().top,
-        header: document.querySelector('.site-header').getBoundingClientRect().bottom,
-      }), id);
-      assert.ok(top >= header - 1, `#${id} queda debajo de la cabecera (top ${top}, header ${header})`);
+      await page.waitForTimeout(500);
+      const r = await page.evaluate((i) => {
+        const el = document.getElementById(i);
+        const inCarta = Boolean(el.closest('.carta')) && i !== 'carta';
+        const bar = (inCarta ? document.querySelector('.catnav') : document.querySelector('.site-header')).getBoundingClientRect().bottom;
+        return { top: el.getBoundingClientRect().top, bar, inCarta };
+      }, id);
+      assert.ok(r.top >= r.bar - 1, `#${id} queda tapado (top ${r.top}, barra ${r.bar})`);
+      assert.ok(r.top < 400, `#${id} llega cerca del borde superior (top ${r.top})`);
       await context.close();
     }
-    const { page, context } = await open('menu.html#papas', { width: 390, height: 844 });
-    await page.waitForTimeout(400);
-    const r = await page.evaluate(() => ({ top: document.getElementById('h-papas').getBoundingClientRect().top, nav: document.querySelector('.catnav').getBoundingClientRect().bottom }));
-    assert.ok(r.top >= r.nav - 1, 'categoría visible bajo la barra de categorías');
-    await context.close();
   });
 });
 
 describe('carta y pedido', () => {
   test('la carta muestra exactamente la oferta confirmada y nada comprable fuera de ella', async () => {
-    const { page, context } = await open('menu.html');
+    const { page, context } = await open('');
     const ids = await page.locator('[data-product]').evaluateAll((n) => n.map((x) => x.dataset.product));
     assert.deepEqual(ids, liveCatalog().productos.map((p) => p.id));
     const text = await page.locator('main').textContent();
@@ -156,7 +153,7 @@ describe('carta y pedido', () => {
   });
 
   test('agregar, sumar, restar, quitar, vaciar y deshacer', async () => {
-    const { page, context, problems } = await open('menu.html');
+    const { page, context, problems } = await open('');
     await addFromMenu(page, 'empanadas-carne', { variant: 'empanadas-carne-12', qty: 2 });
     assert.equal(await count(page), '2');
     assert.match(await page.locator('[data-announcer]').textContent({ timeout: 2000 }) || '', /Agregaste 2 × Empanadas de carne, docena|^$/);
@@ -182,7 +179,7 @@ describe('carta y pedido', () => {
   });
 
   test('variantes 6/12 y carne/pollo quedan separadas (2 medias docenas = $13.000 con la carta vigente)', async () => {
-    const { page, context } = await open('menu.html');
+    const { page, context } = await open('');
     await addFromMenu(page, 'empanadas-carne', { variant: 'empanadas-carne-6' });
     await addFromMenu(page, 'empanadas-pollo', { variant: 'empanadas-pollo-6' });
     await openCart(page);
@@ -191,31 +188,27 @@ describe('carta y pedido', () => {
     await context.close();
   });
 
-  test('cantidades inválidas en la ficha se corrigen (sin NaN, negativos ni cero)', async () => {
-    const { page, context } = await open('menu.html');
+  test('tope de 20 por opción y aviso al llegar al máximo', async () => {
+    const { page, context } = await open('');
     const card = page.locator('[data-product="papas-fritas"]');
-    const input = card.locator('.qty__input');
-    for (const [typed, expected] of [['-3', '1'], ['0', '1'], ['999', '20'], ['abc', '1']]) {
-      await input.fill('');
-      await input.pressSequentially(typed);
-      await input.blur();
-      assert.equal(await input.inputValue(), expected, `escribir ${typed}`);
-    }
-    await input.fill('20');
-    await input.blur();
-    await card.locator('.product__add').click();
+    for (let i = 0; i < 21; i++) await card.locator('.product__add').click();
     assert.equal(await count(page), '20');
-    await card.locator('.product__add').click();
-    assert.equal(await count(page), '20', 'tope de 20 por producto');
-    assert.match(await card.locator('[data-line]').textContent(), /máximo/);
+    assert.match(await card.locator('[data-in-cart]').textContent(), /máximo/);
     await context.close();
   });
 
-  test('persistencia entre inicio y menú y tras recargar', async () => {
-    const { page, context } = await open('menu.html');
+  test('persistencia: recarga, menu.html, categorías y Atrás/Adelante', async () => {
+    const { page, context } = await open('');
     await addFromMenu(page, 'milanesa-pollo');
     await addFromMenu(page, 'papas-fritas', { variant: 'papas-mediana-caja' });
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.locator('.catnav__link', { hasText: 'Empanadas' }).click();
+    await page.locator('.catnav__link', { hasText: 'Hamburguesas' }).click();
+    await page.goBack();
+    assert.ok(page.url().endsWith('#empanadas'), page.url());
+    await page.goForward();
+    assert.ok(page.url().endsWith('#hamburguesas'), page.url());
+    assert.equal(await count(page), '2');
+    await page.goto(BASE + 'menu.html', { waitUntil: 'networkidle' });
     assert.equal(await count(page), '2');
     await page.reload({ waitUntil: 'networkidle' });
     assert.equal(await count(page), '2');
@@ -230,7 +223,7 @@ describe('carta y pedido', () => {
       { productId: 'simple', variantId: 'simple', qty: 1, seenPrice: 3000 },
       { productId: 'papas-fritas', variantId: 'papas-mediana-caja', qty: 'x' },
     ] };
-    const { page, context, problems } = await open('menu.html', { init: `localStorage.setItem('ebs:pedido:v1', ${JSON.stringify(JSON.stringify(stored))})` });
+    const { page, context, problems } = await open('', { init: `localStorage.setItem('ebs:pedido:v1', ${JSON.stringify(JSON.stringify(stored))})` });
     assert.equal(await count(page), '2');
     await openCart(page);
     const notices = await page.locator('.cart__notice').allTextContents();
@@ -242,7 +235,7 @@ describe('carta y pedido', () => {
   });
 
   test('JSON corrupto y almacenamiento bloqueado no rompen el pedido', async () => {
-    const a = await open('menu.html', { init: `localStorage.setItem('ebs:pedido:v1', '{roto')` });
+    const a = await open('', { init: `localStorage.setItem('ebs:pedido:v1', '{roto')` });
     await addFromMenu(a.page, 'papas-fritas');
     assert.equal(await count(a.page), '1');
     await openCart(a.page);
@@ -250,7 +243,7 @@ describe('carta y pedido', () => {
     await a.context.close();
 
     const blocked = `Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('bloqueado', 'SecurityError'); } });`;
-    const b = await open('menu.html', { init: blocked });
+    const b = await open('', { init: blocked });
     await addFromMenu(b.page, 'papas-fritas');
     assert.equal(await count(b.page), '1');
     await openCart(b.page);
@@ -260,7 +253,7 @@ describe('carta y pedido', () => {
   });
 
   test('otras claves del origen no se tocan', async () => {
-    const { page, context } = await open('menu.html', { init: `localStorage.setItem('otro-proyecto', '1'); localStorage.setItem('bt_products_v1', '[]');` });
+    const { page, context } = await open('', { init: `localStorage.setItem('otro-proyecto', '1'); localStorage.setItem('bt_products_v1', '[]');` });
     await addFromMenu(page, 'papas-fritas', { variant: 'papas-mediana-caja' });
     await openCart(page);
     await page.locator('[data-variant="papas-mediana-caja"] [data-action="remove"]').click();
@@ -272,7 +265,7 @@ describe('carta y pedido', () => {
 
 describe('WhatsApp', () => {
   test('pedido real: arma el enlace al número publicado con el mensaje (sin abrirlo)', async () => {
-    const { page, context, waRequests } = await open('menu.html');
+    const { page, context, waRequests } = await open('');
     await addFromMenu(page, 'hamburguesa-completa');
     await openCart(page);
     await page.locator('input[name="mode"][value="retiro"]').check();
@@ -287,7 +280,7 @@ describe('WhatsApp', () => {
   });
 
   test('con el número pendiente no hay enlace a ningún número y se puede copiar el resumen', async () => {
-    const { page, context, waRequests } = await open('menu.html', { fixture: 'pendiente' });
+    const { page, context, waRequests } = await open('', { fixture: 'pendiente' });
     assert.equal(await page.locator('dialog a[href*="wa.me"]').count(), 0);
     await addFromMenu(page, 'papas-fritas');
     await openCart(page);
@@ -304,7 +297,7 @@ describe('WhatsApp', () => {
   });
 
   test('con datos de prueba confirmados: validación, retiro, envío $1.500 y envío a cotizar', async () => {
-    const { page, context, waRequests } = await open('menu.html', { fixture: true });
+    const { page, context, waRequests } = await open('', { fixture: true });
     await addFromMenu(page, 'empanadas-carne', { variant: 'empanadas-carne-12' });
     await addFromMenu(page, 'milanesa-pollo');
     await addFromMenu(page, 'papas-fritas', { variant: 'papas-mediana-caja' });
@@ -356,24 +349,23 @@ describe('WhatsApp', () => {
   });
 
   test('todos los accesos al pedido abren el mismo resumen (inicio y menú)', async () => {
-    const { page, context } = await open('menu.html');
+    const { page, context } = await open('');
     await addFromMenu(page, 'papas-fritas');
-    const openers = ['.order-btn', '#menu-order [data-open-cart]'];
+    const openers = ['.order-btn', '#order [data-open-cart]'];
     for (const sel of openers) {
       await page.locator(sel).click();
       assert.equal(await page.locator('.line').count(), 1, sel);
       await page.keyboard.press('Escape');
     }
-    await page.goto(BASE, { waitUntil: 'networkidle' });
-    await page.locator('#order [data-open-cart]').click();
-    assert.equal(await page.locator('.line').count(), 1, 'desde Cómo pedir en inicio');
+    await page.locator('[data-order-bar] [data-open-cart]').evaluate((b) => b.click());
+    assert.equal(await page.locator('.line').count(), 1, 'desde la barra inferior');
     await context.close();
   });
 });
 
 describe('accesibilidad y teclado', () => {
   test('diálogo: foco inicial, foco contenido, Escape, retorno del foco y scroll reversible', async () => {
-    const { page, context } = await open('menu.html');
+    const { page, context } = await open('');
     await addFromMenu(page, 'papas-fritas');
     await page.locator('.order-btn').focus();
     await page.keyboard.press('Enter');
@@ -394,12 +386,12 @@ describe('accesibilidad y teclado', () => {
   });
 
   test('axe sin violaciones relevantes en inicio, menú, pedido abierto, admin y 404', async () => {
-    for (const [path, width] of [['', 1440], ['', 390], ['menu.html', 1440], ['menu.html', 390], ['admin.html', 1024], ['no-existe', 1024]]) {
+    for (const [path, width] of [['', 1440], ['', 390], ['', 320], ['admin.html', 1024], ['no-existe', 1024]]) {
       const { page, context } = await open(path, { width, height: 900 });
       await axe(page, `${path || 'inicio'} @${width}`);
       await context.close();
     }
-    const { page, context } = await open('menu.html', { fixture: true, width: 390 });
+    const { page, context } = await open('', { fixture: true, width: 390 });
     await addFromMenu(page, 'empanadas-pollo');
     await openCart(page);
     await page.locator('input[name="mode"][value="envio"]').check();
@@ -442,7 +434,7 @@ describe('accesibilidad y teclado', () => {
   });
 
   test('controles táctiles importantes miden al menos 44 px', async () => {
-    const { page, context } = await open('menu.html', { width: 390, height: 844 });
+    const { page, context } = await open('', { width: 390, height: 844 });
     await addFromMenu(page, 'papas-fritas');
     await openCart(page);
     const small = await page.evaluate(() => [...document.querySelectorAll('.qty__btn, .icon-btn, .order-btn, .product__add, .order-bar__btn, .catnav__link, [data-close-cart], .site-nav__toggle, .btn')]
@@ -458,7 +450,7 @@ describe('accesibilidad y teclado', () => {
 describe('responsive, fallos y degradación', () => {
   test(`sin scroll horizontal y sin controles tapados en ${WIDTHS.join(', ')} px`, async () => {
     for (const width of WIDTHS) {
-      const { page, context } = await open('menu.html', { width, height: width < 700 ? 800 : 900 });
+      const { page, context } = await open('', { width, height: width < 700 ? 800 : 900 });
       await noHorizontalScroll(page, `menú ${width}`);
       await addFromMenu(page, 'empanadas-carne');
       await openCart(page);
@@ -494,7 +486,7 @@ describe('responsive, fallos y degradación', () => {
   });
 
   test('sin JavaScript: carta, precios y contacto legibles; sin botones inútiles', async () => {
-    const { page, context } = await open('menu.html', { js: false, width: 390 });
+    const { page, context } = await open('', { js: false, width: 390 });
     const text = await page.locator('main').textContent();
     for (const p of ['$6.500', '$12.000', '$4.500', '$15.500', '$3.500', 'Empanadas de carne', 'Papas fritas']) assert.ok(text.includes(p), p);
     assert.ok(await page.locator('.nojs-note').isVisible());
@@ -506,7 +498,7 @@ describe('responsive, fallos y degradación', () => {
   });
 
   test('imágenes rotas: la carta sigue usable y sin desbordes', async () => {
-    const { page, context } = await open('menu.html', { blockImages: true, width: 390 });
+    const { page, context } = await open('', { blockImages: true, width: 390 });
     await noHorizontalScroll(page, 'sin imágenes');
     await addFromMenu(page, 'papas-fritas');
     assert.equal(await count(page), '1');
@@ -526,7 +518,7 @@ describe('editor local', () => {
     await page.locator('.ed-ok').waitFor();
     await page.locator('[data-act="save"]').click();
     // La web pública sigue mostrando el precio canónico.
-    await page.goto(BASE + 'menu.html', { waitUntil: 'networkidle' });
+    await page.goto(BASE, { waitUntil: 'networkidle' });
     assert.equal(await page.locator('[data-product="hamburguesa-simple"] [data-price]').textContent(), '$4.500');
     await page.goto(BASE + '_herramientas/editor/', { waitUntil: 'networkidle' });
     assert.equal(await price.inputValue(), '7500', 'el borrador se recupera');
@@ -554,26 +546,149 @@ describe('editor local', () => {
   });
 });
 
+describe('carta en el inicio y categorías', () => {
+  test('menu.html lleva a la sección equivalente, sin bucles ni entrada extra en el historial', async () => {
+    const cases = [['menu.html', '#carta'], ['menu.html#papas', '#papas'], ['menu.html#menu-order', '#order'], ['menu.html#menu-main', '#carta'], ['menu.html#cat-burger', '#hamburguesas'], ['menu.html#no-existe', '#carta']];
+    for (const [from, hash] of cases) {
+      const { page, context, problems } = await open('');
+      await page.goto(BASE + from, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(400);
+      const url = new URL(page.url());
+      assert.equal(url.pathname, '/burguer_truck/', from);
+      assert.equal(url.hash, hash, from);
+      if (hash !== '#carta' || from === 'menu.html') {
+        const id = hash.slice(1);
+        const top = await page.evaluate((i) => document.getElementById(i).getBoundingClientRect().top, id);
+        assert.ok(top < 500, `${from}: la sección queda a la vista (top ${top})`);
+      }
+      // Atrás vuelve al inicio, no a menu.html (que redirigiría de nuevo).
+      await page.goBack();
+      assert.ok(!page.url().includes('menu.html'), `Atrás desde ${from}: ${page.url()}`);
+      assert.deepEqual(problems, [], from);
+      await context.close();
+    }
+  });
+
+  test('menu.html sin JavaScript ofrece un enlace de respaldo', async () => {
+    const { page, context } = await open('menu.html', { js: false });
+    // El meta refresh puede haber navegado ya; en cualquier caso existe un camino a la carta.
+    const url = page.url();
+    if (url.includes('menu.html')) assert.equal(await page.locator('a[href="./#carta"]').count(), 1);
+    else assert.ok(url.endsWith('/burguer_truck/#carta'), url);
+    await context.close();
+  });
+
+  test('las categorías salen del catálogo y quedan marcadas al tocar y al desplazarse', async () => {
+    const { page, context } = await open('', { width: 390, height: 844 });
+    const names = await page.locator('.catnav__link').allTextContents();
+    assert.deepEqual(names, liveCatalog().categorias.filter((c) => c.estado === 'activa').map((c) => c.nombre));
+    for (const name of names) {
+      await page.locator('.catnav__link', { hasText: name }).click();
+      await page.waitForTimeout(900);
+      const r = await page.evaluate((n) => {
+        const link = [...document.querySelectorAll('.catnav__link')].find((a) => a.textContent === n);
+        const sec = document.getElementById(link.hash.slice(1));
+        const nav = document.querySelector('.catnav').getBoundingClientRect();
+        const sc = document.querySelector('[data-catnav-scroller]').getBoundingClientRect();
+        const lr = link.getBoundingClientRect();
+        const first = sec.querySelector('.product').getBoundingClientRect();
+        return {
+          current: link.getAttribute('aria-current'),
+          titleTop: sec.querySelector('h2').getBoundingClientRect().top,
+          navBottom: nav.bottom,
+          firstProductVisible: first.top < innerHeight,
+          linkVisible: lr.left >= sc.left - 1 && lr.right <= sc.right + 1,
+          others: [...document.querySelectorAll('.catnav__link[aria-current]')].length,
+        };
+      }, name);
+      assert.equal(r.current, 'location', `${name} activa`);
+      assert.equal(r.others, 1, 'una sola activa');
+      assert.ok(r.titleTop >= r.navBottom - 1, `${name}: título tapado (${r.titleTop} < ${r.navBottom})`);
+      assert.ok(r.titleTop - r.navBottom < 80, `${name}: título lejos de la barra`);
+      assert.ok(r.firstProductVisible, `${name}: primer producto visible`);
+      assert.ok(r.linkVisible, `${name}: el enlace activo queda visible en la fila`);
+    }
+    // Al desplazarse a mano, la categoría activa acompaña.
+    await page.evaluate(() => document.getElementById('h-sandwiches').scrollIntoView({ block: 'start' }));
+    await page.mouse.wheel(0, 10);
+    await page.waitForTimeout(400);
+    assert.equal(await page.locator('.catnav__link[aria-current]').textContent(), 'Sándwiches');
+    await context.close();
+  });
+
+  test('a 320 px la fila avisa que hay más categorías y las flechas funcionan', async () => {
+    const { page, context } = await open('#carta', { width: 320, height: 640 });
+    await page.waitForTimeout(300);
+    const next = page.locator('[data-catnav-next]');
+    assert.ok(await next.isVisible(), 'flecha “Ver más categorías” visible');
+    assert.equal(await page.locator('[data-catnav]').getAttribute('data-more-right'), '');
+    await next.click();
+    await page.waitForTimeout(500);
+    assert.ok(await page.locator('[data-catnav-prev]').isVisible(), 'aparece la flecha para volver');
+    await noHorizontalScroll(page, 'catnav 320');
+    await context.close();
+  });
+
+  test('a 390 × 844 la carta aparece en la primera pantalla', async () => {
+    const { page, context } = await open('', { width: 390, height: 844 });
+    const top = await page.evaluate(() => document.querySelector('.catnav').getBoundingClientRect().top);
+    assert.ok(top < 700, `la barra de categorías empieza en ${top}px`);
+    await page.locator('.hero .btn--primary').click();
+    await page.waitForTimeout(800);
+    assert.ok(page.url().endsWith('#carta'));
+    const navTop = await page.evaluate(() => document.querySelector('.catnav').getBoundingClientRect().top);
+    const header = await page.evaluate(() => document.querySelector('.site-header').getBoundingClientRect().bottom);
+    assert.ok(Math.abs(navTop - header) <= 2, '“Ver menú” deja la barra de categorías pegada a la cabecera');
+    await context.close();
+  });
+
+  test('cada familia tiene su ilustración cargada y tarjetas compactas', async () => {
+    const { page, context, problems } = await open('', { width: 390, height: 844 });
+    await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 300) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); } });
+    await page.waitForTimeout(300);
+    const r = await page.evaluate(() => [...document.querySelectorAll('.product')].map((p) => {
+      const img = p.querySelector('.product__illus img');
+      return { id: p.dataset.product, ok: Boolean(img && img.complete && img.naturalWidth > 0), h: Math.round(p.getBoundingClientRect().height) };
+    }));
+    for (const x of r) {
+      assert.ok(x.ok, `${x.id}: ilustración cargada`);
+      assert.ok(x.h <= 300, `${x.id}: tarjeta compacta (${x.h}px)`);
+    }
+    assert.deepEqual(problems, []);
+    await context.close();
+  });
+
+  test('el contador de cada tarjeta refleja el pedido', async () => {
+    const { page, context } = await open('');
+    await addFromMenu(page, 'hamburguesa-simple', { qty: 2 });
+    await addFromMenu(page, 'empanadas-pollo', { variant: 'empanadas-pollo-6' });
+    await addFromMenu(page, 'empanadas-pollo', { variant: 'empanadas-pollo-12' });
+    assert.equal(await page.locator('[data-product="hamburguesa-simple"] [data-in-cart]').textContent(), 'En tu pedido: 2');
+    assert.equal(await page.locator('[data-product="empanadas-pollo"] [data-in-cart]').textContent(), 'En tu pedido: 2');
+    assert.ok(await page.locator('[data-product="lomito"] [data-in-cart]').isHidden());
+    await context.close();
+  });
+});
+
 describe('capturas', { skip: !SHOTS }, () => {
-  test('inicio, carta y pedido en escritorio y móvil', async () => {
+  test('inicio con carta y pedido en escritorio y móvil', async () => {
     for (const [w, h, tag] of [[1440, 900, 'escritorio'], [390, 844, 'movil']]) {
-      const { page, context } = await open('', { width: w, height: h, fixture: false });
+      const { page, context } = await open('', { width: w, height: h });
+      await page.screenshot({ path: `${SHOTS}/inicio-${tag}.jpg`, type: 'jpeg', quality: 72 });
       await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } window.scrollTo(0, 0); });
       await page.waitForTimeout(300);
-      await page.screenshot({ path: `${SHOTS}/inicio-${tag}.jpg`, type: 'jpeg', quality: 70, fullPage: true });
-      await page.goto(BASE + 'menu.html', { waitUntil: 'networkidle' });
-      await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } window.scrollTo(0, 0); });
-      await page.screenshot({ path: `${SHOTS}/menu-${tag}.jpg`, type: 'jpeg', quality: 70, fullPage: true });
-      await addFromMenu(page, 'empanadas-carne', { variant: 'empanadas-carne-12' });
+      await page.screenshot({ path: `${SHOTS}/inicio-completo-${tag}.jpg`, type: 'jpeg', quality: 65, fullPage: true });
+      await page.locator('.catnav__link', { hasText: 'Sándwiches' }).click();
+      await page.waitForTimeout(900);
+      await page.screenshot({ path: `${SHOTS}/carta-sandwiches-${tag}.jpg`, type: 'jpeg', quality: 72 });
+      await addFromMenu(page, 'lomito', { variant: 'lomito-con-papas' });
       await addFromMenu(page, 'milanesa-pollo');
-      await addFromMenu(page, 'papas-fritas');
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await page.screenshot({ path: `${SHOTS}/menu-con-pedido-${tag}.jpg`, type: 'jpeg', quality: 70 });
+      await page.locator('.catnav__link', { hasText: 'Empanadas' }).click();
+      await page.waitForTimeout(900);
+      await addFromMenu(page, 'empanadas-carne', { variant: 'empanadas-carne-12' });
+      await page.screenshot({ path: `${SHOTS}/carta-con-pedido-${tag}.jpg`, type: 'jpeg', quality: 72 });
       await openCart(page);
-      await page.screenshot({ path: `${SHOTS}/pedido-${tag}.jpg`, type: 'jpeg', quality: 70 });
-      await page.locator('.cart__body').evaluate((n) => n.scrollTo(0, n.scrollHeight));
-      await page.locator('.preview summary').click();
-      await page.screenshot({ path: `${SHOTS}/pedido-resumen-${tag}.jpg`, type: 'jpeg', quality: 70 });
+      await page.screenshot({ path: `${SHOTS}/pedido-${tag}.jpg`, type: 'jpeg', quality: 72 });
       await context.close();
     }
   });

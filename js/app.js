@@ -3,7 +3,7 @@
 // Los datos salen de js/data/datos.js (generado desde data/*.json), nunca del texto de la página.
 import {
   emptyCart, addItem, setQty, removeItem, computeTotals, availableModes,
-  findVariant, normalizeQty, countPacks, reconcile, MAX_QTY,
+  findVariant, countPacks, reconcile, MAX_QTY,
 } from './core/cart.js';
 import { formatARS } from './core/money.js';
 import { buildOrderMessage, buildWhatsAppUrl, validateCheckout } from './core/whatsapp.js';
@@ -118,6 +118,16 @@ function renderSummary() {
     const sum = $('[data-cart-bar-summary]');
     if (sum) sum.textContent = `${packsLabel(n)} · ${formatARS(t.subtotal)}`;
   }
+  // Cuánto de cada producto ya está en el pedido (todas sus opciones).
+  const byProduct = new Map();
+  for (const l of state.cart.lines) byProduct.set(l.productId, (byProduct.get(l.productId) || 0) + l.qty);
+  for (const card of $$('[data-product]')) {
+    const out = $('[data-in-cart]', card);
+    if (!out) continue;
+    const q = byProduct.get(card.dataset.product) || 0;
+    out.hidden = q === 0;
+    out.textContent = q ? `En tu pedido: ${q}` : '';
+  }
 }
 
 /* ---------------- Fichas de producto ---------------- */
@@ -130,61 +140,40 @@ function initProductCards() {
 function wireProduct(form) {
   const card = form.closest('[data-product]');
   const productId = card.dataset.product;
-  const qtyInput = $('.qty__input', form);
-  const priceEl = $('[data-price]', form);
-  const lineEl = $('[data-line]', form);
+  const priceEl = $('[data-price]', card);
   const addBtn = $('.product__add', form);
-  if (!qtyInput || !addBtn) return;
+  if (!addBtn) return;
+  const label = $('span', addBtn);
 
   const selectedVariantId = () => {
     const checked = $('input[name="variant"]:checked', form) || $('input[name="variant"][type="hidden"]', form);
     return checked ? checked.value : null;
   };
-  const currentQty = () => normalizeQty(qtyInput.value) || 1;
 
+  // El precio grande siempre es el de la opción elegida.
   function update() {
     const found = findVariant(CATALOGO, productId, selectedVariantId());
-    const q = currentQty();
-    qtyInput.value = String(q);
-    $$('[data-qty]', form).forEach((b) => {
-      const step = Number(b.dataset.qty);
-      b.disabled = (step < 0 && q <= 1) || (step > 0 && q >= MAX_QTY);
-    });
     if (!found) return;
     const { variant } = found;
     const ok = variant.precioEstado === 'confirmado' && variant.estado === 'disponible';
     priceEl.textContent = ok ? formatARS(variant.precio) : 'Precio a confirmar';
     addBtn.disabled = !ok;
-    const parts = [];
-    if (ok && q > 1) parts.push(`${q} × ${formatARS(variant.precio)} = ${formatARS(variant.precio * q)}`);
-    if (variant.unidades > 1) parts.push(`${variant.unidades * q} unidades`);
-    lineEl.textContent = parts.join(' · ');
   }
 
   form.addEventListener('change', update);
-  qtyInput.addEventListener('input', () => {
-    if (qtyInput.value === '') return;
-    const n = normalizeQty(qtyInput.value);
-    if (n === null) qtyInput.value = '1';
-  });
-  qtyInput.addEventListener('blur', update);
-  form.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-qty]');
-    if (!b) return;
-    qtyInput.value = String(Math.min(Math.max(currentQty() + Number(b.dataset.qty), 1), MAX_QTY));
-    update();
-  });
+  let resetTimer;
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const variantId = selectedVariantId();
-    const qty = currentQty();
-    const res = addItem(state.cart, CATALOGO, productId, variantId, qty);
+    const res = addItem(state.cart, CATALOGO, productId, variantId, 1);
     if (res.error && !res.added) {
-      const why = res.error === 'maximo' ? `Llegaste al máximo de ${MAX_QTY} por producto.`
+      const why = res.error === 'maximo' ? `Llegaste al máximo de ${MAX_QTY} por opción.`
         : res.error === 'agotado' ? 'Esta opción está agotada.'
         : 'No se pudo agregar esta opción.';
       announce(why);
-      lineEl.textContent = why;
+      const out = $('[data-in-cart]', card);
+      out.hidden = false;
+      out.textContent = why;
       return;
     }
     state.cart = res.cart;
@@ -192,16 +181,12 @@ function wireProduct(form) {
     persist();
     renderAll();
     const { product, variant } = findVariant(CATALOGO, productId, variantId);
-    const total = countPacks(state.cart);
-    const extra = res.error === 'maximo' ? ` Se agregaron ${res.added}: es el máximo por producto.` : '';
-    announce(`Agregaste ${res.added} × ${product.nombre}, ${variant.presentacion.toLowerCase()}. Tu pedido tiene ${packsLabel(total)}.${extra}`);
-    const label = addBtn.textContent;
-    addBtn.textContent = 'Agregado';
-    addBtn.prepend(svgIcon('check'));
+    const opt = product.variantes.length > 1 ? `, ${variant.presentacion.toLowerCase()}` : '';
+    announce(`Agregaste ${product.nombre}${opt}. Tu pedido tiene ${packsLabel(countPacks(state.cart))}.`);
+    label.textContent = 'Agregado';
     addBtn.classList.add('is-done');
-    setTimeout(() => { addBtn.textContent = label; addBtn.classList.remove('is-done'); }, 1400);
-    qtyInput.value = '1';
-    update();
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => { label.textContent = 'Agregar'; addBtn.classList.remove('is-done'); }, 1200);
   });
   update();
 }
@@ -507,25 +492,105 @@ function initNav() {
   matchMedia('(min-width: 52.5625rem)').addEventListener('change', (e) => { if (e.matches) set(false); });
 }
 
-function initCategoryHighlight() {
-  const links = $$('.catnav__link');
-  if (!links.length || !('IntersectionObserver' in window)) return;
-  const byId = new Map(links.map((a) => [a.hash.slice(1), a]));
-  const io = new IntersectionObserver((entries) => {
-    for (const en of entries) {
-      if (!en.isIntersecting) continue;
-      links.forEach((a) => a.removeAttribute('aria-current'));
-      byId.get(en.target.id)?.setAttribute('aria-current', 'true');
+/**
+ * Barra de categorías: navegación por anclas (no pestañas).
+ * - Marca la categoría visible con aria-current="location" al tocar o al desplazarse.
+ * - Mantiene la categoría activa dentro de la fila visible.
+ * - Si la fila desborda, muestra degradés y flechas accesibles.
+ */
+function initCatnav() {
+  const nav = $('[data-catnav]');
+  const scroller = $('[data-catnav-scroller]');
+  if (!nav || !scroller) return;
+  const links = $$('.catnav__link', nav);
+  const sections = links.map((a) => document.getElementById(a.hash.slice(1))).filter(Boolean);
+  const prev = $('[data-catnav-prev]', nav);
+  const next = $('[data-catnav-next]', nav);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const behavior = () => (reduce.matches ? 'auto' : 'smooth');
+  let lockUntil = 0;
+  let current = null;
+
+  function keepVisible(link) {
+    const s = scroller.getBoundingClientRect();
+    const r = link.getBoundingClientRect();
+    const pad = 48; // espacio para las flechas y el degradé
+    if (r.left < s.left + pad || r.right > s.right - pad) {
+      scroller.scrollTo({ left: scroller.scrollLeft + (r.left - s.left) - pad, behavior: behavior() });
     }
-  }, { rootMargin: '-40% 0px -55% 0px' });
-  for (const id of byId.keys()) { const s = document.getElementById(id); if (s) io.observe(s); }
+  }
+
+  function setActive(link) {
+    if (link === current) return;
+    current = link;
+    for (const a of links) {
+      if (a === link) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
+    }
+    if (link) keepVisible(link);
+  }
+
+  function spy() {
+    if (Date.now() < lockUntil) return;
+    const offset = nav.getBoundingClientRect().bottom + 24;
+    let active = null;
+    for (let i = 0; i < sections.length; i++) {
+      if (sections[i].getBoundingClientRect().top <= offset) active = links[i];
+    }
+    // Al final de la carta, si la última categoría es corta, igual queda marcada.
+    const last = sections[sections.length - 1];
+    if (last && last.getBoundingClientRect().bottom < offset) active = null;
+    setActive(active);
+  }
+
+  function updateArrows() {
+    const max = scroller.scrollWidth - scroller.clientWidth;
+    const hasPrev = scroller.scrollLeft > 4;
+    const hasNext = scroller.scrollLeft < max - 4;
+    prev.hidden = !hasPrev;
+    next.hidden = !hasNext;
+    nav.toggleAttribute('data-more-left', hasPrev);
+    nav.toggleAttribute('data-more-right', hasNext);
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; spy(); });
+  }, { passive: true });
+  scroller.addEventListener('scroll', updateArrows, { passive: true });
+  window.addEventListener('resize', updateArrows);
+  prev.addEventListener('click', () => scroller.scrollBy({ left: -scroller.clientWidth * 0.7, behavior: behavior() }));
+  next.addEventListener('click', () => scroller.scrollBy({ left: scroller.clientWidth * 0.7, behavior: behavior() }));
+
+  nav.addEventListener('click', (e) => {
+    const link = e.target.closest('.catnav__link');
+    if (!link) return;
+    // Marcar enseguida; el desplazamiento suave no debe “saltar” a la categoría anterior.
+    setActive(link);
+    lockUntil = Date.now() + 900;
+  });
+  window.addEventListener('scrollend', () => { lockUntil = 0; spy(); });
+
+  updateArrows();
+  spy();
+}
+
+/** Si la URL trae un ancla que ya no existe (enlaces viejos), se lleva a la carta. */
+function fixUnknownHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id || id === 'pedido' || document.getElementById(id)) return;
+  history.replaceState(null, '', '#carta');
+  document.getElementById('carta')?.scrollIntoView();
 }
 
 /* ---------------- Inicio ---------------- */
 function init() {
   safely('restaurar', restore);
   safely('navegación', initNav);
-  safely('categorías', initCategoryHighlight);
+  safely('ancla', fixUnknownHash);
+  safely('categorías', initCatnav);
   safely('fichas', initProductCards);
   safely('diálogo', initDialog);
   safely('resumen', renderAll);

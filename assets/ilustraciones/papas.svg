@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128" role="img" aria-label="Ilustración de papas fritas en caja">
+  <defs>
+    <radialGradient id="sombra" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#141414" stop-opacity=".35"/><stop offset="1" stop-color="#141414" stop-opacity="0"/></radialGradient>
+    <linearGradient id="papa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset=".7" stop-color="#F3B232"/><stop offset="1" stop-color="#D98E1B"/></linearGradient>
+    <linearGradient id="cajaFrente" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DDB07C"/><stop offset="1" stop-color="#B07A44"/></linearGradient>
+    <linearGradient id="cajaFondo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9E6A38"/><stop offset="1" stop-color="#7E5229"/></linearGradient>
+  </defs>
+  <ellipse cx="80" cy="116" rx="54" ry="8" fill="url(#sombra)"/>
+  <path d="M36 58l10-16h68l10 16z" fill="url(#cajaFondo)"/>
+  <g fill="url(#papa)" stroke="#C98516" stroke-width=".8">
+    <rect x="48" y="22" width="9" height="46" rx="2.5" transform="rotate(-12 52 45)"/>
+    <rect x="60" y="14" width="9" height="54" rx="2.5" transform="rotate(-5 64 41)"/>
+    <rect x="72" y="18" width="9" height="50" rx="2.5" transform="rotate(4 76 43)"/>
+    <rect x="84" y="12" width="9" height="56" rx="2.5" transform="rotate(-2 88 40)"/>
+    <rect x="96" y="20" width="9" height="48" rx="2.5" transform="rotate(10 100 44)"/>
+    <rect x="66" y="28" width="9" height="40" rx="2.5" transform="rotate(16 70 48)"/>
+    <rect x="104" y="30" width="9" height="38" rx="2.5" transform="rotate(18 108 49)"/>
+  </g>
+  <path d="M34 58h92l-10 54H44z" fill="url(#cajaFrente)"/>
+  <path d="M34 58h92l-2 8H36z" fill="#E8C292"/>
+  <rect x="40" y="76" width="79" height="12" fill="#E60012"/>
+  <path d="M40 76h79" stroke="#FF5A66" stroke-width="1.5" opacity=".6"/>
+  <path d="M40 64l8 46" stroke="#F5D6AE" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+</svg>

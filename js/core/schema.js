@@ -67,6 +67,8 @@ export function validateCatalog(data) {
     if (!catIds.has(p.categoria)) err(`${where}: categoría inexistente "${p.categoria}".`);
     if (!isText(p.nombre, 80)) err(`${where}: nombre obligatorio (máx. 80).`);
     if (!optText(p.descripcion, 200)) err(`${where}: descripción demasiado larga (máx. 200).`);
+    // Ilustración opcional (assets/ilustraciones/<id>.svg).
+    if (p.ilustracion !== undefined && p.ilustracion !== null && !ID_RE.test(p.ilustracion)) err(`${where}: ilustración inválida.`);
     // Imagen opcional: si hay imagen, el texto alternativo es obligatorio.
     if (p.imagen !== undefined && p.imagen !== null) {
       if (!ID_RE.test(p.imagen)) err(`${where}: imagen inválida.`);

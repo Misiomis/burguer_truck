@@ -5,7 +5,7 @@ import {
   normalizeQty, countPacks, availableModes, MAX_QTY,
 } from '../../js/core/cart.js';
 import { formatARS } from '../../js/core/money.js';
-import { catalog, business, businessConfirmedFixture } from './fixtures.js';
+import { catalog, business, businessConfirmedFixture, liveCatalog, liveBusiness } from './fixtures.js';
 
 const add = (cart, cat, p, v, q = 1) => {
   const r = addItem(cart, cat, p, v, q);
@@ -235,5 +235,58 @@ describe('reconciliación de un pedido guardado', () => {
     const { cart } = reconcile(stored, cat);
     assert.deepEqual(cart.lines, [{ productId: 'papas-fritas', variantId: 'papas-mediana-caja', qty: 2 }]);
     assert.deepEqual(reconcile(undefined, cat).cart, emptyCart());
+  });
+});
+
+describe('casos de cálculo con la carta vigente (data/catalogo.json)', () => {
+  const cat = liveCatalog();
+  const biz = liveBusiness();
+  const add = (cart, p, v, q = 1) => {
+    const r = addItem(cart, cat, p, v, q);
+    assert.equal(r.error, null, `${p}/${v}`);
+    return r.cart;
+  };
+
+  test('2 medias docenas de carne: $13.000, 12 unidades', () => {
+    const t = computeTotals(add(emptyCart(), 'empanadas-carne', 'empanadas-carne-6', 2), cat, biz);
+    assert.equal(t.subtotal, 13000);
+    assert.equal(t.lines[0].units, 12);
+  });
+
+  test('1 docena de carne: $12.000, 12 unidades (no es el doble de la media)', () => {
+    const t = computeTotals(add(emptyCart(), 'empanadas-carne', 'empanadas-carne-12'), cat, biz);
+    assert.equal(t.subtotal, 12000);
+    assert.equal(t.lines[0].units, 12);
+  });
+
+  test('1 hamburguesa simple + 1 milanesa de pollo + 1 papas en caja: $20.500 antes del envío', () => {
+    let c = add(emptyCart(), 'hamburguesa-simple', 'hamburguesa-simple');
+    c = add(c, 'milanesa-pollo', 'milanesa-pollo');
+    c = add(c, 'papas-fritas', 'papas-mediana-caja');
+    const t = computeTotals(c, cat, biz, { mode: 'retiro', zoneId: null });
+    assert.equal(t.subtotal, 20500);
+    assert.equal(t.total, 20500, 'retiro: total = subtotal');
+    const envio = computeTotals(c, cat, biz, { mode: 'envio', zoneId: 'zona-centro' });
+    assert.equal(envio.total, 21500, 'envío a Zona Centro ($1.000)');
+  });
+
+  test('una media docena de cada sabor: $13.000 en dos líneas', () => {
+    let c = add(emptyCart(), 'empanadas-carne', 'empanadas-carne-6');
+    c = add(c, 'empanadas-pollo', 'empanadas-pollo-6');
+    const t = computeTotals(c, cat, biz);
+    assert.equal(t.subtotal, 13000);
+    assert.equal(t.lines.length, 2);
+  });
+
+  test('un precio guardado viejo se reconcilia con el vigente', () => {
+    const { cart, notices } = reconcile({ lines: [{ productId: 'empanadas-carne', variantId: 'empanadas-carne-6', qty: 2, seenPrice: 7000 }] }, cat);
+    assert.equal(computeTotals(cart, cat, biz).subtotal, 13000);
+    assert.equal(notices[0].type, 'price');
+  });
+
+  test('las 15 zonas de envío y Barrio 80 Viviendas a cotizar se mantienen', () => {
+    assert.equal(biz.modalidades.envio.zonas.length, 15);
+    const z80 = biz.modalidades.envio.zonas.find((z) => z.id === 'barrio-80-viviendas');
+    assert.equal(z80.tarifa, null);
   });
 });

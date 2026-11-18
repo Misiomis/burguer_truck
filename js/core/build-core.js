@@ -3,13 +3,14 @@
 // exactamente los mismos archivos que `npm run build`.
 import { validateCatalog, validateBusiness } from './schema.js';
 import {
-  renderMenu, renderCategoryNav, renderHomeCategories, renderBusinessInfo,
+  renderMenu, renderCategoryNav, renderBusinessInfo,
   renderFooterContact, renderJsonLd, hasPendingInfo, esc,
 } from './render.js';
 import { SPRITE } from './icons.js';
 import { header, footer, cartDialog, ORDER_BAR, LIVE_REGION } from './layout.js';
 
-export const PAGES = ['index.html', 'menu.html'];
+// La carta vive en index.html; menu.html es una página fija de compatibilidad (redirige a #carta).
+export const PAGES = ['index.html'];
 export const DATA_FILES = { catalog: 'data/catalogo.json', business: 'data/negocio.json' };
 
 /** Formato canónico de los JSON de data/ (el mismo que exporta el editor). */
@@ -61,7 +62,6 @@ export function buildOutputs({ catalog, business }) {
     'live-region': LIVE_REGION,
     'barra-pedido': ORDER_BAR,
     jsonld: renderJsonLd(catalog, business, { image: shareImage }),
-    'home-categorias': renderHomeCategories(catalog),
     'menu-nav': renderCategoryNav(catalog),
     'menu-carta': renderMenu(catalog),
     'menu-fecha': `<p class="menu-intro__meta">Precios en pesos argentinos. Vigentes desde el ${esc(formatDate(catalog.actualizado))}.</p>`,
@@ -69,7 +69,7 @@ export function buildOutputs({ catalog, business }) {
     'footer-contacto': contact,
   };
 
-  const urls = ['', 'menu.html'];
+  const urls = [''];
   const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + urls.map((u) => `  <url><loc>${business.sitio.url}${u}</loc><lastmod>${catalog.actualizado}</lastmod></url>`).join('\n')
     + '\n</urlset>\n';
@@ -97,7 +97,7 @@ export function applyBlocks(html, blocks, file) {
 
 /**
  * Todos los archivos del sitio que dependen de los datos.
- * pages: { 'index.html': htmlActual, 'menu.html': htmlActual }
+ * pages: { 'index.html': htmlActual }
  * Devuelve { files: { ruta: contenido }, version }.
  */
 export function buildSiteFiles({ catalog, business, pages }) {

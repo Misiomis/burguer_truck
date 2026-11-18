@@ -2,18 +2,15 @@
 // Se insertan por build en cada página para no duplicar marcado a mano.
 import { icon, esc } from './render.js';
 
+// La carta vive en el inicio: la navegación son anclas de la misma página.
 const NAV = [
-  { href: 'menu.html', label: 'Menú', page: 'menu' },
-  { href: 'index.html#about', label: 'Nuestra historia' },
-  { href: 'index.html#location', label: 'Contacto' },
+  { href: '#carta', label: 'Menú' },
+  { href: '#about', label: 'Nuestra historia' },
+  { href: '#location', label: 'Contacto' },
 ];
 
 export function header(page, biz) {
-  const links = NAV.map((l) => {
-    const href = page === 'index' && l.href.startsWith('index.html#') ? l.href.slice('index.html'.length) : l.href;
-    const current = l.page === page ? ' aria-current="page"' : '';
-    return `<li><a class="site-nav__link" href="${href}"${current}>${l.label}</a></li>`;
-  }).join('');
+  const links = NAV.map((l) => `<li><a class="site-nav__link" href="${l.href}">${l.label}</a></li>`).join('');
   return `<header class="site-header" id="navbar">
   <div class="container site-header__inner">
     <a class="brand" href="./"${page === 'index' ? ' aria-current="page"' : ''}><span class="brand__name">${esc(biz.nombre)}</span><span class="brand__before">Antes ${esc(biz.nombreHistorico)}</span></a>
@@ -27,7 +24,7 @@ export function header(page, biz) {
 }
 
 export function footer(page, contactHtml) {
-  const p = page === 'index' ? '' : 'index.html';
+  const p = page === 'index' ? '' : './';
   return `<footer class="site-footer">
   <div class="container footer__grid">
     <div class="footer__brand">
@@ -40,7 +37,7 @@ export function footer(page, contactHtml) {
     </div>
     <nav aria-labelledby="f-nav"><h2 class="footer__title" id="f-nav">Secciones</h2>
       <ul class="plain footer__list" role="list">
-        <li><a href="menu.html">Menú</a></li>
+        <li><a href="${p}#carta">Menú</a></li>
         <li><a href="${p}#about">Nuestra historia</a></li>
         <li><a href="${p}#location">Contacto</a></li>
         <li><a href="${p}#order">Cómo pedir</a></li>
@@ -59,7 +56,7 @@ export const ORDER_BAR = `<div class="order-bar js-only" data-order-bar hidden>
 export const LIVE_REGION = `<div class="visually-hidden" role="status" aria-live="polite" aria-atomic="true" data-announcer></div>`;
 
 export function cartDialog(page) {
-  const menuHref = page === 'menu' ? '#menu-main' : 'menu.html';
+  const menuHref = '#carta';
   return `<dialog class="cart" id="pedido" aria-labelledby="cart-title" data-cart>
   <div class="cart__panel">
     <header class="cart__head">

@@ -119,3 +119,13 @@ Detalle completo en `assets/img/manifest.json`. Originales en `_originales/` (no
 | Pizzas sin compra | Sí, no se muestran. Lomito ya está a la venta por decisión del propietario |
 | Pedido con producto, variante, cantidad y total antes de enviar | Sí, con vista del mensaje |
 | Voz con voseo, sin claims no confirmados | Sí |
+
+## 9. Carta digital en el inicio (18/11/2026)
+
+- La carta completa vive en `index.html#carta`, con barra de categorías fija (anclas, `aria-current="location"`, categoría activa al tocar y al desplazarse, degradés y flechas cuando la fila desborda).
+- `menu.html` es una página de compatibilidad: `location.replace` a la sección equivalente (`#papas`, `#menu-order` → `#order`, etc.), sin bucles ni entrada extra en el historial; con `noscript` + meta refresh y enlace de respaldo.
+- Tarjetas compactas con ilustraciones SVG propias (`assets/ilustraciones/`), un toque en “Agregar” suma una unidad; las variantes muestran su precio antes de agregar; contador “En tu pedido: N” por producto.
+- Portada más baja: a 390 × 844 la barra de categorías aparece en la primera pantalla.
+- Sin cambios en precios, productos, variantes, contacto, horarios, modalidades ni zonas.
+- Pruebas: 61 unitarias y 37 de interfaz (320, 360, 390, 430, 768, 1024 y 1440 px, emulados en Chrome), más 5 del panel. Lighthouse 12.6 móvil simulado, 3 corridas: rendimiento 99, accesibilidad/buenas prácticas/SEO 100, LCP 2,2 s, CLS ≤ 0,006, 174 KB.
+- Revisión anterior para revertir: commit `8704f7f`.

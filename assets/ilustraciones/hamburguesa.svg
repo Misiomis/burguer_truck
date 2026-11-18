@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128" role="img" aria-label="Ilustración de una hamburguesa">
+  <defs>
+    <radialGradient id="sombra" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#141414" stop-opacity=".35"/><stop offset="1" stop-color="#141414" stop-opacity="0"/></radialGradient>
+    <radialGradient id="panArriba" cx="35%" cy="25%" r="80%"><stop offset="0" stop-color="#F8CD86"/><stop offset=".45" stop-color="#E09A45"/><stop offset="1" stop-color="#B0621E"/></radialGradient>
+    <linearGradient id="panAbajo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDB06A"/><stop offset="1" stop-color="#B86C26"/></linearGradient>
+    <linearGradient id="carne" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7B4329"/><stop offset=".6" stop-color="#4E2516"/><stop offset="1" stop-color="#3A1A0F"/></linearGradient>
+    <linearGradient id="queso" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD25A"/><stop offset="1" stop-color="#F0A21D"/></linearGradient>
+    <linearGradient id="lechuga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A6DB62"/><stop offset="1" stop-color="#4E9A2A"/></linearGradient>
+  </defs>
+  <ellipse cx="80" cy="117" rx="62" ry="8" fill="url(#sombra)"/>
+  <path d="M28 98h104a8 8 0 0 1 8 8v0a10 10 0 0 1-10 10H30a10 10 0 0 1-10-10v0a8 8 0 0 1 8-8z" fill="url(#panAbajo)"/>
+  <path d="M32 102h96" stroke="#FFF2D9" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  <rect x="20" y="78" width="120" height="22" rx="11" fill="url(#carne)"/>
+  <g fill="#9A5A3A" opacity=".55"><circle cx="40" cy="91" r="1.6"/><circle cx="58" cy="94" r="1.4"/><circle cx="78" cy="90" r="1.6"/><circle cx="98" cy="94" r="1.4"/><circle cx="116" cy="90" r="1.6"/></g>
+  <path d="M22 74h116v6l-6 2-6 9-6-8-12 3-6 10-7-10-14 3-6 9-6-9-14 2-6 8-6-9-11 1z" fill="url(#queso)"/>
+  <path d="M16 70c5-6 9 1 14-3s9 3 14-1 9 3 14-1 9 3 14-1 9 3 14-1 9 3 14-1 9 3 14-1 9 2 14 0 6 4 6 6-4 6-10 6H20c-4 0-6-3-4-5z" fill="url(#lechuga)"/>
+  <path d="M24 62C24 34 50 18 80 18s56 16 56 44a4 4 0 0 1-4 4H28a4 4 0 0 1-4-4z" fill="url(#panArriba)"/>
+  <ellipse cx="56" cy="34" rx="18" ry="8" fill="#FFF6E4" opacity=".35" transform="rotate(-18 56 34)"/>
+  <g fill="#FFF3D6"><ellipse cx="62" cy="30" rx="3" ry="1.6" transform="rotate(-20 62 30)"/><ellipse cx="80" cy="26" rx="3" ry="1.6" transform="rotate(10 80 26)"/><ellipse cx="98" cy="32" rx="3" ry="1.6" transform="rotate(25 98 32)"/><ellipse cx="70" cy="42" rx="3" ry="1.6" transform="rotate(-5 70 42)"/><ellipse cx="90" cy="44" rx="3" ry="1.6" transform="rotate(15 90 44)"/><ellipse cx="112" cy="46" rx="3" ry="1.6" transform="rotate(30 112 46)"/><ellipse cx="48" cy="48" rx="3" ry="1.6" transform="rotate(-30 48 48)"/></g>
+</svg>

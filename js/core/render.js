@@ -35,14 +35,6 @@ function priceText(v) {
   return v.precioEstado === 'confirmado' && Number.isSafeInteger(v.precio) ? formatARS(v.precio) : 'Precio a confirmar';
 }
 
-function variantMeta(v) {
-  const parts = [];
-  if (v.unidades > 1) parts.push(`${v.unidades} unidades`);
-  parts.push(priceText(v));
-  if (v.estado === 'agotado') parts.push('Agotado');
-  return parts.join(' · ');
-}
-
 function productState(p) {
   const vis = p.variantes.filter((v) => v.estado !== 'oculto');
   if (p.estado === 'agotado' || vis.every((v) => v.estado === 'agotado')) return 'agotado';
@@ -50,7 +42,17 @@ function productState(p) {
   return 'disponible';
 }
 
-/** Ficha de producto de la carta. */
+/** Ilustración del producto (decorativa: el nombre está al lado). */
+function illustration(p, base, eager) {
+  if (!p.ilustracion) return '<div class="product__illus product__illus--vacia" aria-hidden="true"></div>';
+  return `<div class="product__illus"><img src="${base}assets/ilustraciones/${esc(p.ilustracion)}.svg" width="160" height="128" alt="" decoding="async"${eager ? '' : ' loading="lazy"'}></div>`;
+}
+
+/**
+ * Ficha de producto compacta para la carta.
+ * Productos simples: un botón “Agregar” (la cantidad se ajusta en el pedido).
+ * Con variantes: se elige la opción (con su precio visible) y después “Agregar”.
+ */
 export function renderProductCard(p, { base = '', eager = false } = {}) {
   const vis = p.variantes.filter((v) => v.estado !== 'oculto');
   const state = productState(p);
@@ -58,16 +60,17 @@ export function renderProductCard(p, { base = '', eager = false } = {}) {
   const nameId = `n-${p.id}`;
   let options;
   if (vis.length > 1) {
-    options = `<fieldset class="choice"><legend class="choice__legend">Presentación</legend><div class="choice__opts">`
+    options = `<fieldset class="choice"><legend class="visually-hidden">Opciones de ${esc(p.nombre.toLowerCase())}</legend><div class="choice__opts">`
       + vis.map((v) => {
         const disabled = v.estado === 'agotado' || v.precioEstado !== 'confirmado';
         return `<label class="choice__opt"><input type="radio" name="variant" value="${esc(v.id)}"${v === def ? ' checked' : ''}${disabled ? ' disabled' : ''}>`
-          + `<span class="choice__label">${esc(v.presentacion)}</span><span class="choice__meta">${esc(variantMeta(v))}</span></label>`;
+          + `<span class="choice__label">${esc(v.presentacion)}${v.unidades > 1 ? ` <span class="choice__units">(${v.unidades} u.)</span>` : ''}</span>`
+          + `<span class="choice__meta">${esc(v.estado === 'agotado' ? 'Agotado' : priceText(v))}</span></label>`;
       }).join('')
       + `</div></fieldset>`;
   } else {
-    options = `<p class="product__presentation">${esc(def.presentacion)}${def.unidades > 1 ? ` · ${def.unidades} unidades` : ''}</p>`
-      + `<input type="hidden" name="variant" value="${esc(def.id)}">`;
+    const pres = def.presentacion !== 'Unidad' ? `<p class="product__presentation">${esc(def.presentacion)}${def.unidades > 1 ? ` · ${def.unidades} unidades` : ''}</p>` : '';
+    options = pres + `<input type="hidden" name="variant" value="${esc(def.id)}">`;
   }
 
   const status = state === 'agotado' ? '<p class="tag tag--muted">Agotado</p>'
@@ -75,95 +78,43 @@ export function renderProductCard(p, { base = '', eager = false } = {}) {
 
   const buy = state === 'disponible'
     ? `<div class="product__buy js-only">`
-      + `<div class="qty" role="group" aria-label="Cantidad de ${esc(p.nombre.toLowerCase())}">`
-      + `<button type="button" class="qty__btn" data-qty="-1" aria-label="Restar uno">${icon('minus')}</button>`
-      + `<input class="qty__input" type="number" name="qty" inputmode="numeric" min="1" max="20" value="1" aria-label="Cantidad">`
-      + `<button type="button" class="qty__btn" data-qty="1" aria-label="Sumar uno">${icon('plus')}</button>`
+      + `<button type="submit" class="btn btn--primary product__add">${icon('plus')}<span>Agregar</span><span class="visually-hidden"> ${esc(p.nombre.toLowerCase())}</span></button>`
+      + `<p class="product__incart" data-in-cart hidden></p>`
       + `</div>`
-      + `<button type="submit" class="btn btn--primary product__add">Agregar al pedido</button>`
-      + `</div>`
-      + `<p class="product__line" data-line aria-hidden="true"></p>`
     : '';
 
-  return `<article class="product${p.imagen ? '' : ' product--sin-foto'}" id="p-${esc(p.id)}" data-product="${esc(p.id)}" data-state="${state}" aria-labelledby="${nameId}">`
-    + (p.imagen ? picture(p.imagen, { base, alt: p.alt, sizes: '(min-width: 1100px) 360px, (min-width: 700px) 45vw, 100vw', cls: 'product__media', loading: eager ? 'eager' : 'lazy' }) : '')
-    + `<div class="product__body">`
+  return `<article class="product" id="p-${esc(p.id)}" data-product="${esc(p.id)}" data-state="${state}" aria-labelledby="${nameId}">`
+    + `<div class="product__top">`
+    + illustration(p, base, eager)
+    + `<div class="product__info">`
     + `<h3 class="product__name" id="${nameId}">${esc(p.nombre)}</h3>`
     + (p.descripcion ? `<p class="product__desc">${esc(p.descripcion)}</p>` : '')
     + status
+    + `<p class="product__price"><span class="visually-hidden">Precio: </span><span data-price>${esc(priceText(def))}</span></p>`
+    + `</div></div>`
     + `<form class="product__form" data-product-form novalidate>`
     + options
-    + `<p class="product__price"><span class="visually-hidden">Precio: </span><span data-price>${esc(priceText(def))}</span></p>`
     + buy
-    + `</form></div></article>`;
+    + `</form></article>`;
 }
 
-/** Carta completa (menu.html). */
+/** Carta completa: una sección por categoría activa, en orden. */
 export function renderMenu(catalog, { base = '' } = {}) {
   return activeCategories(catalog).map((c, ci) => {
     const items = visibleProducts(catalog, c.id);
-    const first = ci === 0;
     return `<section class="menu-cat" id="${esc(c.id)}" aria-labelledby="h-${esc(c.id)}">`
       + `<header class="menu-cat__head"><h2 class="menu-cat__title" id="h-${esc(c.id)}">${esc(c.nombre)}</h2>`
       + (c.descripcion ? `<p class="menu-cat__desc">${esc(c.descripcion)}</p>` : '')
       + `</header><div class="menu-grid">`
-      + items.map((p, i) => renderProductCard(p, { base, eager: first && i < 2 })).join('')
+      + items.map((p) => renderProductCard(p, { base, eager: ci === 0 })).join('')
       + `</div></section>`;
   }).join('\n');
 }
 
+/** Enlaces de categorías (navegación por anclas, no pestañas). */
 export function renderCategoryNav(catalog) {
-  return `<ul class="catnav__list" role="list">` + activeCategories(catalog)
+  return `<ul class="catnav__list" role="list" data-catnav-list>` + activeCategories(catalog)
     .map((c) => `<li><a class="catnav__link" href="#${esc(c.id)}">${esc(c.nombre)}</a></li>`).join('') + `</ul>`;
-}
-
-/**
- * Resumen de precios para la portada.
- * Por presentación cuando todos los productos comparten las mismas opciones (empanadas, papas);
- * si no, una fila por producto con su precio (o "desde" si tiene varias opciones).
- */
-export function categoryPriceSummary(catalog, catId) {
-  const products = visibleProducts(catalog, catId);
-  const sellable = (p) => p.variantes.filter((v) => v.estado === 'disponible' && v.precioEstado === 'confirmado');
-  const sets = products.map((p) => sellable(p).map((v) => v.presentacion).sort().join('|'));
-  const byPresentation = products.some((p) => sellable(p).length > 1) && sets.every((s) => s === sets[0]);
-  if (!byPresentation) {
-    return products.filter((p) => sellable(p).length).map((p) => {
-      const list = sellable(p).map((v) => v.precio).sort((a, b) => a - b);
-      return { presentacion: p.nombre, unidades: 1, precio: list[0], desde: list.length > 1 };
-    });
-  }
-  const byPres = new Map();
-  for (const p of products) {
-    for (const v of p.variantes) {
-      if (v.estado !== 'disponible' || v.precioEstado !== 'confirmado') continue;
-      const key = v.presentacion;
-      if (!byPres.has(key)) byPres.set(key, { units: v.unidades, prices: new Set() });
-      byPres.get(key).prices.add(v.precio);
-    }
-  }
-  return [...byPres.entries()].map(([pres, { units, prices }]) => {
-    const list = [...prices].sort((a, b) => a - b);
-    return { presentacion: pres, unidades: units, precio: list[0], desde: list.length > 1 };
-  });
-}
-
-/** Fichas de la portada (index.html): una por categoría activa. */
-export function renderHomeCategories(catalog, { base = '' } = {}) {
-  return activeCategories(catalog).map((c, i) => {
-    const first = visibleProducts(catalog, c.id).find((p) => p.imagen);
-    const rows = categoryPriceSummary(catalog, c.id);
-    const prices = rows.length
-      ? `<dl class="cat-card__prices">` + rows.map((r) => `<div><dt>${esc(r.presentacion)}${r.unidades > 1 ? ` <span class="muted">(${r.unidades} u.)</span>` : ''}</dt><dd>${r.desde ? 'desde ' : ''}${esc(formatARS(r.precio))}</dd></div>`).join('') + `</dl>`
-      : `<p class="muted">Precio a confirmar</p>`;
-    return `<article class="cat-card${first ? '' : ' cat-card--sin-foto'}">`
-      + (!first ? '' : picture(first.imagen, { base, alt: first.alt, sizes: '(min-width: 1100px) 360px, (min-width: 700px) 30vw, 100vw', cls: 'cat-card__media', loading: i === 0 ? 'eager' : 'lazy' }))
-      + `<div class="cat-card__body"><h3 class="cat-card__title">${esc(c.nombre)}</h3>`
-      + (c.descripcion ? `<p class="cat-card__desc">${esc(c.descripcion)}</p>` : '')
-      + prices
-      + `<a class="btn btn--ghost cat-card__cta" href="${base}menu.html#${esc(c.id)}">Elegir opciones<span class="visually-hidden"> de ${esc(c.nombre.toLowerCase())}</span>${icon('arrow')}</a>`
-      + `</div></article>`;
-  }).join('\n');
 }
 
 const PENDING = '<span class="pending">A confirmar</span>';
@@ -229,7 +180,7 @@ export function renderJsonLd(catalog, biz, { image } = {}) {
     hasMenu: {
       '@type': 'Menu',
       name: 'Menú inicial',
-      url: site + 'menu.html',
+      url: site + '#carta',
       inLanguage: 'es-AR',
       hasMenuSection: activeCategories(catalog).map((c) => ({
         '@type': 'MenuSection',

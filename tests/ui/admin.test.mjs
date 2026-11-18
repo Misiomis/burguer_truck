@@ -113,7 +113,7 @@ describe('panel de precios', () => {
     const expected = buildSiteFiles({ catalog, business, pages: Object.fromEntries(PAGES.map((p) => [p, read(p)])) });
     assert.deepEqual(Object.keys(files).sort(), Object.keys(expected.files).sort());
     for (const [path, content] of Object.entries(expected.files)) assert.equal(files[path], content, path);
-    assert.ok(files['menu.html'].includes('$5.000'));
+    assert.ok(files['index.html'].includes('$5.000'));
     assert.equal(posted.tree.base_tree, 'tree1');
     assert.deepEqual(posted.commit.parents, ['base1']);
     assert.match(posted.commit.message, /Precios actualizados desde el panel \(3 cambios\)/);

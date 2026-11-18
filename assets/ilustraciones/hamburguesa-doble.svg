@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128" role="img" aria-label="Ilustración de una hamburguesa doble">
+  <defs>
+    <radialGradient id="sombra" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#141414" stop-opacity=".35"/><stop offset="1" stop-color="#141414" stop-opacity="0"/></radialGradient>
+    <radialGradient id="panArriba" cx="35%" cy="25%" r="80%"><stop offset="0" stop-color="#F8CD86"/><stop offset=".45" stop-color="#E09A45"/><stop offset="1" stop-color="#B0621E"/></radialGradient>
+    <linearGradient id="panAbajo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDB06A"/><stop offset="1" stop-color="#B86C26"/></linearGradient>
+    <linearGradient id="carne" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7B4329"/><stop offset=".6" stop-color="#4E2516"/><stop offset="1" stop-color="#3A1A0F"/></linearGradient>
+    <linearGradient id="queso" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD25A"/><stop offset="1" stop-color="#F0A21D"/></linearGradient>
+    <linearGradient id="lechuga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A6DB62"/><stop offset="1" stop-color="#4E9A2A"/></linearGradient>
+  </defs>
+  <ellipse cx="80" cy="119" rx="62" ry="8" fill="url(#sombra)"/>
+  <path d="M28 102h104a8 8 0 0 1 8 8v0a9 9 0 0 1-9 9H29a9 9 0 0 1-9-9v0a8 8 0 0 1 8-8z" fill="url(#panAbajo)"/>
+  <rect x="22" y="86" width="116" height="18" rx="9" fill="url(#carne)"/>
+  <path d="M24 82h112v6l-6 2-6 7-6-6-12 2-6 8-7-8-14 2-6 7-6-7-14 2-6 6-6-7-11 1z" fill="url(#queso)"/>
+  <rect x="22" y="64" width="116" height="18" rx="9" fill="url(#carne)"/>
+  <g fill="#9A5A3A" opacity=".55"><circle cx="42" cy="76" r="1.4"/><circle cx="66" cy="78" r="1.3"/><circle cx="92" cy="75" r="1.4"/><circle cx="118" cy="78" r="1.3"/><circle cx="50" cy="97" r="1.4"/><circle cx="84" cy="99" r="1.3"/><circle cx="112" cy="96" r="1.4"/></g>
+  <path d="M24 60h112v6l-6 2-6 7-6-6-12 2-6 8-7-8-14 2-6 7-6-7-14 2-6 6-6-7-11 1z" fill="url(#queso)"/>
+  <path d="M18 56c5-6 9 1 14-3s9 3 14-1 9 3 14-1 9 3 14-1 9 3 14-1 9 3 14-1 9 3 14-1 8 2 12 0 6 4 6 6-4 5-9 5H22c-4 0-6-3-4-5z" fill="url(#lechuga)"/>
+  <path d="M26 50C26 26 50 12 80 12s54 14 54 38a4 4 0 0 1-4 4H30a4 4 0 0 1-4-4z" fill="url(#panArriba)"/>
+  <ellipse cx="58" cy="27" rx="17" ry="7" fill="#FFF6E4" opacity=".35" transform="rotate(-18 58 27)"/>
+  <g fill="#FFF3D6"><ellipse cx="64" cy="23" rx="3" ry="1.6" transform="rotate(-20 64 23)"/><ellipse cx="82" cy="20" rx="3" ry="1.6" transform="rotate(10 82 20)"/><ellipse cx="100" cy="25" rx="3" ry="1.6" transform="rotate(25 100 25)"/><ellipse cx="72" cy="34" rx="3" ry="1.6" transform="rotate(-5 72 34)"/><ellipse cx="92" cy="36" rx="3" ry="1.6" transform="rotate(15 92 36)"/><ellipse cx="50" cy="39" rx="3" ry="1.6" transform="rotate(-30 50 39)"/><ellipse cx="112" cy="39" rx="3" ry="1.6" transform="rotate(30 112 39)"/></g>
+</svg>
