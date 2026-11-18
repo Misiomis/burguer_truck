@@ -8,6 +8,7 @@ export const BUSINESS_SCHEMA = 'ebs.negocio';
 export const BUSINESS_VERSION = 1;
 
 const ID_RE = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
+export const MAX_PORTADA = 6;
 export const FOTO_RE = /^assets\/fotos\/[a-z0-9-]+\.(webp|jpg|png)$/;
 const PRODUCT_STATES = ['disponible', 'agotado', 'oculto'];
 const VARIANT_STATES = ['disponible', 'agotado', 'oculto'];
@@ -167,5 +168,14 @@ export function validateBusiness(data) {
   else data.redes.forEach((r, i) => {
     if (!isObj(r) || !isText(r.nombre, 30) || !isSafeHttpUrl(r.url) || !r.url.startsWith('https://')) err(`Red ${i + 1}: nombre y URL https obligatorios.`);
   });
+
+  // Fotos reales de fondo de la portada (opcional; subidas desde el panel).
+  if (data.portada !== undefined) {
+    if (!isObj(data.portada) || !Array.isArray(data.portada.fotos)) err('portada.fotos debe ser una lista.');
+    else {
+      if (data.portada.fotos.length > MAX_PORTADA) err(`La portada admite hasta ${MAX_PORTADA} fotos.`);
+      data.portada.fotos.forEach((p, i) => { if (!FOTO_RE.test(p || '')) err(`Foto de portada ${i + 1} inválida.`); });
+    }
+  }
   return errors;
 }

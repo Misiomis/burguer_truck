@@ -236,3 +236,21 @@ export function renderJsonLd(catalog, biz, { image } = {}) {
   // JSON dentro de <script>: se escapa "<" para que ningún texto pueda cerrar la etiqueta.
   return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
 }
+
+/**
+ * Fondo de la portada. Con fotos reales subidas desde el panel, se usan esas (si hay varias, rotan).
+ * Sin fotos, la imagen de portada del proyecto.
+ */
+export function renderHeroBackground(biz) {
+  const fotos = (biz.portada && biz.portada.fotos) || [];
+  if (fotos.length) {
+    return `<div class="hero__bg" data-hero-slides>`
+      + fotos.map((f, i) => `<img class="hero__slide${i === 0 ? ' is-active' : ''}" src="${esc(f)}" alt="" decoding="async"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'}>`).join('')
+      + `</div>`;
+  }
+  return `<picture class="hero__bg">`
+    + `<source type="image/avif" srcset="assets/img/portada-640.avif 640w, assets/img/portada-1024.avif 1024w, assets/img/portada-1440.avif 1440w, assets/img/portada-1672.avif 1672w" sizes="100vw">`
+    + `<source type="image/webp" srcset="assets/img/portada-640.webp 640w, assets/img/portada-1024.webp 1024w, assets/img/portada-1440.webp 1440w, assets/img/portada-1672.webp 1672w" sizes="100vw">`
+    + `<img class="hero__slide is-active" src="assets/img/portada-1024.webp" width="1672" height="941" alt="" fetchpriority="high" decoding="async">`
+    + `</picture>`;
+}

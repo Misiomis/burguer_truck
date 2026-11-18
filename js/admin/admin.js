@@ -4,7 +4,7 @@
 import { createGitHub, GitHubError } from './github.js';
 import { parsePriceInput, listChanges, commitMessage, todayISO } from './cambios.js';
 import { buildSiteFiles, PAGES, DATA_FILES } from '../core/build-core.js';
-import { validateCatalog, validateBusiness } from '../core/schema.js';
+import { validateCatalog, validateBusiness, MAX_PORTADA } from '../core/schema.js';
 
 const TOKEN_KEY = 'ebs:admin:token';
 const $ = (s, r = document) => r.querySelector(s);
@@ -156,14 +156,14 @@ function textField(label, context, value, onValue, { maxLength = 80, key } = {})
 const slugify = (s) => s.normalize('NFD').replace(/[^\w\s-]/g, '').trim().toLowerCase().replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'item';
 
 /** Achica la foto en el navegador (máx. 480 px) y la devuelve en WebP (o JPEG si el navegador no codifica WebP). */
-async function shrinkPhoto(file) {
+async function shrinkPhoto(file, max = 480, quality = 0.82) {
   const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, 480 / Math.max(bitmap.width, bitmap.height));
+  const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
   canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  let blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', 0.82));
+  let blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', quality));
   if (!blob || blob.type !== 'image/webp') blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
   const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
   const buf = new Uint8Array(await blob.arrayBuffer());
@@ -247,7 +247,52 @@ function renderProduct(p, editable) {
   return card;
 }
 
+/** Fotos de portada: subir (se achican a 1600 px), ordenar y quitar. */
+function renderCover() {
+  const box = $('[data-cover]');
+  if (!box) return;
+  if (!draft.business.portada) draft.business.portada = { fotos: [] };
+  const fotos = draft.business.portada.fotos;
+  box.replaceChildren();
+  const list = el('ol', { class: 'ad-cover' });
+  fotos.forEach((path, i) => {
+    const move = (d) => { const j = i + d; [fotos[i], fotos[j]] = [fotos[j], fotos[i]]; renderCover(); updateBar(); };
+    list.append(el('li', { class: 'ad-cover__item' },
+      el('img', { class: 'ad-cover__img', src: pendingPhotos.get(path)?.url || path, alt: `Foto de portada ${i + 1}` }),
+      el('div', { class: 'ad-cover__actions' },
+        el('button', { type: 'button', class: 'link-btn', text: 'Subir', disabled: i === 0, 'aria-label': `Mover la foto ${i + 1} antes`, onclick: () => move(-1) }),
+        el('button', { type: 'button', class: 'link-btn', text: 'Bajar', disabled: i === fotos.length - 1, 'aria-label': `Mover la foto ${i + 1} después`, onclick: () => move(1) }),
+        el('button', { type: 'button', class: 'link-btn', text: 'Quitar', 'aria-label': `Quitar la foto ${i + 1}`, onclick: () => { fotos.splice(i, 1); renderCover(); updateBar(); } }))));
+  });
+  if (fotos.length) box.append(list);
+  else box.append(el('p', { class: 'muted', text: 'Todavía no hay fotos reales: la portada usa la imagen actual.' }));
+  if (fotos.length < MAX_PORTADA) {
+    const id = `f-${++uid}`;
+    const input = el('input', { type: 'file', id, accept: 'image/*', class: 'visually-hidden', multiple: true });
+    const err = el('p', { class: 'field__error', hidden: true });
+    input.addEventListener('change', async () => {
+      const files = [...input.files].slice(0, MAX_PORTADA - fotos.length);
+      for (const file of files) {
+        if (!file.type.startsWith('image/') || file.size > 25_000_000) { err.textContent = 'Elegí imágenes JPG, PNG o WebP de hasta 25 MB.'; err.hidden = false; continue; }
+        try {
+          const out = await shrinkPhoto(file, 1600, 0.8);
+          const path = `assets/fotos/portada-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}.${out.ext}`;
+          pendingPhotos.set(path, out);
+          fotos.push(path);
+        } catch { err.textContent = 'No se pudo leer una de las imágenes.'; err.hidden = false; }
+      }
+      renderCover();
+      updateBar();
+      status('Fotos listas. Se suben al publicar.');
+    });
+    box.append(el('div', { class: 'ad-photo__actions' }, input,
+      el('label', { class: 'btn btn--ghost ad-file', for: id, text: fotos.length ? 'Agregar fotos' : 'Subir fotos' }),
+      el('span', { class: 'muted', text: `Hasta ${MAX_PORTADA}. Mejor horizontales.` })), err);
+  }
+}
+
 function render() {
+  renderCover();
   const box = $('[data-products]');
   box.replaceChildren();
   for (const cat of draft.catalog.categorias) {
@@ -309,10 +354,12 @@ function render() {
 
 /** Archivos de fotos para el commit: nuevas (base64) y las que dejaron de usarse (se borran). */
 function photoFiles(catalog) {
-  const used = new Set(catalog.productos.map((p) => p.foto).filter(Boolean));
+  const cover = (draft.business.portada && draft.business.portada.fotos) || [];
+  const used = new Set([...catalog.productos.map((p) => p.foto).filter(Boolean), ...cover]);
   const files = {};
   for (const [path, data] of pendingPhotos) if (used.has(path)) files[path] = { base64: data.base64 };
   for (const p of base.catalog.productos) if (p.foto && !used.has(p.foto)) files[p.foto] = null;
+  for (const path of (base.business.portada && base.business.portada.fotos) || []) if (!used.has(path)) files[path] = null;
   return files;
 }
 

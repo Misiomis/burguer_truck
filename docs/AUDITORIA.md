@@ -141,3 +141,10 @@ Detalle completo en `assets/img/manifest.json`. Originales en `_originales/` (no
 - Bebidas: sección con “Próximamente tendremos bebidas.”; desde el panel se cargan bebidas con foto y precio, y se agregan o quitan barrios.
 - No se puede emular el teclado real de iOS/Android: se probó el modo escritura con un celular táctil emulado; conviene confirmarlo en un teléfono.
 - Lighthouse 12.6 (móvil simulado, servidor local con gzip): 98 de rendimiento y TBT 0 ms, igual que la versión anterior medida en la misma máquina (99). Se corrigió un recálculo de estilos de toda la página que causaba bloqueos al ajustar el panel al teclado.
+
+## 11. Portada con logo y prueba en un teléfono real (18/11/2026)
+
+- Portada: sello completo (240 px en móvil, 300 px en escritorio) con “Ver menú” y “Nuestra historia”, sobre las fotos de fondo. Sin textos largos; el nombre queda como título accesible.
+- Fondo: fotos reales subidas desde el panel (hasta 6, rotan cada 6 s; no rotan con “reducir movimiento”). Mientras no haya, se usa la imagen actual.
+- Prueba en Samsung Galaxy A33 (Android 16, Chrome 157) por adb + DevTools, contra el servidor local: viewport 411 × 780, sin desborde; categoría activa y título bajo la barra; barra “Ver pedido · 2 productos · $18.500”; al tocar Nombre y Referencia aparece el teclado real (área visible 386–450 px), el pie se oculta y el campo queda a la vista; al cerrar, vuelve el pie con el total $21.500 (envío a Villa Nueva $3.000); mensaje y destino de WhatsApp correctos; sin errores de JavaScript.
+- Durante la prueba el panel de notificaciones del teléfono estaba abierto: esas capturas se descartaron sin conservarlas. Falta una captura del teclado sobre la web.

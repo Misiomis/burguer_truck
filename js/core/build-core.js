@@ -4,7 +4,7 @@
 import { validateCatalog, validateBusiness } from './schema.js';
 import {
   renderMenu, renderCategoryNav, renderBusinessInfo,
-  renderFooterContact, renderJsonLd, hasPendingInfo, esc,
+  renderFooterContact, renderJsonLd, hasPendingInfo, esc, renderHeroBackground,
 } from './render.js';
 import { SPRITE } from './icons.js';
 import { header, footer, cartDialog, ORDER_BAR, LIVE_REGION } from './layout.js';
@@ -62,6 +62,7 @@ export function buildOutputs({ catalog, business }) {
     'live-region': LIVE_REGION,
     'barra-pedido': ORDER_BAR,
     jsonld: renderJsonLd(catalog, business, { image: shareImage }),
+    'portada-fondo': renderHeroBackground(business),
     'menu-nav': renderCategoryNav(catalog),
     'menu-carta': renderMenu(catalog),
     'local-info': renderBusinessInfo(business) + pendingNote,

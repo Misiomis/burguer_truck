@@ -514,6 +514,22 @@ function initKeyboardFit() {
   d.addEventListener('close', () => d.classList.remove('is-typing'));
 }
 
+/** Portada: si hay varias fotos reales, rotan suavemente (no con “reducir movimiento” ni con la pestaña oculta). */
+function initHeroSlides() {
+  const box = $('[data-hero-slides]');
+  if (!box) return;
+  const slides = $$('.hero__slide', box);
+  if (slides.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let i = 0;
+  setInterval(() => {
+    if (document.hidden) return;
+    slides[i].classList.remove('is-active');
+    i = (i + 1) % slides.length;
+    slides[i].loading = 'eager';
+    slides[i].classList.add('is-active');
+  }, 6000);
+}
+
 /* ---------------- Navegación ---------------- */
 function initNav() {
   const toggle = $('.site-nav__toggle');
@@ -638,6 +654,7 @@ function init() {
   safely('fichas', initProductCards);
   safely('diálogo', initDialog);
   safely('teclado', initKeyboardFit);
+  safely('portada', initHeroSlides);
   safely('resumen', renderAll);
   if (state.notices.length) {
     safely('avisos', () => announce('Revisamos tu pedido guardado: hay cambios. Abrí el pedido para verlos.'));

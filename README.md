@@ -61,6 +61,7 @@ Todo lo comercial sale de **dos archivos**: `data/catalogo.json` y `data/negocio
 3. Cambiá precios (`7000` o `7.000`; vacío = “a confirmar”), marcá productos como **Agotado** u **Oculto** y ajustá las tarifas de envío por barrio.
    - **Bebidas:** “Agregar bebida” → nombre, presentación (ej.: “Lata 354 ml”), precio y foto. La foto se achica en el navegador (máx. 480 px, WebP) y se sube al publicar a `assets/fotos/`. También se puede cambiar o quitar la foto, o quitar la bebida. Sin bebidas, la web muestra “Próximamente tendremos bebidas.”
    - **Barrios:** cambiar el costo, “Quitar barrio” o “Agregar barrio” (nombre y costo; vacío = a cotizar).
+   - **Fotos de portada:** “Subir fotos” (hasta 6, mejor horizontales). Se achican a 1600 px y se usan de fondo detrás del logo; si hay varias, rotan cada 6 segundos. Se pueden ordenar o quitar. Sin fotos, se usa la imagen actual.
 4. **Revisar y publicar** muestra la lista de cambios. Al confirmar, el panel hace un commit en `main` con los mismos archivos que generaría `npm run build`. GitHub Pages actualiza la web para todos en 1 o 2 minutos y el panel avisa cuando ya se ve.
 5. Si otra persona publicó cambios mientras editabas, el panel no pisa nada: recargá y volvé a aplicar.
 

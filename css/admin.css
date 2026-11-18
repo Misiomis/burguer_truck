@@ -83,3 +83,10 @@
 .ad-newzone { border-top: 1px solid var(--line); padding-top: var(--s-4); margin-top: var(--s-2); display: grid; gap: var(--s-2); }
 .ad-newzone__row { display: grid; gap: var(--s-3); grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: end; }
 @media (max-width: 36rem) { .ad-newzone__row { grid-template-columns: 1fr; } }
+
+/* Fotos de portada */
+.ad-cover { list-style: none; padding: 0; display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); }
+.ad-cover__item { display: grid; gap: var(--s-1); counter-increment: foto; }
+.ad-cover__img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--r); border: 1px solid var(--line); background: var(--surface-2); }
+.ad-cover__actions { display: flex; flex-wrap: wrap; gap: 0 var(--s-2); }
+.ad-cover__actions .link-btn:disabled { opacity: .4; cursor: not-allowed; }

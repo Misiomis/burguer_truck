@@ -503,7 +503,7 @@ describe('responsive, fallos y degradación', () => {
     assert.equal(await page.locator('.product__add:visible').count(), 0);
     await page.goto(BASE, { waitUntil: 'networkidle' });
     assert.ok(await page.locator('#location').isVisible());
-    assert.ok(await page.locator('.hero__title').isVisible(), 'el contenido no depende de JS para mostrarse');
+    assert.ok(await page.locator('.hero__logo img').isVisible(), 'el contenido no depende de JS para mostrarse');
     await context.close();
   });
 

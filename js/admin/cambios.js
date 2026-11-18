@@ -57,6 +57,17 @@ export function listChanges(before, after) {
     else if (o.tarifa !== z.tarifa) out.push({ text: `Envío a ${z.nombre}: ${fee(o.tarifa)} → ${fee(z.tarifa)}` });
   }
   for (const z of before.business.modalidades.envio.zonas) if (!nextZones.has(z.id)) out.push({ text: `Se quita el barrio ${z.nombre}` });
+  const coverBefore = (before.business.portada && before.business.portada.fotos) || [];
+  const coverAfter = (after.business.portada && after.business.portada.fotos) || [];
+  if (JSON.stringify(coverBefore) !== JSON.stringify(coverAfter)) {
+    const added = coverAfter.filter((p) => !coverBefore.includes(p)).length;
+    const removed = coverBefore.filter((p) => !coverAfter.includes(p)).length;
+    const parts = [];
+    if (added) parts.push(`${added} nueva${added === 1 ? '' : 's'}`);
+    if (removed) parts.push(`${removed} quitada${removed === 1 ? '' : 's'}`);
+    if (!parts.length) parts.push('nuevo orden');
+    out.push({ text: `Fotos de portada: ${parts.join(', ')} (${coverAfter.length} en total)` });
+  }
   return out;
 }
 

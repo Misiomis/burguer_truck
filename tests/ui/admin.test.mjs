@@ -218,4 +218,38 @@ describe('panel de precios', () => {
     assert.deepEqual(problems, []);
     await context.close();
   });
+  test('fotos de portada: subir dos, ordenar y publicar; la portada las usa', async () => {
+    const { page, context, posted, problems } = await openAdmin();
+    await login(page);
+    await page.locator('[data-edit-view]:not([hidden])').waitFor();
+    const mk = (color) => sharp({ create: { width: 2400, height: 1500, channels: 3, background: color } }).jpeg().toBuffer();
+    await page.locator('[data-cover] input[type="file"]').setInputFiles([
+      { name: 'local1.jpg', mimeType: 'image/jpeg', buffer: await mk('#884422') },
+      { name: 'local2.jpg', mimeType: 'image/jpeg', buffer: await mk('#224488') },
+    ]);
+    await page.waitForFunction(() => document.querySelectorAll('.ad-cover__item').length === 2);
+    await page.getByRole('button', { name: 'Mover la foto 2 antes' }).click();
+    await page.locator('[data-review]').click();
+    const items = await page.locator('[data-change-list] li').allTextContents();
+    assert.ok(items.includes('Fotos de portada: 2 nuevas (2 en total)'), items.join(' | '));
+    await page.locator('[data-publish]').click();
+    await page.waitForFunction(() => /Publicado/.test(document.querySelector('[data-status]').textContent));
+    const entries = posted.tree.tree;
+    const files = Object.fromEntries(entries.filter((e) => 'content' in e).map((e) => [e.path, e.content]));
+    const fotos = JSON.parse(files['data/negocio.json']).portada.fotos;
+    assert.equal(fotos.length, 2);
+    for (const f of fotos) {
+      assert.ok(f.startsWith('assets/fotos/portada-'), f);
+      assert.ok(entries.some((e) => e.path === f && e.sha && e.sha.startsWith('blob')), `blob ${f}`);
+      assert.ok(files['index.html'].includes(`src="${f}"`), `portada usa ${f}`);
+    }
+    // Orden: la segunda subida (azul) quedó primera.
+    const firstBlob = posted.blobs.find((b, i) => entries.find((e) => e.path === fotos[0]).sha === `blob${i + 1}`);
+    const { dominant } = await sharp(Buffer.from(firstBlob.content, 'base64')).stats();
+    assert.ok(dominant.b > dominant.r, 'la foto azul quedó primera');
+    const meta = await sharp(Buffer.from(posted.blobs[0].content, 'base64')).metadata();
+    assert.ok(meta.width <= 1600, `achicada a ${meta.width}px`);
+    assert.deepEqual(problems, []);
+    await context.close();
+  });
 });

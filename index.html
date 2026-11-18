@@ -25,8 +25,8 @@
   <link rel="stylesheet" href="css/styles.css">
   <script>document.documentElement.classList.add('js');</script>
   <script type="module" src="js/app.js"></script>
-  <!-- build:version --><meta name="ebs-datos" content="a69fc0fa">
-  <link rel="modulepreload" href="js/data/datos.js?v=a69fc0fa"><!-- /build:version -->
+  <!-- build:version --><meta name="ebs-datos" content="fd0ec2fa">
+  <link rel="modulepreload" href="js/data/datos.js?v=fd0ec2fa"><!-- /build:version -->
   <link rel="modulepreload" href="js/core/cart.js">
   <link rel="modulepreload" href="js/core/money.js">
   <link rel="modulepreload" href="js/core/whatsapp.js">
@@ -50,23 +50,18 @@
 
   <main id="contenido" tabindex="-1">
     <section class="hero" aria-labelledby="hero-title">
-      <div class="container hero__grid">
-        <div class="hero__content">
-          <h1 class="hero__title" id="hero-title">El Buen Sabor</h1>
-          <p class="hero__claim">Crecimos. Y el sabor sigue.</p>
-          <p class="hero__text">Hamburguesas, lomitos, milanesas, papas y empanadas. Elegí y pedí por WhatsApp.</p>
-          <div class="hero__actions">
-            <a class="btn btn--primary btn--lg" href="#carta">Ver menú</a>
-            <a class="hero__link" href="#about">Nuestra historia</a>
-          </div>
+      <!-- build:portada-fondo --><picture class="hero__bg"><source type="image/avif" srcset="assets/img/portada-640.avif 640w, assets/img/portada-1024.avif 1024w, assets/img/portada-1440.avif 1440w, assets/img/portada-1672.avif 1672w" sizes="100vw"><source type="image/webp" srcset="assets/img/portada-640.webp 640w, assets/img/portada-1024.webp 1024w, assets/img/portada-1440.webp 1440w, assets/img/portada-1672.webp 1672w" sizes="100vw"><img class="hero__slide is-active" src="assets/img/portada-1024.webp" width="1672" height="941" alt="" fetchpriority="high" decoding="async"></picture><!-- /build:portada-fondo -->
+      <div class="container hero__inner">
+        <h1 class="visually-hidden" id="hero-title">El Buen Sabor</h1>
+        <picture class="hero__logo">
+          <source type="image/avif" srcset="assets/img/logo-principal-320.avif 320w, assets/img/logo-principal-560.avif 560w" sizes="(min-width: 900px) 300px, 240px">
+          <source type="image/webp" srcset="assets/img/logo-principal-320.webp 320w, assets/img/logo-principal-560.webp 560w" sizes="(min-width: 900px) 300px, 240px">
+          <img src="assets/img/logo-principal-560.png" width="1254" height="1254" decoding="async" fetchpriority="high" alt="Logo de El Buen Sabor">
+        </picture>
+        <div class="hero__actions">
+          <a class="btn btn--primary btn--lg" href="#carta">Ver menú</a>
+          <a class="hero__link" href="#about">Nuestra historia</a>
         </div>
-        <figure class="hero__media">
-          <picture>
-            <source type="image/avif" srcset="assets/img/portada-640.avif 640w, assets/img/portada-1024.avif 1024w, assets/img/portada-1440.avif 1440w" sizes="(min-width: 900px) 640px, 100vw">
-            <source type="image/webp" srcset="assets/img/portada-640.webp 640w, assets/img/portada-1024.webp 1024w, assets/img/portada-1440.webp 1440w" sizes="(min-width: 900px) 640px, 100vw">
-            <img src="assets/img/portada-1024.webp" width="1672" height="941" fetchpriority="high" decoding="async" alt="Sándwich de milanesa, empanadas y papas en caja sobre una mesa oscura.">
-          </picture>
-        </figure>
       </div>
     </section>
 

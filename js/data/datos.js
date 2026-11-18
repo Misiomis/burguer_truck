@@ -392,5 +392,8 @@ export const NEGOCIO = {
     "estado": "pendiente",
     "lista": []
   },
-  "redes": []
+  "redes": [],
+  "portada": {
+    "fotos": []
+  }
 };
