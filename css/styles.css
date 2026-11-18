@@ -693,24 +693,44 @@ textarea.field__input { min-height: 4.5rem; resize: vertical; }
 .info-list__row > .icon { width: 1.375rem; height: 1.375rem; margin-top: 1px; }
 .footer__wa { margin-top: var(--s-4); }
 
-/* ---------- Barrios con envío ---------- */
-.zones { margin-top: var(--s-6); max-width: 48rem; }
-.zones__head { margin-bottom: var(--s-4); }
-.zones__title { font-size: var(--fs-h3); }
-.zones__sub { color: var(--ink-2); font-size: 0.9375rem; }
+/* ---------- Barrios con envío (desplegable) ---------- */
+.zones { margin-top: var(--s-5); max-width: 48rem; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+.zones__toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  min-height: 4rem; padding: var(--s-3) var(--s-5);
+  cursor: pointer; list-style: none;
+}
+.zones__toggle::-webkit-details-marker { display: none; }
+.zones__toggle:hover .zones__title { text-decoration: underline; text-underline-offset: .2em; }
+.zones__toggle:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+.zones__toggle-text { display: grid; gap: 2px; }
+.zones__title { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; line-height: 1.2; }
+.zones__sub { color: var(--ink-2); font-size: var(--fs-small); }
+.zones__chevron {
+  flex: none; width: 2.25rem; height: 2.25rem; padding: 8px;
+  border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line);
+  transform: rotate(90deg); transition: transform .2s var(--ease);
+}
+.zones[open] .zones__chevron { transform: rotate(-90deg); }
+.zones__body { padding: 0 var(--s-4) var(--s-4); border-top: 1px solid var(--line); }
+.zones__note { padding-block: var(--s-3); color: var(--ink-2); font-size: var(--fs-small); }
 .zones__list { list-style: none; padding: 0; display: grid; gap: var(--s-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); }
 .zones__item {
   position: relative;
   display: flex; flex-direction: column; justify-content: center; gap: 2px;
   min-height: 3.75rem; padding: var(--s-2) var(--s-3) var(--s-2) var(--s-4);
-  background: var(--white); border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r);
 }
 .zones__item::before {
   content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 4px;
   border-radius: 0 4px 4px 0; background: var(--red);
 }
 .zones__name { font-weight: 600; font-size: 0.9375rem; line-height: 1.25; }
-.zones__fee { flex: none; font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+.zones__fee { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) {
+  .zones[open] .zones__body { animation: zones-in .2s var(--ease); }
+}
+@keyframes zones-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
 /* Selección de barrio dentro del pedido: tarjetas propias, sin el desplegable del sistema. */
 .checkout__legend--sm { font-size: 1.0625rem; }
@@ -754,6 +774,35 @@ textarea.field__input { min-height: 4.5rem; resize: vertical; }
 .cart { inset: var(--vv-top, 0px) 0 auto auto; height: var(--vv-h, 100dvh); max-height: var(--vv-h, 100dvh); }
 .cart.is-typing .cart__foot { display: none; }
 .cart.is-typing .cart__body { padding-bottom: var(--s-8); }
+
+/* ---------- Botón flotante de WhatsApp (consultas) ---------- */
+.wa-fab {
+  position: fixed; right: max(var(--s-4), env(safe-area-inset-right)); bottom: max(var(--s-4), env(safe-area-inset-bottom));
+  z-index: var(--z-bar);
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  height: 3.5rem; min-width: 3.5rem; padding: 0 1rem;
+  border-radius: 999px;
+  background: #25D366; color: #FFFFFF;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 8px 22px rgba(20, 20, 20, .28);
+  text-decoration: none;
+  transition: transform .15s var(--ease), bottom .2s var(--ease), box-shadow .15s var(--ease);
+}
+.wa-fab:hover { transform: translateY(-2px); box-shadow: 0 0 0 2px #FFFFFF, 0 12px 26px rgba(20, 20, 20, .32); }
+.wa-fab:focus-visible { outline: 3px solid var(--carbon); outline-offset: 4px; }
+.wa-fab__icon { width: 1.75rem; height: 1.75rem; flex: none; }
+/* La etiqueta solo en pantallas anchas; en el celular queda el círculo con el logo. */
+.wa-fab__label { display: none; font-weight: 600; color: #0B2B1C; }
+@media (min-width: 52.5625rem) {
+  .wa-fab { right: var(--s-6); bottom: var(--s-6); padding: 0 1.25rem 0 1rem; }
+  .wa-fab__icon { color: #0B2B1C; }
+  .wa-fab__label { display: inline; }
+}
+@media (max-width: 52.5rem) { .wa-fab { width: 3.5rem; padding: 0; justify-content: center; } }
+/* Con la barra “Ver pedido” visible, el botón sube para no taparla. */
+body.has-order-bar .wa-fab { bottom: calc(5.25rem + env(safe-area-inset-bottom)); }
+@media (min-width: 52.5625rem) { body.has-order-bar .wa-fab { bottom: var(--s-6); } }
+@media (prefers-reduced-motion: reduce) { .wa-fab { transition: none; } }
+@media print { .wa-fab { display: none; } }
 
 /* ---------- 404 / aviso admin ---------- */
 .simple-page { min-height: 60vh; display: grid; align-content: center; gap: var(--s-4); padding-block: var(--section-y); }

@@ -716,11 +716,51 @@ describe('identidad, contacto y barrios', () => {
     for (const h of await was.evaluateAll((as) => as.map((a) => a.href))) assert.ok(h.startsWith(`https://wa.me/${liveBusiness().whatsapp.numero}?text=`));
     assert.equal(await page.locator('.site-footer .btn-wa').count(), 1);
     // Barrios con su costo, sin desplegable del sistema.
+    // Desplegable: cerrado por defecto; se abre y se cierra al tocarlo (también con teclado).
+    assert.ok(await page.locator('.zones__list').isHidden(), 'barrios ocultos hasta abrir');
+    await page.locator('.zones__toggle').click();
+    assert.ok(await page.locator('.zones__list').isVisible(), 'se abre');
+    await page.locator('.zones__toggle').focus();
+    await page.keyboard.press('Enter');
+    assert.ok(await page.locator('.zones__list').isHidden(), 'se cierra con Enter');
+    await page.keyboard.press('Space');
+    assert.ok(await page.locator('.zones__list').isVisible(), 'se abre con Espacio');
     const zones = await page.locator('.zones__item').allTextContents();
     assert.equal(zones.length, liveBusiness().modalidades.envio.zonas.length);
     assert.ok(zones.some((z) => z.includes('Barrio 80 Viviendas') && z.includes('$1.500')));
     assert.ok(zones.some((z) => z.includes('Villa Nueva') && z.includes('$3.000')));
     await context.close();
+  });
+
+  test('botón flotante de WhatsApp: consulta directa, sin tapar la barra del pedido; número oculto', async () => {
+    for (const width of [320, 390, 1440]) {
+      const { page, context } = await open('', { width, height: 800 });
+      const fab = page.locator('.wa-fab');
+      assert.ok(await fab.isVisible(), `visible @${width}`);
+      const href = await fab.getAttribute('href');
+      assert.ok(href.startsWith(`https://wa.me/${liveBusiness().whatsapp.numero}?text=`));
+      assert.equal(decodeURIComponent(href.split('?text=')[1]), 'Hola, El Buen Sabor. Quiero hacer una consulta.');
+      const box = await fab.boundingBox();
+      assert.ok(box.width >= 48 && box.height >= 48, `tamaño táctil @${width}`);
+      const visible = await page.evaluate(() => document.body.innerText);
+      assert.ok(!visible.includes('3757') && !visible.includes('626892'), `número oculto @${width}`);
+      await addFromMenu(page, 'hamburguesa-simple');
+      await page.waitForTimeout(250);
+      const r = await page.evaluate(() => {
+        const f = document.querySelector('.wa-fab').getBoundingClientRect();
+        const bar = document.querySelector('[data-order-bar]');
+        const b = bar && !bar.hidden && getComputedStyle(bar).display !== 'none' ? bar.getBoundingClientRect() : null;
+        return { fBottom: f.bottom, barTop: b ? b.top : null };
+      });
+      if (r.barTop !== null) assert.ok(r.fBottom <= r.barTop - 4, `no tapa la barra @${width} (${r.fBottom} > ${r.barTop})`);
+      await openCart(page);
+      const covered = await page.evaluate(() => {
+        const c = document.querySelector('[data-close-cart]').getBoundingClientRect();
+        return document.elementFromPoint(c.left + c.width / 2, c.top + c.height / 2).closest('[data-close-cart]') === null;
+      });
+      assert.ok(!covered, `el pedido abierto queda por encima @${width}`);
+      await context.close();
+    }
   });
 
   test('celular: al escribir la referencia se oculta el pie y el campo queda a la vista', async () => {

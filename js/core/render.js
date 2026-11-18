@@ -143,16 +143,33 @@ export function waButton(biz, text, label, cls = '') {
     + `<span>${esc(label)}</span>${ext('se abre WhatsApp')}</a>`;
 }
 
+/** Botón flotante de WhatsApp para consultas (no confirma pedidos). */
+export function renderWaFab(biz) {
+  const url = buildWhatsAppUrl(biz, CONTACT_MESSAGES.consulta);
+  if (!url) return '';
+  return `<aside class="wa-fab-wrap" aria-label="Contacto rápido"><a class="wa-fab" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="Consultar por WhatsApp (se abre WhatsApp)">`
+    + '<svg class="wa-fab__icon" aria-hidden="true" focusable="false"><use href="#i-logo-whatsapp"></use></svg>'
+    + '<span class="wa-fab__label" aria-hidden="true">Consultas</span></a></aside>';
+}
+
 /** Barrios con su costo de envío. */
 export function renderZones(biz) {
   const env = biz.modalidades.envio;
   if (env.estado !== 'confirmado' || !env.zonas.length) return '';
   const fee = (z) => (z.tarifaEstado === 'confirmada' ? (z.tarifa === 0 ? 'Sin cargo' : formatARS(z.tarifa)) : 'A cotizar');
-  return `<section class="zones" aria-labelledby="zones-title">`
-    + `<div class="zones__head"><h3 class="zones__title" id="zones-title">Envío a domicilio</h3><p class="zones__sub">Costo según tu barrio. También podés retirar en el local.</p></div>`
+  const fees = env.zonas.filter((z) => z.tarifaEstado === 'confirmada').map((z) => z.tarifa);
+  const from = fees.length ? ` · desde ${formatARS(Math.min(...fees))}` : '';
+  // Desplegable propio (details/summary): cerrado por defecto, funciona sin JavaScript y con teclado.
+  return `<details class="zones">`
+    + `<summary class="zones__toggle">`
+    + `<span class="zones__toggle-text"><span class="zones__title">Costos de envío por barrio</span>`
+    + `<span class="zones__sub">${env.zonas.length} barrios${esc(from)}</span></span>`
+    + `<svg class="icon zones__chevron" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg>`
+    + `</summary>`
+    + `<div class="zones__body"><p class="zones__note">También podés retirar en el local sin costo.</p>`
     + `<ul class="zones__list" role="list">`
     + env.zonas.map((z) => `<li class="zones__item"><span class="zones__name">${esc(z.nombre)}</span><span class="zones__fee">${esc(fee(z))}</span></li>`).join('')
-    + `</ul></section>`;
+    + `</ul></div></details>`;
 }
 
 /** Datos del local (sección #location). */
@@ -171,7 +188,7 @@ export function renderBusinessInfo(biz) {
   const wa = biz.whatsapp;
   const waLogo = '<svg class="icon icon--logo icon--wa" aria-hidden="true" focusable="false"><use href="#i-logo-whatsapp"></use></svg>';
   rows.push([waLogo, 'WhatsApp', wa.estado === 'confirmado'
-    ? `<span>${esc(waDisplay(wa.numero))}</span>${waButton(biz, CONTACT_MESSAGES.consulta, 'Escribinos')}`
+    ? `<span>Respondemos por WhatsApp.</span>${waButton(biz, CONTACT_MESSAGES.consulta, 'Escribinos')}`
     : PENDING]);
   const m = biz.modalidades;
   const modes = [];
