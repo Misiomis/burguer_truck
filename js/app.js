@@ -50,7 +50,7 @@ const modes = availableModes(NEGOCIO);
 const state = {
   cart: emptyCart(),
   fulfillment: { mode: modes.length === 1 ? modes[0] : null, zoneId: null },
-  customer: { name: '', address: '', reference: '', notes: '' }, // solo en memoria
+  customer: { name: '', reference: '', notes: '' }, // solo en memoria
   notices: [],
   persistOk: Boolean(storage),
   showErrors: false,
@@ -308,7 +308,7 @@ function initDialog() {
       e.preventDefault();
       state.showErrors = true;
       renderCart({ keepForm: true });
-      const first = $('[aria-invalid="true"]', d) || $('input[name="mode"]', d);
+      const first = $('[aria-invalid="true"]', d);
       if (first) first.focus();
       announce('Revisá los datos marcados antes de continuar.');
       return;
@@ -381,31 +381,38 @@ function renderLines(d, t) {
   }
 }
 
+function zoneFee(z) {
+  return z.tarifaEstado === 'confirmada' ? (z.tarifa === 0 ? 'Sin cargo' : formatARS(z.tarifa)) : 'A cotizar';
+}
+
 function renderCheckout(d, t, keepForm) {
   const box = $('[data-mode-options]', d);
+  const zones = NEGOCIO.modalidades.envio.zonas;
   if (!keepForm) {
     box.replaceChildren();
     if (!modes.length) {
-      box.append(el('p', { class: 'muted', text: 'Retiro y envío se coordinan con el negocio por WhatsApp. Todavía no están confirmados en esta web.' }));
+      box.append(el('p', { class: 'muted', text: 'Retiro y envío se coordinan con el negocio por WhatsApp.' }));
     } else {
       const wrap = el('div', { class: 'mode-opts' });
+      const fees = zones.filter((z) => z.tarifaEstado === 'confirmada').map((z) => z.tarifa);
+      const from = fees.length ? `Según tu barrio, desde ${formatARS(Math.min(...fees))}` : 'Según tu barrio';
       for (const m of modes) {
         const input = el('input', { type: 'radio', name: 'mode', value: m, checked: state.fulfillment.mode === m });
         input.setAttribute('aria-describedby', 'err-mode');
-        const z = NEGOCIO.modalidades.envio.zonas;
-        const meta = m === 'retiro' ? 'Sin costo de envío' : `${z.length} zona${z.length === 1 ? '' : 's'} habilitada${z.length === 1 ? '' : 's'}`;
         wrap.append(el('label', { class: 'choice__opt' }, input,
-          el('span', { class: 'choice__label', text: m === 'retiro' ? 'Retiro en el local' : 'Envío' }),
-          el('span', { class: 'choice__meta', text: meta })));
+          el('span', { class: 'choice__label', text: m === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio' }),
+          el('span', { class: 'choice__meta', text: m === 'retiro' ? 'Sin costo de envío' : from })));
       }
       box.append(wrap);
     }
-    const select = $('#c-zone', d);
-    select.replaceChildren(el('option', { value: '', text: 'Elegí tu zona' }));
-    for (const z of NEGOCIO.modalidades.envio.zonas) {
-      const fee = z.tarifaEstado === 'confirmada' ? (z.tarifa === 0 ? 'sin cargo' : formatARS(z.tarifa)) : 'envío a confirmar';
-      select.append(el('option', { value: z.id, text: `${z.nombre} · ${fee}`, selected: state.fulfillment.zoneId === z.id }));
-    }
+    // Barrios: tarjetas propias (no el desplegable del sistema).
+    const list = $('[data-zone-options]', d);
+    list.replaceChildren(...zones.map((z) => {
+      const input = el('input', { type: 'radio', name: 'zone', value: z.id, checked: state.fulfillment.zoneId === z.id, class: 'zone-opt__input' });
+      return el('label', { class: 'zone-opt' }, input,
+        el('span', { class: 'zone-opt__name', text: z.nombre }),
+        el('span', { class: 'zone-opt__fee', text: zoneFee(z) }));
+    }));
     for (const [k, v] of Object.entries(state.customer)) {
       const input = $(`[name="${k}"]`, d);
       if (input && input.value !== v) input.value = v;
@@ -414,14 +421,12 @@ function renderCheckout(d, t, keepForm) {
   $('[data-delivery-fields]', d).hidden = t.mode !== 'envio';
 
   const errors = state.showErrors ? validateCheckout(t, state.customer, modes) : {};
-  for (const key of ['mode', 'zone', 'address']) {
+  for (const key of ['name', 'mode', 'zone', 'reference']) {
     const msg = $(`[data-error="${key}"]`, d);
     msg.hidden = !errors[key];
     msg.textContent = errors[key] || '';
-    const field = key === 'mode' ? null : $(`[name="${key}"]`, d);
-    if (field) field.setAttribute('aria-invalid', errors[key] ? 'true' : 'false');
+    for (const field of $$(`[name="${key}"]`, d)) field.setAttribute('aria-invalid', errors[key] ? 'true' : 'false');
   }
-  for (const r of $$('input[name="mode"]', d)) r.setAttribute('aria-invalid', errors.mode ? 'true' : 'false');
 }
 
 function renderTotals(d, t) {
@@ -468,6 +473,45 @@ function renderCart({ keepForm = false } = {}) {
 function renderAll() {
   renderSummary();
   renderCart();
+}
+
+/**
+ * Teclado del celular: el panel del pedido se ajusta al área visible (visualViewport)
+ * y, mientras se escribe, se oculta el pie con totales para que no tape el campo.
+ */
+function initKeyboardFit() {
+  const d = dialog();
+  if (!d) return;
+  const vv = window.visualViewport;
+  const touch = matchMedia('(pointer: coarse)');
+  const isText = (n) => Boolean(n && n.matches && n.matches('input:not([type]), input[type="text"], textarea'));
+
+  // Solo sobre el panel y solo mientras está abierto: no recalcula estilos del resto de la página.
+  let last = '';
+  function sync() {
+    if (!d.open) return;
+    const next = `${Math.round(vv.height)}|${Math.round(vv.offsetTop)}`;
+    if (next === last) return;
+    last = next;
+    d.style.setProperty('--vv-h', `${Math.round(vv.height)}px`);
+    d.style.setProperty('--vv-top', `${Math.round(vv.offsetTop)}px`);
+  }
+  if (vv) {
+    vv.addEventListener('resize', sync, { passive: true });
+    vv.addEventListener('scroll', sync, { passive: true });
+    new MutationObserver(() => { last = ''; sync(); }).observe(d, { attributes: true, attributeFilter: ['open'] });
+  }
+
+  d.addEventListener('focusin', (e) => {
+    if (!touch.matches || !isText(e.target)) return;
+    d.classList.add('is-typing');
+    // Esperar a que aparezca el teclado y dejar el campo en el centro del área visible.
+    setTimeout(() => e.target.scrollIntoView({ block: 'center' }), 300);
+  });
+  d.addEventListener('focusout', () => {
+    setTimeout(() => { if (!isText(document.activeElement)) d.classList.remove('is-typing'); }, 0);
+  });
+  d.addEventListener('close', () => d.classList.remove('is-typing'));
 }
 
 /* ---------------- Navegación ---------------- */
@@ -593,6 +637,7 @@ function init() {
   safely('categorías', initCatnav);
   safely('fichas', initProductCards);
   safely('diálogo', initDialog);
+  safely('teclado', initKeyboardFit);
   safely('resumen', renderAll);
   if (state.notices.length) {
     safely('avisos', () => announce('Revisamos tu pedido guardado: hay cambios. Abrí el pedido para verlos.'));

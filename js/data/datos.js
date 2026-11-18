@@ -30,6 +30,13 @@ export const CATALOGO = {
       "nombre": "Empanadas",
       "descripcion": "De carne o de pollo, por media docena o por docena.",
       "estado": "activa"
+    },
+    {
+      "id": "bebidas",
+      "nombre": "Bebidas",
+      "descripcion": "Para acompañar tu pedido.",
+      "estado": "activa",
+      "mensajeVacio": "Próximamente tendremos bebidas."
     }
   ],
   "productos": [
@@ -91,7 +98,7 @@ export const CATALOGO = {
       "ilustracion": "lomito",
       "descripcion": "Elegí con papas o sin papas.",
       "imagen": "lomito",
-      "alt": "Sándwich de lomito cortado en dos sobre papel. Imagen ilustrativa.",
+      "alt": "Sándwich de lomito cortado en dos sobre papel.",
       "estado": "disponible",
       "variantes": [
         {
@@ -118,7 +125,7 @@ export const CATALOGO = {
       "nombre": "Sándwich de milanesa de carne",
       "ilustracion": "milanesa",
       "imagen": "sandwich_milanesa_carne",
-      "alt": "Sándwich de milanesa de carne cortado en dos. Imagen ilustrativa.",
+      "alt": "Sándwich de milanesa de carne cortado en dos.",
       "estado": "disponible",
       "variantes": [
         {
@@ -137,7 +144,7 @@ export const CATALOGO = {
       "nombre": "Sándwich de milanesa de pollo",
       "ilustracion": "milanesa",
       "imagen": "sandwich_milanesa_pollo",
-      "alt": "Sándwich de milanesa de pollo cortado en dos. Imagen ilustrativa.",
+      "alt": "Sándwich de milanesa de pollo cortado en dos.",
       "estado": "disponible",
       "variantes": [
         {
@@ -157,7 +164,7 @@ export const CATALOGO = {
       "ilustracion": "papas",
       "descripcion": "Elegí porción individual o en caja.",
       "imagen": "papas_mediana_caja",
-      "alt": "Papas fritas en una caja de cartón abierta. Imagen ilustrativa.",
+      "alt": "Papas fritas en una caja de cartón abierta.",
       "estado": "disponible",
       "variantes": [
         {
@@ -185,7 +192,7 @@ export const CATALOGO = {
       "ilustracion": "empanadas",
       "descripcion": "Elegí media docena o docena.",
       "imagen": "empanadas",
-      "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",
+      "alt": "Seis empanadas doradas sobre una bandeja.",
       "estado": "disponible",
       "variantes": [
         {
@@ -213,7 +220,7 @@ export const CATALOGO = {
       "ilustracion": "empanadas",
       "descripcion": "Elegí media docena o docena.",
       "imagen": "empanadas",
-      "alt": "Seis empanadas doradas sobre una bandeja. Imagen ilustrativa: no muestra el relleno.",
+      "alt": "Seis empanadas doradas sobre una bandeja.",
       "estado": "disponible",
       "variantes": [
         {
@@ -327,7 +334,7 @@ export const NEGOCIO = {
         {
           "id": "villa-nueva",
           "nombre": "Villa Nueva",
-          "tarifa": 2500,
+          "tarifa": 3000,
           "tarifaEstado": "confirmada"
         },
         {
@@ -345,8 +352,8 @@ export const NEGOCIO = {
         {
           "id": "barrio-80-viviendas",
           "nombre": "Barrio 80 Viviendas",
-          "tarifa": null,
-          "tarifaEstado": "pendiente"
+          "tarifa": 1500,
+          "tarifaEstado": "confirmada"
         },
         {
           "id": "barrio-26-viviendas",

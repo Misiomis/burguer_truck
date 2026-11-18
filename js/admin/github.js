@@ -63,12 +63,18 @@ export function createGitHub(token, { repo = REPO, fetchImpl = (...a) => fetch(.
      */
     async commitFiles({ files, message, parentSha }) {
       const parent = await call(`${base}/git/commits/${parentSha}`);
+      // files: { ruta: texto | { base64 } (binario, ej. una foto) | null (borrar) }
+      const entries = [];
+      for (const [path, content] of Object.entries(files)) {
+        if (content === null) entries.push({ path, mode: '100644', type: 'blob', sha: null });
+        else if (typeof content === 'object' && typeof content.base64 === 'string') {
+          const blob = await call(`${base}/git/blobs`, { method: 'POST', body: { content: content.base64, encoding: 'base64' } });
+          entries.push({ path, mode: '100644', type: 'blob', sha: blob.sha });
+        } else entries.push({ path, mode: '100644', type: 'blob', content });
+      }
       const tree = await call(`${base}/git/trees`, {
         method: 'POST',
-        body: {
-          base_tree: parent.tree.sha,
-          tree: Object.entries(files).map(([path, content]) => ({ path, mode: '100644', type: 'blob', content })),
-        },
+        body: { base_tree: parent.tree.sha, tree: entries },
       });
       const commit = await call(`${base}/git/commits`, { method: 'POST', body: { message, tree: tree.sha, parents: [parentSha] } });
       await call(`${base}/git/refs/heads/${repo.branch}`, { method: 'PATCH', body: { sha: commit.sha, force: false } });

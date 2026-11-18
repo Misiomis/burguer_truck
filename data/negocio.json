@@ -78,7 +78,7 @@
         {
           "id": "villa-nueva",
           "nombre": "Villa Nueva",
-          "tarifa": 2500,
+          "tarifa": 3000,
           "tarifaEstado": "confirmada"
         },
         {
@@ -96,8 +96,8 @@
         {
           "id": "barrio-80-viviendas",
           "nombre": "Barrio 80 Viviendas",
-          "tarifa": null,
-          "tarifaEstado": "pendiente"
+          "tarifa": 1500,
+          "tarifaEstado": "confirmada"
         },
         {
           "id": "barrio-26-viviendas",

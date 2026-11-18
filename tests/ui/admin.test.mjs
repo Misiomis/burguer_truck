@@ -8,6 +8,7 @@ import { chromium } from 'playwright-core';
 import { createServer } from '../../scripts/serve.mjs';
 import { buildSiteFiles, PAGES } from '../../js/core/build-core.js';
 import { liveCatalog, liveBusiness } from '../unit/fixtures.js';
+import sharp from 'sharp';
 
 const require = createRequire(import.meta.url);
 const AXE = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
@@ -26,7 +27,7 @@ after(async () => { await browser?.close(); server?.close(); });
 async function openAdmin({ conflict = false, init } = {}) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'es-AR' });
   const calls = [];
-  const posted = { tree: null, commit: null, patch: null };
+  const posted = { tree: null, commit: null, patch: null, blobs: [] };
   await context.route('https://api.github.com/**', async (route) => {
     const req = route.request();
     const url = new URL(req.url());
@@ -43,6 +44,7 @@ async function openAdmin({ conflict = false, init } = {}) {
       return route.fulfill({ status: 200, contentType: 'text/plain; charset=utf-8', body: read(decodeURIComponent(p.slice('/contents/'.length))) });
     }
     if (p === '/git/commits/base1') return send(200, { sha: 'base1', tree: { sha: 'tree1' } });
+    if (p === '/git/blobs' && req.method() === 'POST') { const body = JSON.parse(req.postData()); posted.blobs.push(body); return send(201, { sha: `blob${posted.blobs.length}` }); }
     if (p === '/git/trees' && req.method() === 'POST') { posted.tree = JSON.parse(req.postData()); return send(201, { sha: 'tree2' }); }
     if (p === '/git/commits' && req.method() === 'POST') { posted.commit = JSON.parse(req.postData()); return send(201, { sha: 'commit2' }); }
     if (p === '/git/refs/heads/main' && req.method() === 'PATCH') {
@@ -101,7 +103,7 @@ describe('panel de precios', () => {
 
     await page.locator('[data-review]').click();
     const items = await page.locator('[data-change-list] li').allTextContents();
-    assert.deepEqual(items.sort(), ['Envío a Barrio 80 Viviendas: a confirmar → $2.000', 'Hamburguesa simple: $4.500 → $5.000', 'Lomito (sin papas): disponible → agotado'].sort());
+    assert.deepEqual(items.sort(), ['Envío a Barrio 80 Viviendas: $1.500 → $2.000', 'Hamburguesa simple: $4.500 → $5.000', 'Lomito (sin papas): disponible → agotado'].sort());
     await page.locator('[data-publish]').click();
     await page.waitForFunction(() => /Publicado: 3 cambios/.test(document.querySelector('[data-status]').textContent));
 
@@ -116,7 +118,7 @@ describe('panel de precios', () => {
     assert.ok(files['index.html'].includes('$5.000'));
     assert.equal(posted.tree.base_tree, 'tree1');
     assert.deepEqual(posted.commit.parents, ['base1']);
-    assert.match(posted.commit.message, /Precios actualizados desde el panel \(3 cambios\)/);
+    assert.match(posted.commit.message, /Carta actualizada desde el panel \(3 cambios\)/);
     assert.equal(posted.patch.force, false);
     assert.ok(calls.every((c) => !c.url.includes('bueno')), 'el token nunca va en la URL');
     assert.deepEqual(problems, []);
@@ -165,6 +167,55 @@ describe('panel de precios', () => {
     await run('revisión');
     const { sw, cw } = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
     assert.ok(sw <= cw, 'sin scroll horizontal a 390 px');
+    await context.close();
+  });
+  test('bebidas: agregar con foto, nombre, presentación y precio; barrios: agregar y quitar', async () => {
+    const { page, context, posted, problems } = await openAdmin();
+    await login(page);
+    await page.locator('[data-edit-view]:not([hidden])').waitFor();
+    assert.match(await page.locator('#cat-bebidas').locator('..').textContent(), /Próximamente tendremos bebidas/);
+    await page.getByRole('button', { name: 'Agregar bebida' }).click();
+    assert.ok(await page.locator('[data-review]').isDisabled(), 'sin nombre no se puede publicar');
+    const card = page.locator('[data-product-card^="bebida-"]');
+    await card.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Coca-Cola');
+    await card.getByRole('textbox', { name: 'Presentación de nueva bebida' }).fill('Lata 354 ml');
+    await card.getByRole('textbox', { name: /^Precio de/ }).fill('2.500');
+    const png = await sharp({ create: { width: 900, height: 700, channels: 3, background: '#C40010' } }).png().toBuffer();
+    await card.locator('input[type="file"]').setInputFiles({ name: 'coca.png', mimeType: 'image/png', buffer: png });
+    await page.waitForFunction(() => /Foto lista/.test(document.querySelector('[data-status]').textContent));
+    // Barrios.
+    await page.getByRole('textbox', { name: 'Nombre del barrio' }).fill('Barrio Nuevo');
+    await page.getByRole('textbox', { name: 'Costo de envío' }).fill('2200');
+    await page.getByRole('button', { name: 'Agregar barrio' }).click();
+    page.once('dialog', (d) => d.accept());
+    await page.getByRole('button', { name: 'Quitar Barrio EMSA' }).click();
+
+    await page.locator('[data-review]').click();
+    const items = await page.locator('[data-change-list] li').allTextContents();
+    assert.ok(items.some((x) => x.startsWith('Nuevo producto: Coca-Cola (Lata 354 ml) · $2.500')), items.join(' | '));
+    assert.ok(items.includes('Nuevo barrio con envío: Barrio Nuevo · $2.200'));
+    assert.ok(items.includes('Se quita el barrio Barrio EMSA'));
+    await page.locator('[data-publish]').click();
+    await page.waitForFunction(() => /Publicado/.test(document.querySelector('[data-status]').textContent));
+
+    const entries = posted.tree.tree;
+    const files = Object.fromEntries(entries.filter((e) => 'content' in e).map((e) => [e.path, e.content]));
+    const catalog = JSON.parse(files['data/catalogo.json']);
+    const drink = catalog.productos.find((p) => p.categoria === 'bebidas');
+    assert.equal(drink.nombre, 'Coca-Cola');
+    assert.equal(drink.variantes[0].precio, 2500);
+    assert.equal(drink.variantes[0].presentacion, 'Lata 354 ml');
+    assert.ok(drink.foto.startsWith('assets/fotos/bebida-') && (drink.foto.endsWith('.webp') || drink.foto.endsWith('.jpg')), drink.foto);
+    const photo = entries.find((e) => e.path === drink.foto);
+    assert.ok(photo && photo.sha && photo.sha.startsWith('blob'), 'la foto se sube como blob');
+    const img = await sharp(Buffer.from(posted.blobs[0].content, 'base64')).metadata();
+    assert.ok(img.width <= 480 && img.height <= 480, `foto achicada (${img.width}x${img.height})`);
+    assert.ok(files['index.html'].includes('Coca-Cola') && files['index.html'].includes('$2.500'));
+    assert.ok(files['index.html'].includes(drink.foto));
+    const business = JSON.parse(files['data/negocio.json']);
+    assert.ok(business.modalidades.envio.zonas.some((z) => z.nombre === 'Barrio Nuevo' && z.tarifa === 2200));
+    assert.ok(!business.modalidades.envio.zonas.some((z) => z.id === 'barrio-emsa'));
+    assert.deepEqual(problems, []);
     await context.close();
   });
 });

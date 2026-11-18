@@ -269,12 +269,15 @@ describe('WhatsApp', () => {
     await addFromMenu(page, 'hamburguesa-completa');
     await openCart(page);
     await page.locator('input[name="mode"][value="retiro"]').check();
+    await page.locator('#c-name').fill('Ana Gómez');
     const href = await page.locator('[data-whatsapp]').getAttribute('href');
     assert.ok(href.startsWith(`https://wa.me/${liveBusiness().whatsapp.numero}?text=`), href.slice(0, 40));
     const text = decodeURIComponent(href.split('?text=')[1]);
-    assert.match(text, /1 x Hamburguesa completa/);
-    assert.ok(text.includes("Total: $6.500"), "total en el mensaje");
-    assert.equal(await page.locator('#c-zone option').count(), liveBusiness().modalidades.envio.zonas.length + 1);
+    assert.ok(text.includes('• 1 × Hamburguesa completa'), text);
+    assert.ok(text.includes('👤 *Cliente:* Ana Gómez'), text);
+    assert.ok(text.includes('*TOTAL: $6.500*'), text);
+    assert.equal(await page.locator('.zone-opt').count(), liveBusiness().modalidades.envio.zonas.length);
+    assert.equal(await page.locator('dialog select').count(), 0, 'sin desplegables del sistema');
     assert.deepEqual(waRequests, []);
     await context.close();
   });
@@ -290,13 +293,13 @@ describe('WhatsApp', () => {
     assert.equal(await page.locator('[data-total]').textContent(), 'A confirmar');
     await page.locator('.preview summary').click();
     const preview = await page.locator('[data-message-preview]').textContent();
-    assert.match(preview, /Modalidad: a coordinar/);
+    assert.ok(preview.includes('🛵 *Entrega:* a coordinar'));
     assert.equal(await page.locator('dialog a[href*="wa.me"]').count(), 0);
     assert.deepEqual(waRequests, []);
     await context.close();
   });
 
-  test('con datos de prueba confirmados: validación, retiro, envío $1.500 y envío a cotizar', async () => {
+  test('validación: nombre y apellido, entrega, barrio y referencia; envío $1.500 y a cotizar', async () => {
     const { page, context, waRequests } = await open('', { fixture: true });
     await addFromMenu(page, 'empanadas-carne', { variant: 'empanadas-carne-12' });
     await addFromMenu(page, 'milanesa-pollo');
@@ -304,12 +307,18 @@ describe('WhatsApp', () => {
     await openCart(page);
     assert.equal(await page.locator('[data-subtotal]').textContent(), '$28.000');
 
-    // Sin modalidad: no se abre nada y se marca el error junto al campo.
+    // Sin datos: no se abre nada y se marcan los errores junto a cada campo; el foco va al primero.
     const popups = [];
     context.on('page', (p) => popups.push(p));
     await page.locator('[data-whatsapp]').click();
-    assert.ok(await page.locator('#err-mode').isVisible());
+    assert.ok(await page.locator('#err-name').isVisible(), 'pide nombre');
+    assert.ok(await page.locator('#err-mode').isVisible(), 'pide entrega');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'c-name');
     assert.equal(popups.length, 0);
+    await page.locator('#c-name').fill('Ana');
+    await page.locator('[data-whatsapp]').click();
+    assert.ok(await page.locator('#err-name').isVisible(), 'un solo nombre no alcanza');
+    await page.locator('#c-name').fill('Ana Gómez');
 
     await page.locator('input[name="mode"][value="retiro"]').check();
     assert.equal(await page.locator('[data-total]').textContent(), '$28.000');
@@ -318,32 +327,33 @@ describe('WhatsApp', () => {
     assert.ok(href.startsWith('https://wa.me/5490000000000?text='));
     let text = decodeURIComponent(href.split('?text=')[1]);
     assert.equal(text, await page.locator('[data-message-preview]').textContent(), 'el enlace lleva exactamente el texto mostrado');
-    assert.ok(text.includes("Total: $28.000"), "total en el mensaje");
+    assert.ok(text.includes('*TOTAL: $28.000*'));
 
     await page.locator('input[name="mode"][value="envio"]').check();
-    await page.locator('#c-zone').selectOption('zona-test');
     await page.locator('[data-whatsapp]').click();
-    assert.ok(await page.locator('#err-address').isVisible(), 'pide dirección');
-    assert.equal(await page.locator('#c-address').getAttribute('aria-invalid'), 'true');
-    await page.locator('#c-address').fill('Av. Siempre Viva 123 & Ñandú + 2º');
+    assert.ok(await page.locator('#err-zone').isVisible(), 'pide barrio');
+    assert.ok(await page.locator('#err-reference').isVisible(), 'pide referencia');
+    assert.equal(await page.locator('#c-address').count(), 0, 'ya no hay campo de dirección');
+    await page.locator('.zone-opt', { hasText: 'Zona de prueba' }).click();
+    await page.locator('#c-reference').fill('Portón verde & Ñandú + 2º');
     await page.locator('#c-notes').fill('Sin sal. <b>gracias</b>');
     assert.equal(await page.locator('[data-shipping]').textContent(), '$1.500');
     assert.equal(await page.locator('[data-total]').textContent(), '$29.500');
     href = await page.locator('[data-whatsapp]').getAttribute('href');
     text = decodeURIComponent(href.split('?text=')[1]);
-    assert.match(text, /Dirección: Av\. Siempre Viva 123 & Ñandú \+ 2º/);
-    assert.match(text, /Observaciones: Sin sal\. bgracias\/b/);
+    assert.ok(text.includes('📍 *Referencia:* Portón verde & Ñandú + 2º'), text);
+    assert.ok(text.includes('📝 *Observaciones:* Sin sal. bgracias/b'), text);
     assert.doesNotMatch(text, /undefined|null|NaN/);
 
-    await page.locator('#c-zone').selectOption('zona-pendiente');
+    await page.locator('.zone-opt', { hasText: 'Zona a cotizar' }).click();
     assert.equal(await page.locator('[data-shipping]').textContent(), 'A confirmar');
     assert.equal(await page.locator('[data-total]').textContent(), 'A confirmar');
     text = decodeURIComponent((await page.locator('[data-whatsapp]').getAttribute('href')).split('?text=')[1]);
-    assert.match(text, /Envío: a confirmar[\s\S]*Total: a confirmar/);
+    assert.ok(text.includes('Envío: a confirmar') && text.includes('*TOTAL: a confirmar*'));
 
     // Datos personales: no se guardan.
     const saved = await page.evaluate(() => localStorage.getItem('ebs:pedido:v1'));
-    assert.doesNotMatch(saved, /Siempre Viva|Sin sal/);
+    assert.doesNotMatch(saved, /Gómez|Portón|Sin sal/);
     assert.deepEqual(waRequests, [], 'no se envió ninguna petición a WhatsApp');
     await context.close();
   });
@@ -591,7 +601,7 @@ describe('carta en el inicio y categorías', () => {
         const nav = document.querySelector('.catnav').getBoundingClientRect();
         const sc = document.querySelector('[data-catnav-scroller]').getBoundingClientRect();
         const lr = link.getBoundingClientRect();
-        const first = sec.querySelector('.product').getBoundingClientRect();
+        const first = (sec.querySelector('.product') || sec.querySelector('.menu-empty')).getBoundingClientRect();
         return {
           current: link.getAttribute('aria-current'),
           titleTop: sec.querySelector('h2').getBoundingClientRect().top,
@@ -609,7 +619,7 @@ describe('carta en el inicio y categorías', () => {
       assert.ok(r.linkVisible, `${name}: el enlace activo queda visible en la fila`);
     }
     // Al desplazarse a mano, la categoría activa acompaña.
-    await page.evaluate(() => document.getElementById('h-sandwiches').scrollIntoView({ block: 'start' }));
+    await page.evaluate(() => document.getElementById('h-sandwiches').scrollIntoView({ block: 'start', behavior: 'instant' }));
     await page.mouse.wheel(0, 10);
     await page.waitForTimeout(400);
     assert.equal(await page.locator('.catnav__link[aria-current]').textContent(), 'Sándwiches');
@@ -666,6 +676,76 @@ describe('carta en el inicio y categorías', () => {
     assert.equal(await page.locator('[data-product="hamburguesa-simple"] [data-in-cart]').textContent(), 'En tu pedido: 2');
     assert.equal(await page.locator('[data-product="empanadas-pollo"] [data-in-cart]').textContent(), 'En tu pedido: 2');
     assert.ok(await page.locator('[data-product="lomito"] [data-in-cart]').isHidden());
+    await context.close();
+  });
+});
+
+describe('identidad, contacto y barrios', () => {
+  test('logo arriba y sin textos retirados (Antes Burguer Truck, imagen ilustrativa, pesos argentinos)', async () => {
+    for (const width of [320, 390, 1440]) {
+      const { page, context } = await open('', { width, height: 800 });
+      const logo = page.locator('.site-header .brand__logo');
+      assert.ok(await logo.isVisible(), `logo visible @${width}`);
+      const box = await logo.boundingBox();
+      assert.ok(box.y < 20 && box.width >= 40, `logo arriba y legible @${width}`);
+      assert.equal(await logo.evaluate((i) => i.complete && i.naturalWidth > 0), true);
+      const text = await page.evaluate(() => document.documentElement.innerText + ' ' + document.head.innerHTML);
+      for (const bad of ['Antes Burguer Truck', 'antes Burguer Truck', 'ilustrativa', 'Precios en pesos argentinos']) assert.ok(!text.includes(bad), `${bad} @${width}`);
+      await noHorizontalScroll(page, `cabecera ${width}`);
+      await context.close();
+    }
+  });
+
+  test('bebidas: sección visible con “Próximamente tendremos bebidas.” y enlace en la barra', async () => {
+    const { page, context } = await open('#bebidas', { width: 390, height: 844 });
+    assert.equal(await page.locator('#bebidas .menu-empty__text').textContent(), 'Próximamente tendremos bebidas.');
+    assert.equal(await page.locator('.catnav__link', { hasText: 'Bebidas' }).count(), 1);
+    assert.equal(await page.locator('#bebidas .product__add').count(), 0, 'nada para comprar todavía');
+    await context.close();
+  });
+
+  test('contacto: logos de WhatsApp y Google Maps con enlaces y mensajes armados', async () => {
+    const { page, context } = await open('#location', { width: 390, height: 844 });
+    const maps = page.locator('#location .btn-maps');
+    assert.equal(await maps.getAttribute('href'), liveBusiness().direccion.mapaUrl);
+    assert.equal(await maps.locator('use').getAttribute('href'), '#i-logo-maps');
+    const was = page.locator('#location .btn-wa');
+    assert.equal(await was.count(), 2);
+    const texts = await was.evaluateAll((as) => as.map((a) => decodeURIComponent(a.href.split('?text=')[1])));
+    assert.deepEqual(texts, ['Hola, El Buen Sabor. Quiero hacer una consulta.', 'Hola, ¿cuáles son los medios de pago?']);
+    for (const h of await was.evaluateAll((as) => as.map((a) => a.href))) assert.ok(h.startsWith(`https://wa.me/${liveBusiness().whatsapp.numero}?text=`));
+    assert.equal(await page.locator('.site-footer .btn-wa').count(), 1);
+    // Barrios con su costo, sin desplegable del sistema.
+    const zones = await page.locator('.zones__item').allTextContents();
+    assert.equal(zones.length, liveBusiness().modalidades.envio.zonas.length);
+    assert.ok(zones.some((z) => z.includes('Barrio 80 Viviendas') && z.includes('$1.500')));
+    assert.ok(zones.some((z) => z.includes('Villa Nueva') && z.includes('$3.000')));
+    await context.close();
+  });
+
+  test('celular: al escribir la referencia se oculta el pie y el campo queda a la vista', async () => {
+    const context = await browser.newContext({ viewport: { width: 390, height: 664 }, isMobile: true, hasTouch: true, locale: 'es-AR' });
+    await context.route(/wa\.me/, (r) => r.abort());
+    const page = await context.newPage();
+    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.locator('[data-product="hamburguesa-simple"] .product__add').tap();
+    await page.locator('.order-btn').tap();
+    await page.locator('dialog[open]').waitFor();
+    await page.locator('.choice__opt', { hasText: 'Envío a domicilio' }).tap();
+    await page.locator('.zone-opt', { hasText: 'Zona Centro' }).tap();
+    await page.locator('#c-reference').tap();
+    await page.waitForTimeout(500);
+    assert.ok(await page.locator('.cart__foot').isHidden(), 'el pie se oculta mientras se escribe');
+    const r = await page.evaluate(() => {
+      const f = document.getElementById('c-reference').getBoundingClientRect();
+      const head = document.querySelector('.cart__head').getBoundingClientRect();
+      return { top: f.top, bottom: f.bottom, head: head.bottom, vh: window.visualViewport.height };
+    });
+    assert.ok(r.top >= r.head && r.bottom <= r.vh, `campo visible (${r.top}-${r.bottom}, alto ${r.vh})`);
+    await page.locator('#c-reference').fill('Frente a la plaza');
+    await page.locator('.cart__title').tap();
+    await page.waitForTimeout(200);
+    assert.ok(await page.locator('.cart__foot').isVisible(), 'el pie vuelve al terminar de escribir');
     await context.close();
   });
 });

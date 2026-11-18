@@ -116,6 +116,8 @@ body.has-order-bar { padding-bottom: calc(4.75rem + env(safe-area-inset-bottom))
 body.is-locked { overflow: hidden; }
 
 img, picture, svg { display: block; max-width: 100%; }
+/* La selección ya se marca con estilos propios: sin el resaltado azul del navegador al tocar. */
+a, button, label, summary { -webkit-tap-highlight-color: transparent; }
 img { height: auto; }
 input, button, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -229,7 +231,6 @@ main:focus { outline: none; }
   font-family: var(--font-display); font-weight: 600;
   font-size: 1.375rem; text-transform: uppercase; letter-spacing: 0.02em;
 }
-.brand__before { font-size: var(--fs-xs); color: var(--ink-3); margin-top: 2px; }
 
 .site-nav__list { display: flex; gap: var(--s-1); list-style: none; padding: 0; }
 .site-nav__link {
@@ -655,6 +656,98 @@ textarea.field__input { min-height: 4.5rem; resize: vertical; }
 @keyframes cart-in { from { transform: translateX(24px); opacity: .4; } to { transform: none; opacity: 1; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes pulse { 50% { transform: scale(.97); } }
+
+/* ---------- Logo en la cabecera ---------- */
+.brand { flex-direction: row; align-items: center; gap: var(--s-3); }
+.brand picture { flex: none; }
+.brand__logo { width: 2.75rem; height: 2.75rem; border-radius: 50%; flex: none; object-fit: contain; }
+@media (max-width: 22.5rem) {
+  .brand { gap: var(--s-2); }
+  .brand__logo { width: 2.5rem; height: 2.5rem; }
+  .brand__name { font-size: 1.125rem; }
+}
+
+/* ---------- Logos de terceros y botones de contacto ---------- */
+.icon--logo { width: 1.375rem; height: 1.375rem; }
+.icon--wa, .info-list__row .icon--wa { color: #25D366; }
+.btn-wa, .btn-maps {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  min-height: var(--tap); padding: 0 var(--s-4);
+  border-radius: 999px;
+  font-size: 0.9375rem; font-weight: 600; text-decoration: none;
+  transition: filter .15s var(--ease), border-color .15s var(--ease);
+}
+/* Verde oficial de WhatsApp con texto oscuro: 7,69:1. */
+.btn-wa { background: #25D366; color: #0B2B1C; }
+.btn-wa .icon { color: #0B2B1C; }
+.btn-wa:hover { filter: brightness(.95); text-decoration: none; }
+.btn-maps { background: var(--white); color: var(--ink); border: 1px solid var(--line-strong); }
+.btn-maps:hover { border-color: var(--carbon); text-decoration: none; }
+.info-list dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); justify-content: space-between; }
+.info-list__row > .icon { width: 1.375rem; height: 1.375rem; margin-top: 1px; }
+.footer__wa { margin-top: var(--s-4); }
+
+/* ---------- Barrios con envío ---------- */
+.zones { margin-top: var(--s-6); max-width: 48rem; }
+.zones__head { margin-bottom: var(--s-4); }
+.zones__title { font-size: var(--fs-h3); }
+.zones__sub { color: var(--ink-2); font-size: 0.9375rem; }
+.zones__list { list-style: none; padding: 0; display: grid; gap: var(--s-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); }
+.zones__item {
+  position: relative;
+  display: flex; flex-direction: column; justify-content: center; gap: 2px;
+  min-height: 3.75rem; padding: var(--s-2) var(--s-3) var(--s-2) var(--s-4);
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--r);
+}
+.zones__item::before {
+  content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 4px;
+  border-radius: 0 4px 4px 0; background: var(--red);
+}
+.zones__name { font-weight: 600; font-size: 0.9375rem; line-height: 1.25; }
+.zones__fee { flex: none; font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+
+/* Selección de barrio dentro del pedido: tarjetas propias, sin el desplegable del sistema. */
+.checkout__legend--sm { font-size: 1.0625rem; }
+.zone-picker__list { display: grid; gap: var(--s-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); }
+.zone-opt {
+  position: relative;
+  display: grid; gap: 2px; align-content: center;
+  min-height: 3.5rem; padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--line-strong); border-radius: var(--r);
+  background: var(--white); cursor: pointer;
+}
+.zone-opt__input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.zone-opt__name { font-weight: 600; font-size: 0.875rem; line-height: 1.2; padding-right: 1.5rem; }
+.zone-opt__fee { font-family: var(--font-display); font-weight: 600; font-size: 1.0625rem; font-variant-numeric: tabular-nums; }
+.zone-opt::after {
+  content: ""; position: absolute; top: 10px; right: 10px;
+  width: 1rem; height: 1rem; border-radius: 50%;
+  border: 2px solid var(--line-strong); background: var(--white);
+}
+.zone-opt:has(input:checked) { border-color: var(--carbon); box-shadow: inset 0 0 0 1px var(--carbon); background: var(--surface-2); }
+.zone-opt:has(input:checked)::after { border-color: var(--red); background: radial-gradient(circle, var(--red) 0 45%, var(--white) 50%); }
+.zone-opt:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.zone-opt:has(input[aria-invalid="true"]) { border-color: var(--red-ink); }
+.field__help { font-size: var(--fs-small); color: var(--ink-3); }
+
+/* ---------- Categoría sin productos (próximamente) ---------- */
+.menu-empty {
+  display: flex; align-items: center; gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  background: var(--white); border: 2px dashed var(--line-strong); border-radius: var(--r-lg);
+  max-width: 36rem;
+}
+.menu-empty img { width: 6rem; height: auto; flex: none; }
+.menu-empty__text { font-family: var(--font-display); font-weight: 600; font-size: 1.375rem; line-height: 1.2; }
+
+/* ---------- Foto de producto subida desde el panel ---------- */
+.product__illus--foto { overflow: hidden; }
+.product__illus--foto img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- Pedido con el teclado del celular abierto ---------- */
+.cart { inset: var(--vv-top, 0px) 0 auto auto; height: var(--vv-h, 100dvh); max-height: var(--vv-h, 100dvh); }
+.cart.is-typing .cart__foot { display: none; }
+.cart.is-typing .cart__body { padding-bottom: var(--s-8); }
 
 /* ---------- 404 / aviso admin ---------- */
 .simple-page { min-height: 60vh; display: grid; align-content: center; gap: var(--s-4); padding-block: var(--section-y); }

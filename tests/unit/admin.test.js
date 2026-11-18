@@ -40,7 +40,7 @@ describe('panel: cambios y commit', () => {
     assert.ok(list.includes('Envío a Zona Centro: $1.000 → sin cargo'));
     assert.equal(listChanges(before, before).length, 0);
     const msg = commitMessage(listChanges(before, after), 'dueño');
-    assert.match(msg, /^Precios actualizados desde el panel \(4 cambios\)/);
+    assert.match(msg, /^Carta actualizada desde el panel \(4 cambios\)/);
     assert.match(msg, /Publicado por dueño/);
   });
   test('fecha local en formato ISO', () => {
@@ -99,5 +99,32 @@ describe('cliente de GitHub', () => {
     assert.equal(JSON.parse(patch.o.body).force, false);
     const tree = calls.find((c) => c.u.endsWith('/git/trees'));
     assert.deepEqual(JSON.parse(tree.o.body).tree[0], { path: 'data/catalogo.json', mode: '100644', type: 'blob', content: '{}\n' });
+  });
+});
+
+describe('bebidas y barrios desde el panel', () => {
+  test('categoría vacía muestra el mensaje y una bebida con foto usa su foto', async () => {
+    const { renderMenu } = await import('../../js/core/render.js');
+    const cat = liveCatalog();
+    assert.ok(renderMenu(cat).includes('Próximamente tendremos bebidas.'));
+    cat.productos.push({ id: 'bebida-x', categoria: 'bebidas', nombre: 'Agua', foto: 'assets/fotos/bebida-x-1.webp', estado: 'disponible',
+      variantes: [{ id: 'bebida-x', presentacion: '500 ml', unidades: 1, precio: 1500, precioEstado: 'confirmado', estado: 'disponible' }] });
+    const html = renderMenu(cat);
+    assert.ok(!html.includes('Próximamente tendremos bebidas.'));
+    assert.ok(html.includes('src="assets/fotos/bebida-x-1.webp"'));
+    assert.ok(html.includes('$1.500'));
+  });
+
+  test('cambios: productos y barrios nuevos o quitados', () => {
+    const before = { catalog: liveCatalog(), business: liveBusiness() };
+    const after = { catalog: liveCatalog(), business: liveBusiness() };
+    after.catalog.productos.push({ id: 'bebida-y', categoria: 'bebidas', nombre: 'Sprite', estado: 'disponible',
+      variantes: [{ id: 'bebida-y', presentacion: 'Lata', unidades: 1, precio: 2000, precioEstado: 'confirmado', estado: 'disponible' }] });
+    after.business.modalidades.envio.zonas.push({ id: 'nuevo', nombre: 'Nuevo', tarifa: 0, tarifaEstado: 'confirmada' });
+    after.business.modalidades.envio.zonas.splice(0, 1);
+    const list = listChanges(before, after).map((c) => c.text);
+    assert.ok(list.includes('Nuevo producto: Sprite (Lata) · $2.000'), list.join(' | '));
+    assert.ok(list.includes('Nuevo barrio con envío: Nuevo · sin cargo'));
+    assert.ok(list.includes('Se quita el barrio Zona Centro'));
   });
 });

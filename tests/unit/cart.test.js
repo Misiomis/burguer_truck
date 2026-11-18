@@ -284,9 +284,10 @@ describe('casos de cálculo con la carta vigente (data/catalogo.json)', () => {
     assert.equal(notices[0].type, 'price');
   });
 
-  test('las 15 zonas de envío y Barrio 80 Viviendas a cotizar se mantienen', () => {
+  test('las 15 zonas de envío con Barrio 80 Viviendas a $1.500 y Villa Nueva a $3.000', () => {
     assert.equal(biz.modalidades.envio.zonas.length, 15);
     const z80 = biz.modalidades.envio.zonas.find((z) => z.id === 'barrio-80-viviendas');
-    assert.equal(z80.tarifa, null);
+    assert.equal(z80.tarifa, 1500);
+    assert.equal(biz.modalidades.envio.zonas.find((z) => z.id === 'villa-nueva').tarifa, 3000);
   });
 });

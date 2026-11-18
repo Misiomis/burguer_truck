@@ -129,3 +129,15 @@ Detalle completo en `assets/img/manifest.json`. Originales en `_originales/` (no
 - Sin cambios en precios, productos, variantes, contacto, horarios, modalidades ni zonas.
 - Pruebas: 61 unitarias y 37 de interfaz (320, 360, 390, 430, 768, 1024 y 1440 px, emulados en Chrome), más 5 del panel. Lighthouse 12.6 móvil simulado, 3 corridas: rendimiento 99, accesibilidad/buenas prácticas/SEO 100, LCP 2,2 s, CLS ≤ 0,006, 174 KB.
 - Revisión anterior para revertir: commit `8704f7f`.
+
+## 10. Ajustes del propietario (18/11/2026)
+
+- Logo (perfil simplificado) en la cabecera junto al nombre, en todas las pantallas. Se usa más chico que el mínimo orientativo del manual (96 px) por decisión del propietario; el nombre sigue en texto al lado.
+- Se quitaron “Antes Burguer Truck”, “Imagen ilustrativa” y “Precios en pesos argentinos…”. La historia del carrito se mantiene en “Nuestra historia”.
+- Contacto con logos oficiales de WhatsApp y Google Maps; “Escribinos” y “Consultar” (medios de pago) abren WhatsApp con el mensaje escrito. Botón verde con texto oscuro (7,69:1).
+- Barrios: tarjetas propias en “Dónde estamos” y en el pedido (sin desplegable del sistema). Barrio 80 Viviendas $1.500, Villa Nueva $3.000.
+- Pedido: “Nombre y apellido” obligatorio; sin campo Dirección, con Referencia obligatoria para envío. El panel sigue el área visible del celular y oculta el pie mientras se escribe.
+- Mensaje de WhatsApp reordenado: cliente, entrega, referencia, detalle, totales, observaciones.
+- Bebidas: sección con “Próximamente tendremos bebidas.”; desde el panel se cargan bebidas con foto y precio, y se agregan o quitan barrios.
+- No se puede emular el teclado real de iOS/Android: se probó el modo escritura con un celular táctil emulado; conviene confirmarlo en un teléfono.
+- Lighthouse 12.6 (móvil simulado, servidor local con gzip): 98 de rendimiento y TBT 0 ms, igual que la versión anterior medida en la misma máquina (99). Se corrigió un recálculo de estilos de toda la página que causaba bloqueos al ajustar el panel al teclado.

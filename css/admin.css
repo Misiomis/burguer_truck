@@ -71,3 +71,15 @@
   .ad-bar [data-review] { flex: 1 1 auto; }
 }
 .ad-bar .link-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Bebidas y barrios editables */
+.ad-product__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.ad-photo { display: flex; align-items: center; gap: var(--s-4); }
+.ad-photo__img { width: 6rem; height: 4.8rem; object-fit: cover; border-radius: var(--r); background: var(--surface-2); border: 1px solid var(--line); }
+.ad-photo__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
+.ad-file { cursor: pointer; }
+.ad-photo:has(input[type="file"]:focus-visible) .ad-file { outline: 3px solid var(--focus); outline-offset: 3px; }
+.ad-zones .field .link-btn { justify-self: start; }
+.ad-newzone { border-top: 1px solid var(--line); padding-top: var(--s-4); margin-top: var(--s-2); display: grid; gap: var(--s-2); }
+.ad-newzone__row { display: grid; gap: var(--s-3); grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: end; }
+@media (max-width: 36rem) { .ad-newzone__row { grid-template-columns: 1fr; } }

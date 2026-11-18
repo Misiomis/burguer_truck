@@ -58,7 +58,9 @@ Todo lo comercial sale de **dos archivos**: `data/catalogo.json` y `data/negocio
 
 1. Abrí <https://misiomis.github.io/burguer_truck/admin.html>.
 2. Pegá el **token de GitHub** (ver abajo). Marcá “Recordar en este dispositivo” solo en un equipo propio.
-3. Cambiá precios (`7000` o `7.000`; vacío = “a confirmar”), marcá productos como **Agotado** u **Oculto** y ajustá las tarifas de envío por zona.
+3. Cambiá precios (`7000` o `7.000`; vacío = “a confirmar”), marcá productos como **Agotado** u **Oculto** y ajustá las tarifas de envío por barrio.
+   - **Bebidas:** “Agregar bebida” → nombre, presentación (ej.: “Lata 354 ml”), precio y foto. La foto se achica en el navegador (máx. 480 px, WebP) y se sube al publicar a `assets/fotos/`. También se puede cambiar o quitar la foto, o quitar la bebida. Sin bebidas, la web muestra “Próximamente tendremos bebidas.”
+   - **Barrios:** cambiar el costo, “Quitar barrio” o “Agregar barrio” (nombre y costo; vacío = a cotizar).
 4. **Revisar y publicar** muestra la lista de cambios. Al confirmar, el panel hace un commit en `main` con los mismos archivos que generaría `npm run build`. GitHub Pages actualiza la web para todos en 1 o 2 minutos y el panel avisa cuando ya se ve.
 5. Si otra persona publicó cambios mientras editabas, el panel no pisa nada: recargá y volvé a aplicar.
 
@@ -114,7 +116,8 @@ Horarios (una sola fuente para toda la web):
 
 ## Categorías, precios e ilustraciones
 
-- **Precios, disponibilidad y tarifas de envío:** desde el panel `admin.html` (ver arriba) o en `data/catalogo.json` / `data/negocio.json`.
+- **Precios, disponibilidad, bebidas (con foto) y barrios con envío:** desde el panel `admin.html` (ver arriba) o en `data/catalogo.json` / `data/negocio.json`.
+- **Mensaje “próximamente” de una categoría vacía:** campo `mensajeVacio` de la categoría.
 - **Categorías:** `categorias` en `data/catalogo.json` (orden = orden de la barra y de la carta; `estado: "oculta"` la saca). Los enlaces de la barra se generan solos.
 - **Ilustración de un producto:** campo `ilustracion` del producto = nombre del archivo en `assets/ilustraciones/` sin `.svg` (hoy: `hamburguesa`, `hamburguesa-doble`, `lomito`, `milanesa`, `papas`, `empanadas`). Para una nueva, agregá un SVG de 160 × 128 con el mismo estilo (luz arriba a la izquierda, sombra elíptica abajo) y referenciála. Son ilustraciones de referencia: no prometen ingredientes ni tamaños.
 - **Foto de portada:** `_originales/menu_inicial/portada_menu_inicial.png` → `npm run images`. Es ilustrativa y está rotulada así.

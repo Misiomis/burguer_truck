@@ -1,6 +1,7 @@
 // Renderizado a HTML (texto escapado) desde la fuente canónica.
 // Lo usan el build (prerender de index/menu) y la vista previa del editor local.
 import { formatARS } from './money.js';
+import { buildWhatsAppUrl, CONTACT_MESSAGES } from './whatsapp.js';
 
 export function esc(value) {
   return String(value ?? '')
@@ -29,7 +30,7 @@ export const icon = (id, label) => label
   : `<svg class="icon" aria-hidden="true" focusable="false"><use href="#i-${id}"></use></svg>`;
 
 const visibleProducts = (catalog, catId) => catalog.productos.filter((p) => p.categoria === catId && p.estado !== 'oculto' && p.variantes.some((v) => v.estado !== 'oculto'));
-const activeCategories = (catalog) => catalog.categorias.filter((c) => c.estado === 'activa' && visibleProducts(catalog, c.id).length);
+const activeCategories = (catalog) => catalog.categorias.filter((c) => c.estado === 'activa' && (visibleProducts(catalog, c.id).length || c.mensajeVacio));
 
 function priceText(v) {
   return v.precioEstado === 'confirmado' && Number.isSafeInteger(v.precio) ? formatARS(v.precio) : 'Precio a confirmar';
@@ -42,10 +43,15 @@ function productState(p) {
   return 'disponible';
 }
 
-/** Ilustración del producto (decorativa: el nombre está al lado). */
+/** Imagen del producto (decorativa: el nombre está al lado). Foto subida > ilustración > genérica. */
 function illustration(p, base, eager) {
-  if (!p.ilustracion) return '<div class="product__illus product__illus--vacia" aria-hidden="true"></div>';
-  return `<div class="product__illus"><img src="${base}assets/ilustraciones/${esc(p.ilustracion)}.svg" width="160" height="128" alt="" decoding="async"${eager ? '' : ' loading="lazy"'}></div>`;
+  const lazy = eager ? '' : ' loading="lazy"';
+  if (p.foto) {
+    return `<div class="product__illus product__illus--foto"><img src="${base}${esc(p.foto)}" width="160" height="128" alt="" decoding="async"${lazy}></div>`;
+  }
+  const name = p.ilustracion || (p.categoria === 'bebidas' ? 'bebida' : '');
+  if (!name) return '<div class="product__illus product__illus--vacia" aria-hidden="true"></div>';
+  return `<div class="product__illus"><img src="${base}assets/ilustraciones/${esc(name)}.svg" width="160" height="128" alt="" decoding="async"${lazy}></div>`;
 }
 
 /**
@@ -105,9 +111,11 @@ export function renderMenu(catalog, { base = '' } = {}) {
     return `<section class="menu-cat" id="${esc(c.id)}" aria-labelledby="h-${esc(c.id)}">`
       + `<header class="menu-cat__head"><h2 class="menu-cat__title" id="h-${esc(c.id)}">${esc(c.nombre)}</h2>`
       + (c.descripcion ? `<p class="menu-cat__desc">${esc(c.descripcion)}</p>` : '')
-      + `</header><div class="menu-grid">`
-      + items.map((p) => renderProductCard(p, { base, eager: ci === 0 })).join('')
-      + `</div></section>`;
+      + `</header>`
+      + (items.length
+        ? `<div class="menu-grid">${items.map((p) => renderProductCard(p, { base, eager: ci === 0 })).join('')}</div>`
+        : `<div class="menu-empty"><img src="${base}assets/ilustraciones/${c.id === 'bebidas' ? 'bebida' : 'hamburguesa'}.svg" width="160" height="128" alt="" loading="lazy" decoding="async"><p class="menu-empty__text">${esc(c.mensajeVacio)}</p></div>`)
+      + `</section>`;
   }).join('\n');
 }
 
@@ -120,34 +128,61 @@ export function renderCategoryNav(catalog) {
 const PENDING = '<span class="pending">A confirmar</span>';
 
 function waDisplay(numero) {
-  // 5493757000000 -> +54 9 3757 00-0000 aproximado; se muestra con espacios simples.
+  // 5493757626892 -> +54 9 3757 626892
   return '+' + numero.replace(/^(\d{2})(\d)(\d{4})(\d+)$/, '$1 $2 $3 $4');
+}
+
+const ext = (label) => `<span class="visually-hidden"> (${label})</span>`;
+
+/** Botón de WhatsApp con el logo oficial y un mensaje ya escrito. */
+export function waButton(biz, text, label, cls = '') {
+  const url = buildWhatsAppUrl(biz, text);
+  if (!url) return PENDING;
+  return `<a class="btn-wa${cls ? ' ' + cls : ''}" href="${esc(url)}" target="_blank" rel="noopener noreferrer">`
+    + `<svg class="icon icon--logo" aria-hidden="true" focusable="false"><use href="#i-logo-whatsapp"></use></svg>`
+    + `<span>${esc(label)}</span>${ext('se abre WhatsApp')}</a>`;
+}
+
+/** Barrios con su costo de envío. */
+export function renderZones(biz) {
+  const env = biz.modalidades.envio;
+  if (env.estado !== 'confirmado' || !env.zonas.length) return '';
+  const fee = (z) => (z.tarifaEstado === 'confirmada' ? (z.tarifa === 0 ? 'Sin cargo' : formatARS(z.tarifa)) : 'A cotizar');
+  return `<section class="zones" aria-labelledby="zones-title">`
+    + `<div class="zones__head"><h3 class="zones__title" id="zones-title">Envío a domicilio</h3><p class="zones__sub">Costo según tu barrio. También podés retirar en el local.</p></div>`
+    + `<ul class="zones__list" role="list">`
+    + env.zonas.map((z) => `<li class="zones__item"><span class="zones__name">${esc(z.nombre)}</span><span class="zones__fee">${esc(fee(z))}</span></li>`).join('')
+    + `</ul></section>`;
 }
 
 /** Datos del local (sección #location). */
 export function renderBusinessInfo(biz) {
   const rows = [];
   const dir = biz.direccion;
-  rows.push(['pin', 'Dirección', dir.estado === 'confirmado'
-    ? `${esc(dir.texto)}${dir.localidad ? `<br>${esc(dir.localidad)}` : ''}${dir.mapaUrl ? `<br><a href="${esc(dir.mapaUrl)}" target="_blank" rel="noopener noreferrer">Abrir en el mapa<span class="visually-hidden"> (se abre en otra pestaña)</span></a>` : ''}`
+  const mapsLogo = '<svg class="icon icon--logo" aria-hidden="true" focusable="false"><use href="#i-logo-maps"></use></svg>';
+  rows.push([mapsLogo, 'Dirección', dir.estado === 'confirmado'
+    ? `<span>${esc(dir.texto)}${dir.localidad ? `<br>${esc(dir.localidad)}` : ''}</span>`
+      + (dir.mapaUrl ? `<a class="btn-maps" href="${esc(dir.mapaUrl)}" target="_blank" rel="noopener noreferrer">${mapsLogo}<span>Cómo llegar</span>${ext('se abre Google Maps')}</a>` : '')
     : PENDING]);
   const h = biz.horarios;
-  rows.push(['clock', 'Horarios', h.estado === 'confirmado'
+  rows.push([icon('clock'), 'Horarios', h.estado === 'confirmado'
     ? `<ul class="plain" role="list">${h.lista.map((r) => `<li>${esc(r.dias)}: <strong>${esc(r.horario)}</strong></li>`).join('')}</ul>`
     : PENDING]);
   const wa = biz.whatsapp;
-  rows.push(['whatsapp', 'WhatsApp', wa.estado === 'confirmado'
-    ? `<a href="https://wa.me/${esc(wa.numero)}" target="_blank" rel="noopener noreferrer">${esc(waDisplay(wa.numero))}<span class="visually-hidden"> (se abre WhatsApp)</span></a>`
+  const waLogo = '<svg class="icon icon--logo icon--wa" aria-hidden="true" focusable="false"><use href="#i-logo-whatsapp"></use></svg>';
+  rows.push([waLogo, 'WhatsApp', wa.estado === 'confirmado'
+    ? `<span>${esc(waDisplay(wa.numero))}</span>${waButton(biz, CONTACT_MESSAGES.consulta, 'Escribinos')}`
     : PENDING]);
   const m = biz.modalidades;
   const modes = [];
   if (m.retiro.estado === 'confirmado') modes.push('Retiro en el local');
-  if (m.envio.estado === 'confirmado') modes.push('Envío a zonas habilitadas');
-  rows.push(['bag', 'Retiro y envío', modes.length ? esc(modes.join(' · ')) : PENDING]);
+  if (m.envio.estado === 'confirmado') modes.push('Envío a domicilio');
+  rows.push([icon('bag'), 'Retiro y envío', modes.length ? esc(modes.join(' · ')) : PENDING]);
   const pay = biz.mediosDePago;
-  rows.push(['card', 'Medios de pago', pay.estado === 'confirmado' && pay.lista.length ? esc(pay.lista.join(' · '))
-    : wa.estado === 'confirmado' ? 'Consultalos por WhatsApp' : PENDING]);
-  return `<dl class="info-list">` + rows.map(([ic, k, v]) => `<div class="info-list__row">${icon(ic)}<dt>${k}</dt><dd>${v}</dd></div>`).join('') + `</dl>`;
+  rows.push([icon('card'), 'Medios de pago', pay.estado === 'confirmado' && pay.lista.length ? esc(pay.lista.join(' · '))
+    : wa.estado === 'confirmado' ? `<span>Te los contamos por WhatsApp.</span>${waButton(biz, CONTACT_MESSAGES.pagos, 'Consultar')}` : PENDING]);
+  return `<dl class="info-list">` + rows.map(([ic, k, v]) => `<div class="info-list__row">${ic}<dt>${k}</dt><dd>${v}</dd></div>`).join('') + `</dl>`
+    + renderZones(biz);
 }
 
 export function hasPendingInfo(biz) {
@@ -158,12 +193,12 @@ export function hasPendingInfo(biz) {
 /** Bloque de contacto del pie. */
 export function renderFooterContact(biz) {
   const items = [];
-  if (biz.direccion.estado === 'confirmado') items.push(`<li>${esc(biz.direccion.texto)}</li>`);
+  if (biz.direccion.estado === 'confirmado') items.push(`<li>${esc(biz.direccion.texto)}${biz.direccion.localidad ? `, ${esc(biz.direccion.localidad)}` : ''}</li>`);
   if (biz.horarios.estado === 'confirmado') items.push(...biz.horarios.lista.map((r) => `<li>${esc(r.dias)}: ${esc(r.horario)}</li>`));
-  if (biz.whatsapp.estado === 'confirmado') items.push(`<li><a href="https://wa.me/${esc(biz.whatsapp.numero)}" target="_blank" rel="noopener noreferrer">WhatsApp ${esc(waDisplay(biz.whatsapp.numero))}</a></li>`);
   for (const r of biz.redes) items.push(`<li><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.nombre)}</a></li>`);
-  if (!items.length) items.push('<li>Dirección, horarios y contacto del nuevo local: a confirmar.</li>');
-  return `<ul class="plain footer__list" role="list">${items.join('')}</ul>`;
+  if (!items.length) items.push('<li>Dirección, horarios y contacto: a confirmar.</li>');
+  const wa = biz.whatsapp.estado === 'confirmado' ? `<p class="footer__wa">${waButton(biz, CONTACT_MESSAGES.consulta, 'Escribinos por WhatsApp')}</p>` : '';
+  return `<ul class="plain footer__list" role="list">${items.join('')}</ul>${wa}`;
 }
 
 /** Datos estructurados: solo campos confirmados y presentes en la página. */
@@ -173,16 +208,15 @@ export function renderJsonLd(catalog, biz, { image } = {}) {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
     name: biz.nombre,
-    alternateName: biz.nombreHistorico,
     url: site,
     slogan: biz.lema,
     currenciesAccepted: 'ARS',
     hasMenu: {
       '@type': 'Menu',
-      name: 'Menú inicial',
+      name: 'Menú',
       url: site + '#carta',
       inLanguage: 'es-AR',
-      hasMenuSection: activeCategories(catalog).map((c) => ({
+      hasMenuSection: activeCategories(catalog).filter((c) => visibleProducts(catalog, c.id).length).map((c) => ({
         '@type': 'MenuSection',
         name: c.nombre,
         hasMenuItem: visibleProducts(catalog, c.id).map((p) => ({

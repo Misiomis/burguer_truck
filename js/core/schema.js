@@ -8,6 +8,7 @@ export const BUSINESS_SCHEMA = 'ebs.negocio';
 export const BUSINESS_VERSION = 1;
 
 const ID_RE = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
+export const FOTO_RE = /^assets\/fotos\/[a-z0-9-]+\.(webp|jpg|png)$/;
 const PRODUCT_STATES = ['disponible', 'agotado', 'oculto'];
 const VARIANT_STATES = ['disponible', 'agotado', 'oculto'];
 const PRICE_STATES = ['confirmado', 'pendiente'];
@@ -54,6 +55,7 @@ export function validateCatalog(data) {
     if (!isText(c.nombre, 60)) err(`${where}: nombre obligatorio (máx. 60).`);
     if (!optText(c.descripcion, 160)) err(`${where}: descripción demasiado larga.`);
     if (!CATEGORY_STATES.includes(c.estado)) err(`${where}: estado inválido.`);
+    if (!optText(c.mensajeVacio, 120)) err(`${where}: mensaje para categoría vacía demasiado largo.`);
   });
 
   const productIds = new Set();
@@ -67,6 +69,8 @@ export function validateCatalog(data) {
     if (!catIds.has(p.categoria)) err(`${where}: categoría inexistente "${p.categoria}".`);
     if (!isText(p.nombre, 80)) err(`${where}: nombre obligatorio (máx. 80).`);
     if (!optText(p.descripcion, 200)) err(`${where}: descripción demasiado larga (máx. 200).`);
+    // Foto opcional subida desde el panel (assets/fotos/...). Tiene prioridad sobre la ilustración.
+    if (p.foto !== undefined && p.foto !== null && !FOTO_RE.test(p.foto)) err(`${where}: foto inválida.`);
     // Ilustración opcional (assets/ilustraciones/<id>.svg).
     if (p.ilustracion !== undefined && p.ilustracion !== null && !ID_RE.test(p.ilustracion)) err(`${where}: ilustración inválida.`);
     // Imagen opcional: si hay imagen, el texto alternativo es obligatorio.

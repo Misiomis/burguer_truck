@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { emptyCart, addItem, computeTotals } from '../../js/core/cart.js';
-import { buildOrderMessage, buildWhatsAppUrl, cleanText, validateCheckout, MAX_MESSAGE } from '../../js/core/whatsapp.js';
+import { buildOrderMessage, buildWhatsAppUrl, cleanText, validateCheckout, MAX_MESSAGE, CONTACT_MESSAGES, isFullName } from '../../js/core/whatsapp.js';
 import { loadCart, saveCart, serializeCart, detectLegacy, CART_KEY, LEGACY_KEYS } from '../../js/core/storage.js';
 import { validateCatalog, validateBusiness } from '../../js/core/schema.js';
 import { buildOutputs, applyBlocks } from '../../scripts/build.mjs';
@@ -16,19 +16,32 @@ const cart30 = (cat) => {
 };
 
 describe('mensaje de WhatsApp', () => {
-  test('incluye líneas, precios, subtotal, modalidad y total confirmado', () => {
+  test('mensaje ordenado: cliente, entrega, referencia, detalle, totales y observaciones', () => {
     const cat = catalog();
     const biz = businessConfirmedFixture();
-    const t = computeTotals(cart30(cat), cat, biz, { mode: 'envio', zoneId: 'zona-test' });
-    const msg = buildOrderMessage(t, { name: 'Ana', address: 'Calle 1', reference: 'Portón verde', notes: 'Sin sal' }, biz);
-    assert.match(msg, /^Hola, El Buen Sabor\./);
-    assert.match(msg, /1 x Empanadas de carne, docena \(12 unidades\)/);
-    assert.match(msg, /\$14\.000 c\/u = \$14\.000/);
-    assert.match(msg, /Subtotal: \$30\.000/);
-    assert.match(msg, /Modalidad: Envío a Zona de prueba/);
-    assert.match(msg, /Envío: \$1\.500/);
-    assert.match(msg, /Total: \$31\.500/);
-    assert.match(msg, /Dirección: Calle 1/);
+    let c = cart30(cat);
+    c = addItem(c, cat, 'empanadas-pollo', 'empanadas-pollo-6', 2).cart;
+    const t = computeTotals(c, cat, biz, { mode: 'envio', zoneId: 'zona-test' });
+    const msg = buildOrderMessage(t, { name: 'Ana Gómez', reference: 'Portón verde', notes: 'Sin sal' }, biz);
+    const lines = msg.split('\n');
+    assert.equal(lines[0], '*🧾 NUEVO PEDIDO · EL BUEN SABOR*');
+    for (const expected of [
+      '👤 *Cliente:* Ana Gómez',
+      '🛵 *Entrega:* Envío a domicilio · Zona de prueba',
+      '📍 *Referencia:* Portón verde',
+      '*DETALLE*',
+      '• 1 × Empanadas de carne · Docena (12 u.)',
+      '   *$14.000*',
+      '• 2 × Empanadas de pollo · Media docena (6 u.)',
+      '   $7.000 c/u → *$14.000*',
+      'Subtotal: $44.000',
+      'Envío: $1.500',
+      '*TOTAL: $45.500*',
+      '📝 *Observaciones:* Sin sal',
+    ]) assert.ok(lines.includes(expected), `falta: ${expected}\n${msg}`);
+    // Orden: cliente antes del detalle; total después del subtotal.
+    assert.ok(lines.indexOf('👤 *Cliente:* Ana Gómez') < lines.indexOf('*DETALLE*'));
+    assert.ok(lines.indexOf('Subtotal: $44.000') < lines.indexOf('*TOTAL: $45.500*'));
     assert.doesNotMatch(msg, /undefined|null|NaN|<|>/);
   });
 
@@ -36,20 +49,27 @@ describe('mensaje de WhatsApp', () => {
     const cat = catalog();
     const pend = computeTotals(cart30(cat), cat, businessConfirmedFixture(), { mode: 'envio', zoneId: 'zona-pendiente' });
     const m1 = buildOrderMessage(pend, {}, business());
-    assert.match(m1, /Envío: a confirmar/);
-    assert.match(m1, /Total: a confirmar/);
+    assert.ok(m1.includes('Envío: a confirmar'));
+    assert.ok(m1.includes('*TOTAL: a confirmar*'));
     const real = computeTotals(cart30(cat), cat, business(), { mode: null, zoneId: null });
     const m2 = buildOrderMessage(real, {}, business());
-    assert.match(m2, /Modalidad: a coordinar/);
-    assert.match(m2, /Total: a confirmar/);
+    assert.ok(m2.includes('🛵 *Entrega:* a coordinar'));
+    assert.ok(m2.includes('*TOTAL: a confirmar*'));
   });
 
-  test('retiro: no incluye dirección aunque se haya escrito', () => {
+  test('retiro: sin línea de envío ni referencia aunque se haya escrito', () => {
     const cat = catalog();
     const t = computeTotals(cart30(cat), cat, businessConfirmedFixture(), { mode: 'retiro', zoneId: null });
-    const msg = buildOrderMessage(t, { address: 'Calle 1' }, business());
-    assert.match(msg, /Total: \$30\.000/);
-    assert.doesNotMatch(msg, /Dirección/);
+    const msg = buildOrderMessage(t, { name: 'Ana Gómez', reference: 'Calle 1' }, business());
+    assert.ok(msg.includes('🏠 *Entrega:* Retiro en el local'));
+    assert.ok(msg.includes('*TOTAL: $30.000*'));
+    assert.ok(!msg.includes('Referencia') && !msg.includes('Envío:'));
+  });
+
+  test('enlaces de consulta con mensaje armado', () => {
+    const biz = businessConfirmedFixture();
+    const url = buildWhatsAppUrl(biz, CONTACT_MESSAGES.pagos);
+    assert.equal(decodeURIComponent(url.split('?text=')[1]), 'Hola, ¿cuáles son los medios de pago?');
   });
 
   test('limpia HTML, controles y largos excesivos', () => {
@@ -76,7 +96,7 @@ describe('mensaje de WhatsApp', () => {
   test('el mensaje respeta un largo máximo', () => {
     const cat = catalog();
     const t = computeTotals(cart30(cat), cat, business());
-    const msg = buildOrderMessage(t, { notes: 'a'.repeat(5000), name: 'b'.repeat(500), address: 'c'.repeat(500) }, business());
+    const msg = buildOrderMessage(t, { notes: 'a'.repeat(5000), name: 'b'.repeat(500), reference: 'c'.repeat(500) }, business());
     assert.ok(msg.length <= MAX_MESSAGE);
   });
 
@@ -91,14 +111,23 @@ describe('mensaje de WhatsApp', () => {
     const cat = catalog();
     const biz = businessConfirmedFixture();
     const modes = ['retiro', 'envio'];
+    const ok = { name: 'Ana Gómez' };
     const none = computeTotals(cart30(cat), cat, biz, { mode: null });
-    assert.ok(validateCheckout(none, {}, modes).mode);
+    assert.ok(validateCheckout(none, ok, modes).mode);
     const retiro = computeTotals(cart30(cat), cat, biz, { mode: 'retiro' });
-    assert.deepEqual(validateCheckout(retiro, {}, modes), {}, 'retiro no exige barrio ni dirección');
+    assert.deepEqual(validateCheckout(retiro, ok, modes), {}, 'retiro no exige barrio ni referencia');
     const envio = computeTotals(cart30(cat), cat, biz, { mode: 'envio', zoneId: null });
-    const e = validateCheckout(envio, { address: '  ' }, modes);
-    assert.ok(e.zone && e.address);
-    assert.deepEqual(validateCheckout(computeTotals(cart30(cat), cat, business()), {}, []), {}, 'sin modalidades confirmadas no se exige elegir');
+    const e = validateCheckout(envio, { ...ok, reference: '  ' }, modes);
+    assert.ok(e.zone && e.reference);
+    assert.deepEqual(validateCheckout(computeTotals(cart30(cat), cat, business()), ok, []), {}, 'sin modalidades confirmadas no se exige elegir');
+  });
+
+  test('nombre y apellido obligatorios', () => {
+    const cat = catalog();
+    const t = computeTotals(cart30(cat), cat, businessConfirmedFixture(), { mode: 'retiro' });
+    for (const bad of ['', 'Ana', '  Ana  ', 'A B', '12 34']) assert.ok(validateCheckout(t, { name: bad }, ['retiro']).name, bad);
+    for (const good of ['Ana Gómez', 'María de los Ángeles', 'José  Pérez']) assert.equal(validateCheckout(t, { name: good }, ['retiro']).name, undefined, good);
+    assert.equal(isFullName('Ñandú Ñúñez'), true);
   });
 });
 
@@ -217,7 +246,7 @@ describe('build y prerender', () => {
     for (const k of ['address', 'telephone', 'aggregateRating', 'review']) assert.equal(ldP[k], undefined, k);
     const ld = strip((await buildOutputs()).blocksFor('index').jsonld);
     assert.equal(ld.name, 'El Buen Sabor');
-    assert.equal(ld.alternateName, 'Burguer Truck');
+    assert.equal(ld.alternateName, undefined, 'sin el nombre anterior');
     assert.equal(ld.telephone, '+' + liveBusiness().whatsapp.numero);
     assert.equal(ld.address.streetAddress, liveBusiness().direccion.texto);
     for (const k of ['aggregateRating', 'review']) assert.equal(ld[k], undefined, k);

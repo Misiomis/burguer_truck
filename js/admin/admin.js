@@ -135,45 +135,185 @@ function stateField(label, context, value, onValue) {
   return el('div', { class: 'field' }, el('label', { class: 'field__label', for: id }, ...labelWith(label, context)), select);
 }
 
+// Categorías cuyos productos se pueden crear, renombrar, fotografiar y quitar desde el panel.
+const EDITABLE = new Set(['bebidas']);
+const pendingPhotos = new Map(); // ruta -> { base64, url } (fotos nuevas aún sin publicar)
+
+function textField(label, context, value, onValue, { maxLength = 80, key } = {}) {
+  const id = `f-${++uid}`;
+  const err = el('p', { class: 'field__error', id: `${id}-e`, hidden: true });
+  const input = el('input', { class: 'field__input', id, type: 'text', value: value || '', maxLength, autocomplete: 'off', 'aria-describedby': `${id}-e` });
+  input.addEventListener('input', () => {
+    const v = input.value.trim();
+    if (key && !v) { invalid.add(key); err.textContent = 'Escribí un nombre.'; err.hidden = false; input.setAttribute('aria-invalid', 'true'); }
+    else { if (key) invalid.delete(key); err.hidden = true; input.removeAttribute('aria-invalid'); }
+    onValue(v);
+    updateBar();
+  });
+  return el('div', { class: 'field' }, el('label', { class: 'field__label', for: id }, ...labelWith(label, context)), input, err);
+}
+
+const slugify = (s) => s.normalize('NFD').replace(/[^\w\s-]/g, '').trim().toLowerCase().replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'item';
+
+/** Achica la foto en el navegador (máx. 480 px) y la devuelve en WebP (o JPEG si el navegador no codifica WebP). */
+async function shrinkPhoto(file) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 480 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  let blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', 0.82));
+  if (!blob || blob.type !== 'image/webp') blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
+  const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
+  const buf = new Uint8Array(await blob.arrayBuffer());
+  let bin = '';
+  for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+  return { base64: btoa(bin), ext, url: URL.createObjectURL(blob) };
+}
+
+function photoField(p) {
+  const id = `f-${++uid}`;
+  const preview = p.foto
+    ? el('img', { class: 'ad-photo__img', src: pendingPhotos.get(p.foto)?.url || `${p.foto}`, alt: `Foto actual de ${p.nombre || 'la bebida'}` })
+    : el('img', { class: 'ad-photo__img', src: 'assets/ilustraciones/bebida.svg', alt: '' });
+  const input = el('input', { type: 'file', id, accept: 'image/*', class: 'visually-hidden' });
+  const err = el('p', { class: 'field__error', hidden: true });
+  input.addEventListener('change', async () => {
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/') || file.size > 15_000_000) { err.textContent = 'Elegí una imagen (JPG, PNG o WebP) de hasta 15 MB.'; err.hidden = false; return; }
+    try {
+      const out = await shrinkPhoto(file);
+      const path = `assets/fotos/${p.id}-${Date.now().toString(36)}.${out.ext}`;
+      pendingPhotos.set(path, out);
+      p.foto = path;
+      render();
+      status('Foto lista. Se sube al publicar.');
+    } catch {
+      err.textContent = 'No se pudo leer la imagen. Probá con otra.';
+      err.hidden = false;
+    }
+  });
+  const actions = el('div', { class: 'ad-photo__actions' },
+    el('label', { class: 'btn btn--ghost ad-btn-sm ad-file', for: id, text: p.foto ? 'Cambiar foto' : 'Subir foto' }),
+    p.foto ? el('button', { type: 'button', class: 'link-btn', text: 'Quitar foto', onclick: () => { delete p.foto; render(); } }) : null);
+  return el('div', { class: 'ad-photo' }, preview, el('div', {}, input, actions, err));
+}
+
+function addDrink() {
+  const id = `bebida-${Date.now().toString(36)}`;
+  draft.catalog.productos.push({
+    id, categoria: 'bebidas', nombre: '', estado: 'disponible',
+    variantes: [{ id, presentacion: 'Unidad', unidades: 1, precio: null, precioEstado: 'pendiente', estado: 'disponible' }],
+  });
+  invalid.add(`n:${id}`);
+  render();
+  document.querySelector(`[data-product-card="${id}"] input`)?.focus();
+}
+
+function removeProduct(p) {
+  if (!confirm(`¿Quitar “${p.nombre || 'esta bebida'}” de la carta?`)) return;
+  draft.catalog.productos = draft.catalog.productos.filter((x) => x !== p);
+  invalid.delete(`n:${p.id}`);
+  for (const v of p.variantes) invalid.delete(`p:${v.id}`);
+  render();
+}
+
+function renderProduct(p, editable) {
+  const card = el('div', { class: 'ad-product', 'data-product-card': p.id });
+  if (editable) {
+    card.append(el('div', { class: 'ad-product__head' },
+      el('h3', { class: 'ad-h3', text: p.nombre || 'Nueva bebida' }),
+      el('button', { type: 'button', class: 'link-btn', text: 'Quitar', 'aria-label': `Quitar ${p.nombre || 'nueva bebida'}`, onclick: () => removeProduct(p) })));
+    card.append(textField('Nombre', '', p.nombre, (v) => { p.nombre = v; }, { key: `n:${p.id}` }));
+    card.append(photoField(p));
+  } else {
+    card.append(el('h3', { class: 'ad-h3', text: p.nombre }));
+  }
+  for (const v of p.variantes) {
+    const name = p.variantes.length > 1 ? `${p.nombre}, ${v.presentacion.toLowerCase()}` : (p.nombre || 'nueva bebida');
+    const row = el('div', { class: 'ad-variant' },
+      editable
+        ? textField('Presentación', name, v.presentacion === 'Unidad' ? '' : v.presentacion, (val) => { v.presentacion = val || 'Unidad'; }, { maxLength: 60 })
+        : (p.variantes.length > 1 || v.presentacion !== 'Unidad' ? el('p', { class: 'ad-variant__name', text: v.presentacion + (v.unidades > 1 ? ` (${v.unidades} u.)` : '') }) : null),
+      priceField({
+        label: 'Precio', context: name, value: v.precio, key: `p:${v.id}`,
+        onValue: (val) => { v.precio = val; v.precioEstado = val === null ? 'pendiente' : 'confirmado'; },
+      }),
+      stateField('Estado', name, v.estado, (val) => { v.estado = val; }));
+    card.append(row);
+  }
+  return card;
+}
+
 function render() {
   const box = $('[data-products]');
   box.replaceChildren();
   for (const cat of draft.catalog.categorias) {
+    const editable = EDITABLE.has(cat.id);
     const products = draft.catalog.productos.filter((p) => p.categoria === cat.id);
-    if (!products.length) continue;
+    if (!products.length && !editable) continue;
     const section = el('section', { class: 'ad-panel', 'aria-labelledby': `cat-${cat.id}` }, el('h2', { class: 'ad-h2', id: `cat-${cat.id}`, text: cat.nombre }));
-    for (const p of products) {
-      const card = el('div', { class: 'ad-product' }, el('h3', { class: 'ad-h3', text: p.nombre }));
-      for (const v of p.variantes) {
-        const name = p.variantes.length > 1 ? `${p.nombre}, ${v.presentacion.toLowerCase()}` : p.nombre;
-        const row = el('div', { class: 'ad-variant' },
-          p.variantes.length > 1 || v.presentacion !== 'Unidad' ? el('p', { class: 'ad-variant__name', text: v.presentacion + (v.unidades > 1 ? ` (${v.unidades} u.)` : '') }) : null,
-          priceField({
-            label: 'Precio',
-            context: name,
-            value: v.precio,
-            key: `p:${v.id}`,
-            onValue: (val) => { v.precio = val; v.precioEstado = val === null ? 'pendiente' : 'confirmado'; },
-          }),
-          stateField('Estado', name, v.estado, (val) => { v.estado = val; }));
-        card.append(row);
-      }
-      section.append(card);
-    }
+    if (editable && !products.length) section.append(el('p', { class: 'muted', text: `Sin productos: la web muestra “${cat.mensajeVacio || 'Próximamente'}”.` }));
+    for (const p of products) section.append(renderProduct(p, editable));
+    if (editable) section.append(el('div', { class: 'ad-actions' }, el('button', { type: 'button', class: 'btn btn--ghost', text: 'Agregar bebida', onclick: addDrink })));
     box.append(section);
   }
+
   const zones = $('[data-zones]');
   zones.replaceChildren();
   const grid = el('div', { class: 'ad-zones' });
-  for (const z of draft.business.modalidades.envio.zonas) {
+  const list = draft.business.modalidades.envio.zonas;
+  for (const z of list) {
     const f = priceField({
       label: z.nombre, context: '', value: z.tarifa, key: `z:${z.id}`,
       onValue: (val) => { z.tarifa = val; z.tarifaEstado = val === null ? 'pendiente' : 'confirmada'; },
     });
+    f.append(el('button', { type: 'button', class: 'link-btn', text: 'Quitar barrio', 'aria-label': `Quitar ${z.nombre}`, onclick: () => {
+      if (!confirm(`¿Quitar ${z.nombre} de los barrios con envío?`)) return;
+      draft.business.modalidades.envio.zonas = list.filter((x) => x !== z);
+      invalid.delete(`z:${z.id}`);
+      render();
+    } }));
     grid.append(f);
   }
   zones.append(grid);
+  // Alta de barrio.
+  const nameId = `f-${++uid}`;
+  const priceId = `f-${++uid}`;
+  const errNew = el('p', { class: 'field__error', hidden: true });
+  const nameIn = el('input', { class: 'field__input', id: nameId, type: 'text', maxLength: 60, autocomplete: 'off' });
+  const priceIn = el('input', { class: 'field__input ad-price__input', id: priceId, type: 'text', inputMode: 'numeric', autocomplete: 'off', placeholder: 'a cotizar' });
+  const addBtn = el('button', { type: 'button', class: 'btn btn--ghost', text: 'Agregar barrio', onclick: () => {
+    const nombre = nameIn.value.trim();
+    const r = parsePriceInput(priceIn.value);
+    if (!nombre) { errNew.textContent = 'Escribí el nombre del barrio.'; errNew.hidden = false; nameIn.focus(); return; }
+    if (!r.ok) { errNew.textContent = r.error; errNew.hidden = false; priceIn.focus(); return; }
+    let id = slugify(nombre);
+    while (list.some((z) => z.id === id)) id += '-2';
+    list.push({ id, nombre, tarifa: r.value, tarifaEstado: r.value === null ? 'pendiente' : 'confirmada' });
+    render();
+    status(`Se agregó ${nombre}. Publicá para que aparezca en la web.`);
+  } });
+  zones.append(el('div', { class: 'ad-newzone' },
+    el('h3', { class: 'ad-h3', text: 'Agregar barrio' }),
+    el('div', { class: 'ad-newzone__row' },
+      el('div', { class: 'field' }, el('label', { class: 'field__label', for: nameId, text: 'Nombre del barrio' }), nameIn),
+      el('div', { class: 'field ad-price' }, el('label', { class: 'field__label', for: priceId, text: 'Costo de envío' }),
+        el('div', { class: 'ad-price__wrap' }, el('span', { class: 'ad-price__prefix', 'aria-hidden': 'true', text: '$' }), priceIn)),
+      addBtn),
+    errNew));
   updateBar();
+}
+
+/** Archivos de fotos para el commit: nuevas (base64) y las que dejaron de usarse (se borran). */
+function photoFiles(catalog) {
+  const used = new Set(catalog.productos.map((p) => p.foto).filter(Boolean));
+  const files = {};
+  for (const [path, data] of pendingPhotos) if (used.has(path)) files[path] = { base64: data.base64 };
+  for (const p of base.catalog.productos) if (p.foto && !used.has(p.foto)) files[p.foto] = null;
+  return files;
 }
 
 function changes() {
@@ -183,7 +323,7 @@ function changes() {
 function updateBar() {
   const n = changes().length;
   const bad = invalid.size;
-  $('[data-change-count]').textContent = bad ? `Revisá ${bad === 1 ? 'un importe' : `${bad} importes`} con error`
+  $('[data-change-count]').textContent = bad ? `Revisá ${bad === 1 ? 'un dato' : `${bad} datos`} con error`
     : n ? `${n} ${n === 1 ? 'cambio sin publicar' : 'cambios sin publicar'}` : 'Sin cambios';
   $('[data-review]').disabled = !n || bad > 0;
   $('[data-discard]').disabled = !n && !bad;
@@ -220,7 +360,8 @@ async function publish() {
     }
     const catalog = { ...clone(draft.catalog), actualizado: todayISO() };
     const { files, version } = buildSiteFiles({ catalog, business: draft.business, pages });
-    await gh.commitFiles({ files, message: commitMessage(list, login), parentSha: head });
+    await gh.commitFiles({ files: { ...files, ...photoFiles(catalog) }, message: commitMessage(list, login), parentSha: head });
+    pendingPhotos.clear();
     $('[data-review-dialog]').close();
     status(`Publicado: ${list.length} ${list.length === 1 ? 'cambio' : 'cambios'}. La web se actualiza en 1 o 2 minutos.`);
     await loadFromRepo();

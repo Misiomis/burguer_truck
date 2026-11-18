@@ -13,7 +13,7 @@ export function header(page, biz) {
   const links = NAV.map((l) => `<li><a class="site-nav__link" href="${l.href}">${l.label}</a></li>`).join('');
   return `<header class="site-header" id="navbar">
   <div class="container site-header__inner">
-    <a class="brand" href="./"${page === 'index' ? ' aria-current="page"' : ''}><span class="brand__name">${esc(biz.nombre)}</span><span class="brand__before">Antes ${esc(biz.nombreHistorico)}</span></a>
+    <a class="brand" href="./"${page === 'index' ? ' aria-current="page"' : ''}><picture><source type="image/avif" srcset="assets/img/logo-simplificado-192.avif"><img class="brand__logo" src="assets/img/logo-simplificado-192.webp" width="48" height="48" alt=""  decoding="async"></picture><span class="brand__name">${esc(biz.nombre)}</span></a>
     <nav class="site-nav" aria-label="Principal">
       <button type="button" class="site-nav__toggle js-only" aria-expanded="false" aria-controls="nav-list">${icon('menu')}<span class="visually-hidden">Abrir navegación</span></button>
       <ul class="site-nav__list" id="nav-list" role="list">${links}</ul>
@@ -31,7 +31,6 @@ export function footer(page, contactHtml) {
       <picture><source type="image/avif" srcset="assets/img/logo-simplificado-192.avif"><img class="footer__logo" src="assets/img/logo-simplificado-192.webp" width="96" height="96" alt="" loading="lazy" decoding="async"></picture>
       <div>
         <p class="footer__name">El Buen Sabor</p>
-        <p class="footer__before">Antes Burguer Truck</p>
         <p class="footer__lema">Siempre hay algo rico.</p>
       </div>
     </div>
@@ -45,7 +44,7 @@ export function footer(page, contactHtml) {
     </nav>
     <div><h2 class="footer__title">Contacto</h2>${contactHtml}</div>
   </div>
-  <div class="container footer__bottom"><p>© 2026 El Buen Sabor. Imágenes de comida ilustrativas.</p></div>
+  <div class="container footer__bottom"><p>© 2026 El Buen Sabor.</p></div>
 </footer>`;
 }
 
@@ -74,36 +73,35 @@ export function cartDialog(page) {
         <ul class="cart__lines plain" role="list" data-cart-lines></ul>
         <button type="button" class="link-btn" data-clear-cart>${icon('trash')}Vaciar pedido</button>
         <form class="checkout" data-checkout novalidate>
+          <div class="field">
+            <label class="field__label" for="c-name">¿A nombre de quién va el pedido?</label>
+            <input class="field__input" id="c-name" name="name" autocomplete="name" autocapitalize="words" maxlength="60" required aria-describedby="hint-name err-name">
+            <p class="field__help" id="hint-name">Nombre y apellido.</p>
+            <p class="field__error" id="err-name" data-error="name" hidden></p>
+          </div>
           <fieldset class="checkout__group">
             <legend class="checkout__legend">Entrega</legend>
             <div data-mode-options></div>
             <p class="field__error" id="err-mode" data-error="mode" hidden></p>
           </fieldset>
           <div class="checkout__delivery" data-delivery-fields hidden>
-            <div class="field">
-              <label class="field__label" for="c-zone">Zona de envío</label>
-              <select class="field__input" id="c-zone" name="zone" aria-describedby="err-zone"></select>
+            <fieldset class="checkout__group zone-picker" aria-describedby="err-zone">
+              <legend class="checkout__legend checkout__legend--sm">¿A qué barrio?</legend>
+              <div class="zone-picker__list" data-zone-options></div>
               <p class="field__error" id="err-zone" data-error="zone" hidden></p>
-            </div>
+            </fieldset>
             <div class="field">
-              <label class="field__label" for="c-address">Dirección de entrega</label>
-              <input class="field__input" id="c-address" name="address" autocomplete="street-address" maxlength="140" aria-describedby="err-address">
-              <p class="field__error" id="err-address" data-error="address" hidden></p>
+              <label class="field__label" for="c-reference">Referencia para la entrega</label>
+              <textarea class="field__input" id="c-reference" name="reference" rows="2" maxlength="160" aria-describedby="hint-ref err-reference"></textarea>
+              <p class="field__help" id="hint-ref">Calle y número, o cómo llegar (ej.: casa de rejas negras frente a la plaza).</p>
+              <p class="field__error" id="err-reference" data-error="reference" hidden></p>
             </div>
-            <div class="field">
-              <label class="field__label" for="c-reference">Referencia <span class="field__opt">(opcional)</span></label>
-              <input class="field__input" id="c-reference" name="reference" maxlength="140">
-            </div>
-          </div>
-          <div class="field">
-            <label class="field__label" for="c-name">Nombre <span class="field__opt">(opcional)</span></label>
-            <input class="field__input" id="c-name" name="name" autocomplete="given-name" maxlength="60">
           </div>
           <div class="field">
             <label class="field__label" for="c-notes">Observaciones <span class="field__opt">(opcional)</span></label>
             <textarea class="field__input" id="c-notes" name="notes" rows="2" maxlength="300"></textarea>
           </div>
-          <p class="checkout__privacy">Tu nombre, dirección y observaciones no se guardan en esta web: solo van en el mensaje.</p>
+          <p class="checkout__privacy">Tus datos no se guardan en esta web: solo van en el mensaje.</p>
           <details class="preview">
             <summary>Ver el mensaje que vas a enviar</summary>
             <pre class="preview__text" data-message-preview></pre>
@@ -118,8 +116,8 @@ export function cartDialog(page) {
         <div class="totals__row totals__row--total"><dt>Total</dt><dd data-total></dd></div>
       </dl>
       <p class="cart__hint" data-cart-hint></p>
-      <a class="btn btn--primary btn--block" data-whatsapp href="#" target="_blank" rel="noopener noreferrer" hidden>${icon('whatsapp')}Continuar por WhatsApp</a>
-      <button type="button" class="btn btn--primary btn--block" data-whatsapp-pending disabled hidden>${icon('whatsapp')}WhatsApp a confirmar</button>
+      <a class="btn btn--primary btn--block" data-whatsapp href="#" target="_blank" rel="noopener noreferrer" hidden><svg class="icon icon--logo" aria-hidden="true" focusable="false"><use href="#i-logo-whatsapp"></use></svg>Continuar por WhatsApp</a>
+      <button type="button" class="btn btn--primary btn--block" data-whatsapp-pending disabled hidden><svg class="icon icon--logo" aria-hidden="true" focusable="false"><use href="#i-logo-whatsapp"></use></svg>WhatsApp a confirmar</button>
       <button type="button" class="btn btn--ghost btn--block" data-copy>${icon('copy')}Copiar resumen</button>
     </footer>
   </div>

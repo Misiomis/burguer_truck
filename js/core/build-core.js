@@ -64,7 +64,6 @@ export function buildOutputs({ catalog, business }) {
     jsonld: renderJsonLd(catalog, business, { image: shareImage }),
     'menu-nav': renderCategoryNav(catalog),
     'menu-carta': renderMenu(catalog),
-    'menu-fecha': `<p class="menu-intro__meta">Precios en pesos argentinos. Vigentes desde el ${esc(formatDate(catalog.actualizado))}.</p>`,
     'local-info': renderBusinessInfo(business) + pendingNote,
     'footer-contacto': contact,
   };
